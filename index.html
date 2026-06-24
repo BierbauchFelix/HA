@@ -172,11 +172,10 @@
         .lidJ { animation: lidBlinkJ 7s ease-in-out infinite; }
         .ringJ { animation: pulseJ 1.6s ease-in-out infinite; transform-origin: 640px 330px; }
         .talkJ { animation: mouthTalkJ 0.35s ease-in-out infinite; transform-origin: center; }
-        .fl-btn { background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;white-space:nowrap; }
-        .fl-btn:hover,.fl-btn.active { background:#2a2548;color:#eef1f9;border-color:#6c85bd; }
-        .alarm-item { display:flex;align-items:center;justify-content:space-between;background:#1a1630;border:1px solid #2a2548;border-radius:12px;padding:12px 16px;margin-bottom:10px; }
-        .alarm-item.firing { border-color:#f39c12;animation:alarmPulse 0.5s ease-in-out infinite alternate; }
-        @keyframes alarmPulse { from{background:#1a1630} to{background:#2d2010} }
+        @keyframes matchInJ { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes panelSlideInJ { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes alarmPulse { from{background:#1a1630;border-color:#f39c12} to{background:#2d2010;border-color:#f39c12} }
+        @keyframes alarmRing { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-8deg)} 40%{transform:rotate(8deg)} 60%{transform:rotate(-5deg)} 80%{transform:rotate(5deg)} }
         .pupilJ { animation: pupilDriftJ 3.6s ease-in-out infinite; }
         .fadeJ { transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1); }
         .fadeFastJ { transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1); }
@@ -525,68 +524,87 @@
                             </div>
                         </foreignObject>
                     <!-- SPOTIFY FULL VIEW -->
-                    <g id="musicFullModeJ" class="fadeFastJ" opacity="0">
-                        <line x1="530" y1="40" x2="530" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
-                        <!-- Cover Art links (groß) -->
-                        <defs><clipPath id="fullCoverClipJ"><rect x="60" y="130" width="420" height="420" rx="22"/></clipPath></defs>
-                        <rect x="60" y="130" width="420" height="420" rx="22" fill="#1a1630"/>
-                        <image id="fullCoverImgJ" href="" x="60" y="130" width="420" height="420" clip-path="url(#fullCoverClipJ)" preserveAspectRatio="xMidYMid slice"/>
-                        <text id="fullCoverFallbackJ" x="270" y="360" text-anchor="middle" style="font-size:90px">🎵</text>
-                        <!-- Glow unterm Cover -->
-                        <rect x="80" y="548" width="380" height="20" rx="10" fill="#1DB954" opacity="0.08"/>
+                    <g id="musicFullModeJ" opacity="0" style="pointer-events:none">
+                        <!-- Hintergrund -->
+                        <rect x="0" y="0" width="1280" height="720" fill="url(#bgGJ)"/>
+                        <!-- Cover Blur-Hintergrund (groß, unscharf) -->
+                        <image id="fullCoverBgJ" href="" x="-60" y="-60" width="700" height="840" preserveAspectRatio="xMidYMid slice" opacity="0.12" style="filter:blur(30px)"/>
+                        <!-- Cover Art -->
+                        <rect x="70" y="110" width="390" height="390" rx="20" fill="#1a1630" stroke="#2a2548" stroke-width="1"/>
+                        <image id="fullCoverImgJ" href="" x="70" y="110" width="390" height="390" preserveAspectRatio="xMidYMid slice" style="clip-path:inset(0 round 20px)"/>
+                        <text id="fullCoverFallbackJ" x="265" y="325" text-anchor="middle" style="font-size:80px">🎵</text>
+                        <!-- Animierte Equalizer-Balken unterm Cover -->
+                        <g id="fullEqJ" opacity="0.6">
+                            <rect x="110" y="518" width="8" height="14" rx="3" fill="#1DB954"><animate attributeName="height" values="6;22;6" dur="0.6s" repeatCount="indefinite"/><animate attributeName="y" values="526;510;526" dur="0.6s" repeatCount="indefinite"/></rect>
+                            <rect x="124" y="514" width="8" height="20" rx="3" fill="#1DB954"><animate attributeName="height" values="20;6;20" dur="0.6s" begin="0.1s" repeatCount="indefinite"/><animate attributeName="y" values="510;524;510" dur="0.6s" begin="0.1s" repeatCount="indefinite"/></rect>
+                            <rect x="138" y="516" width="8" height="16" rx="3" fill="#1DB954"><animate attributeName="height" values="10;24;10" dur="0.6s" begin="0.2s" repeatCount="indefinite"/><animate attributeName="y" values="522;508;522" dur="0.6s" begin="0.2s" repeatCount="indefinite"/></rect>
+                            <rect x="152" y="512" width="8" height="20" rx="3" fill="#1DB954"><animate attributeName="height" values="18;6;18" dur="0.6s" begin="0.3s" repeatCount="indefinite"/><animate attributeName="y" values="514;526;514" dur="0.6s" begin="0.3s" repeatCount="indefinite"/></rect>
+                            <rect x="166" y="518" width="8" height="14" rx="3" fill="#1DB954"><animate attributeName="height" values="8;20;8" dur="0.6s" begin="0.15s" repeatCount="indefinite"/><animate attributeName="y" values="524;512;524" dur="0.6s" begin="0.15s" repeatCount="indefinite"/></rect>
+                        </g>
 
-                        <!-- Song Info rechts -->
-                        <text x="570" y="115" style="font-size:10px;fill:#3B355E;letter-spacing:4px">NOW PLAYING</text>
-                        <text id="fullTitleJ" x="570" y="200" style="font-size:28px;fill:#EEF1F9;font-weight:700">Lade...</text>
-                        <text id="fullArtistJ" x="570" y="238" style="font-size:17px;fill:#1DB954">Künstler</text>
-                        <text id="fullAlbumJ" x="570" y="268" style="font-size:13px;fill:#3B355E">Album</text>
+                        <!-- Rechte Seite: Info + Controls als foreignObject -->
+                        <foreignObject x="510" y="60" width="730" height="600">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 40px;box-sizing:border-box;">
+                                <div style="font-size:10px;color:#3B355E;letter-spacing:5px;margin-bottom:24px">NOW PLAYING</div>
+                                <div id="fullTitleJ" style="font-size:32px;color:#EEF1F9;font-weight:700;line-height:1.2;margin-bottom:10px">Lade...</div>
+                                <div id="fullArtistJ" style="font-size:18px;color:#1DB954;margin-bottom:6px">Künstler</div>
+                                <div id="fullAlbumJ" style="font-size:13px;color:#3B355E;margin-bottom:36px">Album</div>
 
-                        <!-- Progress -->
-                        <rect x="570" y="310" width="660" height="5" rx="2.5" fill="#1a1630"/>
-                        <rect id="fullProgressJ" x="570" y="310" width="0" height="5" rx="2.5" fill="#1DB954"/>
-                        <text id="fullTimeJ" x="570" y="330" style="font-size:11px;fill:#3B355E">0:00</text>
-                        <text id="fullDurJ" x="1230" y="330" text-anchor="end" style="font-size:11px;fill:#3B355E">0:00</text>
+                                <!-- Progress -->
+                                <div style="position:relative;height:4px;background:#1a1630;border-radius:2px;margin-bottom:8px;">
+                                    <div id="fullProgressJ" style="height:100%;width:0%;background:#1DB954;border-radius:2px;transition:width 1s linear;"></div>
+                                </div>
+                                <div style="display:flex;justify-content:space-between;margin-bottom:32px;">
+                                    <span id="fullTimeJ" style="font-size:11px;color:#3B355E">0:00</span>
+                                    <span id="fullDurJ" style="font-size:11px;color:#3B355E">0:00</span>
+                                </div>
 
-                        <!-- Controls -->
-                        <foreignObject x="560" y="348" width="400" height="72">
-                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;align-items:center;gap:18px;">
-                                <button onclick="prevTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:20px;">⏮</button>
-                                <button onclick="toggleMusicPlay()" id="fullPlayBtnJ" style="background:#1DB954;border:none;color:#000;width:64px;height:64px;border-radius:50%;cursor:pointer;font-size:26px;">⏸</button>
-                                <button onclick="skipTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:20px;">⏭</button>
-                                <button onclick="toggleMusicView()" style="background:#1a1630;border:1px solid #2a2548;color:#6c85bd;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:18px;">⊞</button>
+                                <!-- Controls -->
+                                <div style="display:flex;align-items:center;gap:20px;margin-bottom:32px;">
+                                    <button onclick="prevTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#2a2548'" onmouseout="this.style.background='#1a1630'">⏮</button>
+                                    <button onclick="toggleMusicPlay()" id="fullPlayBtnJ" style="background:#1DB954;border:none;color:#000;width:68px;height:68px;border-radius:50%;cursor:pointer;font-size:28px;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">⏸</button>
+                                    <button onclick="skipTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#2a2548'" onmouseout="this.style.background='#1a1630'">⏭</button>
+                                    <button onclick="openMusicMode();hideAllPanels();showJ(\'musicModeJ\',1);showJ(\'avatarBodyJ\',1);showJ(\'faceFeaturesJ\',1);document.getElementById(\'avatarBundleJ\').style.transform=\'\'" style="background:#1a1630;border:1px solid #2a2548;color:#6c85bd;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:16px;margin-left:auto;">⊞</button>
+                                </div>
+
+                                <!-- Volume -->
+                                <div style="font-size:10px;color:#3B355E;letter-spacing:3px;margin-bottom:10px">LAUTSTÄRKE</div>
+                                <input type="range" min="0" max="100" value="70" id="spotifyVolumeJ" oninput="setSpotifyVolume(this.value)" style="width:100%;accent-color:#1DB954;cursor:pointer;height:4px;"/>
                             </div>
-                        </foreignObject>
-
-                        <!-- Volume -->
-                        <text x="570" y="460" style="font-size:11px;fill:#3B355E;letter-spacing:2px">LAUTSTÄRKE</text>
-                        <foreignObject x="568" y="468" width="300" height="30">
-                            <input xmlns="http://www.w3.org/1999/xhtml" type="range" min="0" max="100" value="70" id="spotifyVolumeJ" oninput="setSpotifyVolume(this.value)" style="width:100%;accent-color:#1DB954;cursor:pointer;"/>
                         </foreignObject>
                     </g>
 
                     <!-- FUSSBALL PANEL -->
-                    <g id="footballModeJ" class="fadeFastJ" opacity="0">
+                    <g id="footballModeJ" opacity="0" style="pointer-events:none">
                         <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
-                        <!-- League selector -->
-                        <foreignObject x="680" y="55" width="560" height="50">
-                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;gap:8px;align-items:center;">
-                                <button onclick="loadFootball('ger.1')"  class="fl-btn" id="fb-ger">🇩🇪 Bundesliga</button>
-                                <button onclick="loadFootball('eng.1')"  class="fl-btn" id="fb-eng">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
-                                <button onclick="loadFootball('uefa.champions')" class="fl-btn" id="fb-ucl">⭐ UCL</button>
-                                <button onclick="loadFootball('esp.1')"  class="fl-btn" id="fb-esp">🇪🇸 LaLiga</button>
+                        <foreignObject x="670" y="40" width="590" height="640">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;padding:16px 20px;box-sizing:border-box;overflow:hidden;">
+                                <!-- Liga-Buttons -->
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+                                    <button onclick="loadFootball('ger.1')"  id="fb-ger" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🇩🇪 Bundesliga</button>
+                                    <button onclick="loadFootball('eng.1')"  id="fb-eng" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
+                                    <button onclick="loadFootball('uefa.champions')" id="fb-ucl" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">⭐ UCL</button>
+                                    <button onclick="loadFootball('esp.1')"  id="fb-esp" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🇪🇸 LaLiga</button>
+                                </div>
+                                <!-- Liga-Name + Datum -->
+                                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+                                    <div id="fbLeagueNameJ" style="font-size:18px;color:#EEF1F9;font-weight:600">Bundesliga</div>
+                                    <div id="fbDateJ" style="font-size:10px;color:#3B355E;letter-spacing:2px">HEUTE</div>
+                                </div>
+                                <!-- Match Liste -->
+                                <div id="fbMatchListJ" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;"></div>
                             </div>
                         </foreignObject>
-                        <text id="fbLeagueNameJ" x="690" y="130" style="font-size:17px;fill:#EEF1F9;font-weight:600">Bundesliga</text>
-                        <text id="fbDateJ" x="690" y="152" style="font-size:11px;fill:#3B355E;letter-spacing:2px">HEUTE</text>
-                        <g id="fbMatchListJ"></g>
                     </g>
 
-                    <!-- WECKER / ALARM PANEL -->
-                    <g id="alarmModeJ" class="fadeFastJ" opacity="0">
+                    <!-- WECKER PANEL -->
+                    <g id="alarmModeJ" opacity="0" style="pointer-events:none">
                         <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
-                        <text x="690" y="100" style="font-size:20px;fill:#EEF1F9;font-weight:600">⏰ Wecker</text>
-                        <foreignObject x="680" y="115" width="560" height="530">
-                            <div xmlns="http://www.w3.org/1999/xhtml" id="alarmPanelHtmlJ" style="color:#eef1f9;font-family:inherit;"></div>
+                        <foreignObject x="670" y="40" width="590" height="640">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;padding:20px;box-sizing:border-box;">
+                                <div style="font-size:22px;color:#EEF1F9;font-weight:600;margin-bottom:20px">⏰ Wecker</div>
+                                <div id="alarmPanelHtmlJ" style="flex:1;overflow-y:auto;color:#eef1f9;"></div>
+                            </div>
                         </foreignObject>
                     </g>
                     </g>
@@ -737,7 +755,12 @@
             } catch(e) { document.getElementById('weatherTempJ').textContent = "--°C"; }
         }
 
-        function showJ(id, v) { document.getElementById(id).style.opacity = v; }
+        function showJ(id, v) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.style.opacity = v;
+            el.style.pointerEvents = v > 0 ? 'auto' : 'none';
+        }
         function setLabelJ(p, t) {
             document.getElementById('phaseJ').textContent = p;
             document.getElementById('triggerJ').textContent = t;
@@ -1554,30 +1577,46 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             hideAllPanels();
             musicViewFull = true;
             showJ('focusScreenJ', 1);
-            document.getElementById('avatarBundleJ').style.transform = '';
             showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             showJ('musicFullModeJ', 1);
-            setLabelJ('Spotify', 'Musik');
-            const interval = setInterval(async () => {
+            setLabelJ('Spotify', 'Musik — Vollansicht');
+
+            async function updateFull() {
                 const d = await spotifyAPI('GET', '/me/player/currently-playing');
                 if (!d || !d.item) return;
                 const t = d.item;
                 const artist = t.artists.map(a => a.name).join(', ');
                 const img = t.album?.images?.[0]?.url || '';
-                const pct = Math.round((d.progress_ms / t.duration_ms) * 660);
+                const pct = Math.round((d.progress_ms / t.duration_ms) * 100);
+
                 const fi = document.getElementById('fullCoverImgJ');
+                const fb = document.getElementById('fullCoverBgJ');
                 const ff = document.getElementById('fullCoverFallbackJ');
-                if (img) { fi.setAttribute('href', img); fi.style.opacity = 1; ff.style.opacity = 0; }
-                else { fi.style.opacity = 0; ff.style.opacity = 1; }
-                document.getElementById('fullTitleJ').textContent = t.name.length > 28 ? t.name.slice(0,26)+'…' : t.name;
-                document.getElementById('fullArtistJ').textContent = artist;
-                document.getElementById('fullAlbumJ').textContent = t.album?.name || '';
-                document.getElementById('fullProgressJ').setAttribute('width', pct);
-                document.getElementById('fullTimeJ').textContent = fmtMs(d.progress_ms);
-                document.getElementById('fullDurJ').textContent = fmtMs(t.duration_ms);
-                document.getElementById('fullPlayBtnJ').textContent = d.is_playing ? '⏸' : '▶';
-            }, 2000);
-            spotifyPollInterval = interval;
+                if (img) {
+                    fi.setAttribute('href', img); fi.style.opacity = 1;
+                    fb.setAttribute('href', img); fb.style.opacity = 0.12;
+                    ff.style.opacity = 0;
+                } else { fi.style.opacity = 0; ff.style.opacity = 1; }
+
+                const titleEl = document.getElementById('fullTitleJ');
+                if (titleEl) titleEl.textContent = t.name.length > 30 ? t.name.slice(0,28)+'…' : t.name;
+                const artistEl = document.getElementById('fullArtistJ');
+                if (artistEl) artistEl.textContent = artist;
+                const albumEl = document.getElementById('fullAlbumJ');
+                if (albumEl) albumEl.textContent = t.album?.name || '';
+
+                const prog = document.getElementById('fullProgressJ');
+                if (prog) prog.style.width = pct + '%';
+                const timeEl = document.getElementById('fullTimeJ');
+                if (timeEl) timeEl.textContent = fmtMs(d.progress_ms);
+                const durEl = document.getElementById('fullDurJ');
+                if (durEl) durEl.textContent = fmtMs(t.duration_ms);
+                const btn = document.getElementById('fullPlayBtnJ');
+                if (btn) btn.textContent = d.is_playing ? '⏸' : '▶';
+            }
+            updateFull();
+            spotifyPollInterval = setInterval(updateFull, 2000);
         }
 
         async function setSpotifyVolume(val) {
@@ -1598,74 +1637,78 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
             setLabelJ('Fußball', FOOTBALL_LEAGUES[league] || 'Fußball');
-            document.getElementById('fbLeagueNameJ').textContent = FOOTBALL_LEAGUES[league] || league;
-            document.getElementById('fbDateJ').textContent = new Date().toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
-            document.getElementById('fbMatchListJ').innerHTML = '';
-            renderFbLoading();
+            const dateStr = new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+            document.getElementById('fbDateJ').textContent = dateStr;
+            document.getElementById('fbMatchListJ').innerHTML = `<div style="color:#3B355E;font-size:13px;padding:20px 0;text-align:center">Lade Spiele…</div>`;
             await loadFootball(league);
-        }
-
-        function renderFbLoading() {
-            const g = document.getElementById('fbMatchListJ');
-            g.innerHTML = `<text x="690" y="220" style="font-size:14px;fill:#3B355E">Lade Spiele…</text>`;
         }
 
         async function loadFootball(league) {
             currentLeague = league;
-            document.querySelectorAll('.fl-btn').forEach(b => b.classList.remove('active'));
+            // Active-Button Styling
+            ['fb-ger','fb-eng','fb-ucl','fb-esp'].forEach(id => {
+                const b = document.getElementById(id);
+                if (!b) return;
+                b.style.background = '#1a1630'; b.style.color = '#a9bbe0'; b.style.borderColor = '#2a2548';
+            });
             const map = {'ger.1':'fb-ger','eng.1':'fb-eng','uefa.champions':'fb-ucl','esp.1':'fb-esp'};
-            if (map[league]) { const el = document.getElementById(map[league]); if(el) el.classList.add('active'); }
-            document.getElementById('fbLeagueNameJ').textContent = FOOTBALL_LEAGUES[league] || league;
+            if (map[league]) {
+                const b = document.getElementById(map[league]);
+                if (b) { b.style.background = '#2a2548'; b.style.color = '#EEF1F9'; b.style.borderColor = '#6c85bd'; }
+            }
+            const nameEl = document.getElementById('fbLeagueNameJ');
+            if (nameEl) nameEl.textContent = FOOTBALL_LEAGUES[league] || league;
 
             try {
                 const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
                 const data = await res.json();
-                const events = data.events || [];
-                renderFootballMatches(events);
+                renderFootballMatches(data.events || []);
             } catch(e) {
-                document.getElementById('fbMatchListJ').innerHTML = `<text x="690" y="220" style="font-size:13px;fill:#a0415d">Fehler beim Laden</text>`;
+                const el = document.getElementById('fbMatchListJ');
+                if (el) el.innerHTML = `<div style="color:#a0415d;font-size:13px;padding:20px">Fehler beim Laden der Spiele.</div>`;
             }
         }
 
         function renderFootballMatches(events) {
-            const g = document.getElementById('fbMatchListJ');
+            const container = document.getElementById('fbMatchListJ');
+            if (!container) return;
             if (!events.length) {
-                g.innerHTML = `<text x="690" y="220" style="font-size:13px;fill:#3B355E">Keine Spiele heute</text>`;
+                container.innerHTML = `<div style="color:#3B355E;font-size:13px;padding:20px;text-align:center">Keine Spiele heute ⚽</div>`;
                 return;
             }
-            let svg = '';
-            const max = Math.min(events.length, 7);
-            for (let i = 0; i < max; i++) {
-                const e = events[i];
-                const comp = e.competitions?.[0];
+            container.innerHTML = events.slice(0, 8).map((ev, i) => {
+                const comp = ev.competitions?.[0];
                 const home = comp?.competitors?.find(c => c.homeAway === 'home');
                 const away = comp?.competitors?.find(c => c.homeAway === 'away');
-                const status = comp?.status?.type;
-                const stateStr = status?.state; // pre, in, post
-                const clock = status?.displayClock || '';
-                const period = comp?.status?.period || 0;
-                const homeScore = home?.score ?? '-';
-                const awayScore = away?.score ?? '-';
-                const homeName = (home?.team?.shortDisplayName || home?.team?.name || '?').slice(0,14);
-                const awayName = (away?.team?.shortDisplayName || away?.team?.name || '?').slice(0,14);
-                const time = e.date ? new Date(e.date).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '';
-
-                const y = 175 + i * 72;
-                const isLive = stateStr === 'in';
-                const isDone = stateStr === 'post';
-                const borderColor = isLive ? '#1d9e75' : isDone ? '#3B355E' : '#2a2548';
+                const state = comp?.status?.type?.state;
+                const clock = comp?.status?.displayClock || '';
+                const period = comp?.status?.period || '';
+                const homeScore = home?.score ?? '–';
+                const awayScore = away?.score ?? '–';
+                const homeName = home?.team?.shortDisplayName || home?.team?.name || '?';
+                const awayName = away?.team?.shortDisplayName || away?.team?.name || '?';
+                const kickoff = ev.date ? new Date(ev.date).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '';
+                const isLive = state === 'in';
+                const isDone = state === 'post';
+                const border = isLive ? '#1d9e75' : isDone ? '#2a2548' : '#2a2548';
                 const scoreColor = isLive ? '#1d9e75' : isDone ? '#EEF1F9' : '#3B355E';
-                const statusLabel = isLive ? `🟢 ${period}' ${clock}` : isDone ? 'Abpfiff' : time;
+                const statusBadge = isLive
+                    ? `<span style="background:#0d2e1e;color:#1d9e75;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600">🟢 LIVE ${period ? period+"'" : ''} ${clock}</span>`
+                    : isDone
+                    ? `<span style="color:#3B355E;font-size:10px">Abpfiff</span>`
+                    : `<span style="color:#6C85BD;font-size:11px">${kickoff} Uhr</span>`;
 
-                svg += `<g>
-                    <rect x="688" y="${y}" width="552" height="58" rx="12" fill="#0f0d1e" stroke="${borderColor}" stroke-width="1"/>
-                    <text x="710" y="${y+24}" style="font-size:14px;fill:#EEF1F9;font-weight:600">${homeName}</text>
-                    <text x="710" y="${y+44}" style="font-size:11px;fill:#6C85BD">${awayName}</text>
-                    <text x="900" y="${y+34}" text-anchor="middle" style="font-size:22px;fill:${scoreColor};font-weight:700">${homeScore} : ${awayScore}</text>
-                    <text x="1100" y="${y+26}" text-anchor="middle" style="font-size:10px;fill:${isLive?'#1d9e75':'#3B355E'}">${statusLabel}</text>
-                </g>`;
-            }
-            g.innerHTML = svg;
+                return `<div style="background:#0f0d1e;border:1px solid ${border};border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:8px;animation:matchInJ 0.3s ease both;animation-delay:${i*0.06}s">
+                    <div style="flex:1;min-width:0">
+                        <div style="font-size:14px;color:#EEF1F9;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${homeName}</div>
+                        <div style="font-size:12px;color:#6C85BD;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${awayName}</div>
+                    </div>
+                    <div style="text-align:center;min-width:70px">
+                        <div style="font-size:22px;font-weight:700;color:${scoreColor};letter-spacing:2px">${homeScore}:${awayScore}</div>
+                        <div style="margin-top:4px">${statusBadge}</div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         // ── WECKER / ALARM ────────────────────────────────────────
@@ -1729,26 +1772,35 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function renderAlarmPanel() {
             const el = document.getElementById('alarmPanelHtmlJ');
             if (!el) return;
-            let html = `<div style="margin-bottom:12px;">
-                <div style="display:flex;gap:8px;margin-bottom:8px;">
-                    <input type="time" id="newAlarmTime" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:8px;border-radius:8px;font-size:14px;flex:1;">
-                    <input type="text" id="newAlarmLabel" placeholder="Label…" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:8px;border-radius:8px;font-size:13px;flex:2;">
-                    <button onclick="addAlarmFromUI()" style="background:#6c85bd;border:none;color:#0a0813;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:700;">+</button>
-                </div>
+            const sorted = [...alarms].sort((a,b) => a.time.localeCompare(b.time));
+            let html = `
+            <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <input type="time" id="newAlarmTime" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:15px;flex:1;outline:none;">
+                <input type="text" id="newAlarmLabel" placeholder="Label…" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:13px;flex:2;outline:none;">
+                <button onclick="addAlarmFromUI()" style="background:#6c85bd;border:none;color:#0a0813;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:22px;font-weight:700;flex-shrink:0;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">+</button>
             </div>`;
-            if (!alarms.length) {
-                html += `<div style="color:#3B355E;font-size:13px;text-align:center;margin-top:30px;">Noch keine Wecker gestellt.<br><br>Sag: <span style="color:#6c85bd">"Stell Wecker auf 7 Uhr"</span></div>`;
+
+            if (!sorted.length) {
+                html += `<div style="color:#3B355E;font-size:13px;text-align:center;margin-top:40px;line-height:1.8">
+                    <div style="font-size:36px;margin-bottom:12px">⏰</div>
+                    Noch keine Wecker.<br>
+                    <span style="color:#6c85bd">Sag "Stell Wecker auf 7 Uhr"</span>
+                </div>`;
             } else {
-                alarms.forEach(a => {
-                    const col = a.active ? '#EEF1F9' : '#3B355E';
-                    html += `<div class="alarm-item${a.fired?' firing':''}">
-                        <div>
-                            <div style="font-size:28px;font-weight:300;color:${col};letter-spacing:2px">${a.time}</div>
-                            <div style="font-size:12px;color:#6C85BD;margin-top:2px">${a.label}</div>
+                sorted.forEach((a, i) => {
+                    const isFiring = a.fired;
+                    html += `
+                    <div style="background:#0f0d1e;border:1px solid ${a.active ? (isFiring?'#f39c12':'#2a2548') : '#1a1630'};border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;animation:matchInJ 0.3s ease both;animation-delay:${i*0.07}s;${isFiring?'animation:alarmPulse 0.5s ease-in-out infinite alternate;':''}" >
+                        <div style="display:flex;align-items:center;gap:14px;">
+                            <div style="font-size:10px;${isFiring?'animation:alarmRing 0.5s ease infinite':''}">⏰</div>
+                            <div>
+                                <div style="font-size:30px;font-weight:200;color:${a.active?'#EEF1F9':'#3B355E'};letter-spacing:3px;line-height:1">${a.time}</div>
+                                <div style="font-size:11px;color:#6C85BD;margin-top:4px;letter-spacing:1px">${a.label.toUpperCase()}</div>
+                            </div>
                         </div>
                         <div style="display:flex;gap:8px;align-items:center;">
-                            <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#2a2548'};border:none;color:#fff;width:44px;height:24px;border-radius:12px;cursor:pointer;font-size:10px;">${a.active?'AN':'AUS'}</button>
-                            <button onclick="deleteAlarm(${a.id})" style="background:#3c1f2e;border:1px solid #a0415d;color:#a0415d;width:30px;height:30px;border-radius:8px;cursor:pointer;">✕</button>
+                            <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#1a1630'};border:1px solid ${a.active?'#1d9e75':'#2a2548'};color:#fff;width:50px;height:26px;border-radius:13px;cursor:pointer;font-size:10px;letter-spacing:1px;transition:all 0.2s">${a.active?'AN':'AUS'}</button>
+                            <button onclick="deleteAlarm(${a.id})" style="background:transparent;border:1px solid #3c1f2e;color:#a0415d;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:14px;transition:all 0.2s" onmouseover="this.style.background='#3c1f2e'" onmouseout="this.style.background='transparent'">✕</button>
                         </div>
                     </div>`;
                 });
@@ -1758,8 +1810,11 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function addAlarmFromUI() {
             const t = document.getElementById('newAlarmTime')?.value;
-            const l = document.getElementById('newAlarmLabel')?.value || 'Wecker';
-            if (t) { addAlarm(t, l); jarvisSpeak(`Wecker auf ${t} Uhr gestellt.`); }
+            const l = document.getElementById('newAlarmLabel')?.value.trim() || 'Wecker';
+            if (!t) return;
+            addAlarm(t, l);
+            jarvisSpeak(`Wecker auf ${t} Uhr gestellt.`);
+            document.getElementById('newAlarmLabel').value = '';
         }
 
         function openAlarmMode() {
@@ -1768,7 +1823,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             showJ('alarmModeJ', 1);
             document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
-            setLabelJ('Wecker', `${alarms.filter(a=>a.active).length} aktiv`);
+            const active = alarms.filter(a => a.active).length;
+            setLabelJ('Wecker', `${active} aktiv · ${alarms.length} gesamt`);
             renderAlarmPanel();
         }
 
