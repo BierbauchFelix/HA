@@ -27,65 +27,222 @@
             color: var(--text-primary);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        h1 { display: none; }
+
+        /* Floating command bar */
+        .cmd-bar {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(21,18,38,0.92);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            width: min(700px, 90vw);
+        }
+        .cmd-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
             color: var(--text-primary);
+            font-size: 15px;
+            outline: none;
+            padding: 4px 8px;
+        }
+        .cmd-bar input::placeholder { color: var(--text-muted); }
+        .cmd-bar-btn {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .cmd-bar-btn:hover { background: #2e284f; border-color: var(--text-muted); }
+        .cmd-bar-btn.active { background: #3c1f2e; border-color: #a0415d; }
+
+        /* Floating settings button */
+        #settingsToggleBtn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 200;
+            background: rgba(21,18,38,0.9);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+        #settingsToggleBtn:hover { background: var(--bg-accent); border-color: var(--text-muted); }
+
+        /* Settings drawer */
+        #settingsDrawer {
+            position: fixed;
+            top: 0; right: 0;
+            width: 340px;
+            height: 100vh;
+            background: rgba(15,13,30,0.97);
+            border-left: 1px solid var(--border-color);
+            backdrop-filter: blur(16px);
+            z-index: 190;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+            display: flex;
+            flex-direction: column;
+            padding: 80px 20px 20px;
+            box-sizing: border-box;
+            gap: 14px;
+            overflow-y: auto;
+        }
+        #settingsDrawer.open { transform: translateX(0); }
+        #settingsDrawer h2 {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 0 4px 0;
+        }
+        .s-box {
+            background: rgba(36,31,62,0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .s-box h3 {
+            font-size: 11px;
+            margin: 0;
+            color: var(--text-muted);
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        .s-row { display: flex; gap: 8px; }
+        .s-row input {
+            flex: 1;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-family: monospace;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .s-btn {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .s-btn:hover { background: #2e284f; border-color: var(--text-muted); }
+        .s-status { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .s-modules { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .s-module-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 12px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .s-module-btn:hover { background: var(--bg-accent); border-color: var(--text-muted); color: var(--text-primary); }
+        /* Overlay backdrop */
+        #settingsBackdrop {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 180;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #settingsBackdrop.open { opacity: 1; pointer-events: auto; }
 
         .app-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 24px;
+            gap: 0;
             width: 100%;
-            max-width: 1400px;
-        }
-
-        @media (min-width: 1024px) {
-            .app-container {
-                grid-template-columns: 2.5fr 1fr;
-            }
+            max-width: 1280px;
+            height: 100vh;
         }
 
         .monitor-section {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             position: relative;
+            height: 100vh;
+            width: 100%;
+        }
+        .monitor-section svg {
+            flex: 1;
+            height: 100%;
+            width: 100%;
+            border-radius: 0 !important;
         }
         .svg-overlay {
             position: absolute;
-            top: 24px; left: 24px; right: 24px; bottom: 24px;
+            top: 54px; left: 0; right: 0; bottom: 76px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
-            border-radius: 12px;
+            border-radius: 0;
             overflow: hidden;
         }
         .svg-overlay.active { opacity: 1; pointer-events: auto; }
-        /* Right-side overlay (starts at ~51.5% = x:660/1280) */
+        /* Right-side overlay */
         .svg-overlay-right {
             position: absolute;
-            top: 24px; left: calc(24px + 51.6%); right: 24px; bottom: 24px;
+            top: 54px; left: 58%; right: 0; bottom: 76px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
             overflow: hidden;
-            border-radius: 0 12px 12px 0;
+            border-radius: 0;
         }
         .svg-overlay-right.active { opacity: 1; pointer-events: auto; }
         .svg-overlay-right .panel-inner {
@@ -103,9 +260,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            padding: 10px 20px 10px;
             border-bottom: 1px solid rgba(59, 53, 94, 0.4);
-            padding-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .phase-j { font-size: 16px; font-weight: 600; color: var(--text-muted); margin: 0; }
@@ -152,7 +309,7 @@
             width: 100%;
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"], input[type="number"], input[type="time"] {
             background: var(--bg-main);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
@@ -204,12 +361,31 @@
         .lidJ { animation: lidBlinkJ 7s ease-in-out infinite; }
         .ringJ { animation: pulseJ 1.6s ease-in-out infinite; transform-origin: 640px 330px; }
         .talkJ { animation: mouthTalkJ 0.35s ease-in-out infinite; transform-origin: center; }
-        @keyframes matchInJ { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes matchInJ { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
         @keyframes panelSlideInJ { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
         @keyframes alarmPulse { from{background:#1a1630;border-color:#f39c12} to{background:#2d2010;border-color:#f39c12} }
         @keyframes alarmRing { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-10deg)} 40%{transform:rotate(10deg)} 60%{transform:rotate(-6deg)} 80%{transform:rotate(6deg)} }
-        @keyframes eqBar { from{height:4px} to{height:22px} }
-        .eq-bar { height: 4px; }
+        @keyframes eqBar { 0%, 100% { height: 6px; } 50% { height: 32px; } }
+        .eq-bar { height: 6px; }
+
+        /* Wecker Styles */
+        .alarm-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(36, 31, 62, 0.4); border: 1px solid var(--border-color);
+            padding: 10px 14px; border-radius: 10px; margin-bottom: 8px;
+        }
+        .switch-j { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch-j input { opacity: 0; width: 0; height: 0; }
+        .slider-j {
+            position: absolute; cursor: pointer; inset: 0; background-color: #3b355e;
+            transition: .3s; border-radius: 24px;
+        }
+        .switch-j input:checked + .slider-j { background-color: #1DB954; }
+        .slider-j:before {
+            position: absolute; content: ""; height: 16px; width: 16px;
+            left: 4px; bottom: 4px; background-color: white; transition: .3s; border-radius: 50%;
+        }
+        .switch-j input:checked + .slider-j:before { transform: translateX(20px); }
         .pupilJ { animation: pupilDriftJ 3.6s ease-in-out infinite; }
         .fadeJ { transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1); }
         .fadeFastJ { transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1); }
@@ -723,57 +899,86 @@
         </div>
         </div>
 
-        <!-- STEUERUNGSZENTRALE RECHTS -->
-        <div class="control-section">
-            <h2>Command Center</h2>
-            <div class="config-box">
-                <h3>System Befehl</h3>
-                <div class="chat-input-group">
-                    <input type="text" id="assistantInput" placeholder="Tippen oder 🎤 drücken…">
-                    <button class="btn-j" id="micBtnJ" onclick="toggleVoiceInput()" title="Spracheingabe">🎤</button>
-                    <button class="btn-j" onclick="processCommand()">➤</button>
-                </div>
-                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-                    <label style="font-size:11px;color:#3b355e;display:flex;align-items:center;gap:6px;cursor:pointer;">
-                        <input type="checkbox" id="ttsToggle" checked onchange="speechEnabled=this.checked" style="width:auto;">
-                        Sprachausgabe aktiv
-                    </label>
-                </div>
+    </div>
+
+    <!-- SETTINGS BACKDROP -->
+    <div id="settingsBackdrop" onclick="closeSettings()"></div>
+
+    <!-- FLOATING SETTINGS BUTTON -->
+    <button id="settingsToggleBtn" onclick="toggleSettings()" title="Einstellungen">⚙️</button>
+
+    <!-- SETTINGS DRAWER -->
+    <div id="settingsDrawer">
+        <h2>Einstellungen</h2>
+
+        <!-- Module Shortcuts -->
+        <div class="s-box">
+            <h3>Module</h3>
+            <div class="s-modules">
+                <button class="s-module-btn" onclick="openFootball('ger.1');closeSettings()">⚽ Fußball</button>
+                <button class="s-module-btn" onclick="openAlarmMode();closeSettings()">⏰ Wecker</button>
+                <button class="s-module-btn" onclick="openMusicFull();closeSettings()">🎵 Musik</button>
+                <button class="s-module-btn" onclick="openLedControlWindow();closeSettings()">💡 Lichter</button>
+                <button class="s-module-btn" onclick="openDetailWeather('Dachau');closeSettings()">🌤️ Wetter</button>
+                <button class="s-module-btn" onclick="resetToHome();closeSettings()">🏠 Home</button>
             </div>
-            <div class="config-box">
-                <h3>Spotify</h3>
-                <div class="input-row-j">
-                    <input type="text" id="spotifyClientId" placeholder="Client ID (developer.spotify.com)…" style="font-size:12px;font-family:monospace;">
-                    <button class="btn-j" onclick="spotifyLogin()">🔗</button>
-                </div>
-                <div id="spotifyStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Nicht verbunden</div>
-            </div>
-            <div class="config-box">
-                <h3>Govee LEDs</h3>
-                <div class="input-row-j">
-                    <input type="text" id="goveeApiKey" placeholder="Govee API Key…" style="font-size:12px;font-family:monospace;">
-                    <button class="btn-j" onclick="saveGoveeKey()">💾</button>
-                </div>
-                <div id="goveeStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Demo-Modus</div>
-            </div>
-            <div class="config-box">
-                <h3>ElevenLabs (Stimme)</h3>
-                <div class="input-row-j">
-                    <input type="text" id="elevenLabsKey" placeholder="API Key von elevenlabs.io…" style="font-size:12px;font-family:monospace;">
-                    <button class="btn-j" onclick="saveElevenLabsKey()">💾</button>
-                </div>
-                <div id="elevenLabsStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Browser-Stimme</div>
-            </div>
-            <div class="config-box">
-                <h3>Groq API Key</h3>
-                <div class="input-row-j">
-                    <input type="text" id="groqApiKey" placeholder="gsk_..." style="font-family:monospace;font-size:12px;">
-                    <button class="btn-j" onclick="saveGroqKey()">💾</button>
-                </div>
-                <div id="groqKeyStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key gespeichert</div>
-            </div>
-            <button class="btn-j" style="text-align: center;" onclick="resetToHome()">Dashboard (Reset)</button>
         </div>
+
+        <!-- Sprachausgabe -->
+        <div class="s-box">
+            <h3>Sprachausgabe</h3>
+            <label style="font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:10px;cursor:pointer;">
+                <input type="checkbox" id="ttsToggle" checked onchange="speechEnabled=this.checked" style="width:18px;height:18px;accent-color:#1d9e75;">
+                Stimme aktiv
+            </label>
+        </div>
+
+        <!-- Spotify -->
+        <div class="s-box">
+            <h3>Spotify</h3>
+            <div class="s-row">
+                <input type="text" id="spotifyClientId" placeholder="Client ID…">
+                <button class="s-btn" onclick="spotifyLogin()">🔗</button>
+            </div>
+            <div class="s-status" id="spotifyStatus">Nicht verbunden</div>
+        </div>
+
+        <!-- Groq -->
+        <div class="s-box">
+            <h3>Groq API Key</h3>
+            <div class="s-row">
+                <input type="text" id="groqApiKey" placeholder="gsk_...">
+                <button class="s-btn" onclick="saveGroqKey()">💾</button>
+            </div>
+            <div class="s-status" id="groqKeyStatus">Kein Key gespeichert</div>
+        </div>
+
+        <!-- ElevenLabs -->
+        <div class="s-box">
+            <h3>ElevenLabs Stimme</h3>
+            <div class="s-row">
+                <input type="text" id="elevenLabsKey" placeholder="API Key…">
+                <button class="s-btn" onclick="saveElevenLabsKey()">💾</button>
+            </div>
+            <div class="s-status" id="elevenLabsStatus">Kein Key → Browser-Stimme</div>
+        </div>
+
+        <!-- Govee -->
+        <div class="s-box">
+            <h3>Govee LEDs</h3>
+            <div class="s-row">
+                <input type="text" id="goveeApiKey" placeholder="Govee API Key…">
+                <button class="s-btn" onclick="saveGoveeKey()">💾</button>
+            </div>
+            <div class="s-status" id="goveeStatus">Kein Key → Demo-Modus</div>
+        </div>
+    </div>
+
+    <!-- FLOATING COMMAND BAR -->
+    <div class="cmd-bar">
+        <button class="cmd-bar-btn" id="micBtnJ" onclick="toggleVoiceInput()" title="Spracheingabe">🎤</button>
+        <input type="text" id="assistantInput" placeholder="Jarvis fragen oder Befehl eingeben…">
+        <button class="cmd-bar-btn" onclick="processCommand()" title="Senden">➤</button>
     </div>
 
     <script>
@@ -850,7 +1055,7 @@
 
         async function getLiveWeather() {
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dachau,de&appid=dc73a9090b9cd0f45f276fd2497d2775&units=metric&lang=de`);
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dachau,de&appid=WEATHER_API_KEY_HERE&units=metric&lang=de`);
                 const data = await response.json();
                 if(data.cod === 200) {
                     globalWeatherData = data;
@@ -1349,7 +1554,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             showJ('detailWeatherModeJ', 1);
 
             try {
-                const KEY = 'dc73a9090b9cd0f45f276fd2497d2775';
+                const KEY = 'WEATHER_API_KEY_HERE';
                 const [res, forecastRes] = await Promise.all([
                     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de`),
                     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de&cnt=8`)
@@ -1901,17 +2106,17 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             }
 
             el.innerHTML = sorted.map((a, i) => `
-                <div style="background:#0f0d1e;border:1px solid ${a.active?(a.fired?'#f39c12':'#2a2548'):'#181628'};border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;animation:matchInJ 0.3s ease both;animation-delay:${i*0.07}s">
-                    <div style="display:flex;align-items:center;gap:12px;">
-                        <div style="font-size:22px;${a.fired?'animation:alarmRing 0.5s ease infinite':''}">⏰</div>
-                        <div>
-                            <div style="font-size:32px;font-weight:200;color:${a.active?'#EEF1F9':'#3B355E'};letter-spacing:3px;line-height:1">${a.time}</div>
-                            <div style="font-size:11px;color:#6C85BD;margin-top:5px;letter-spacing:1px">${a.label.toUpperCase()}</div>
-                        </div>
+                <div class="alarm-item" style="animation:matchInJ 0.3s ease both;animation-delay:${i*0.07}s;${a.fired?'border-color:#f39c12;':!a.active?'opacity:0.5;':''}">
+                    <div>
+                        <div style="font-size:28px;font-weight:200;color:${a.active?'#EEF1F9':'#6C85BD'};letter-spacing:2px;${a.fired?'animation:alarmRing 0.5s ease infinite':''}">${a.time} Uhr</div>
+                        <div style="font-size:11px;color:#6C85BD;margin-top:4px;letter-spacing:1px">${a.label.toUpperCase()}</div>
                     </div>
-                    <div style="display:flex;gap:8px;align-items:center;">
-                        <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#1a1630'};border:1px solid ${a.active?'#1d9e75':'#2a2548'};color:#fff;width:52px;height:28px;border-radius:14px;cursor:pointer;font-size:11px;letter-spacing:1px;transition:all 0.2s;font-weight:600">${a.active?'AN':'AUS'}</button>
-                        <button onclick="deleteAlarm(${a.id})" style="background:transparent;border:1px solid #3c1f2e;color:#a0415d;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:15px;transition:background 0.2s" onmouseover="this.style.background='#3c1f2e'" onmouseout="this.style.background='transparent'">✕</button>
+                    <div style="display:flex;align-items:center;gap:12px;">
+                        <label class="switch-j">
+                            <input type="checkbox" ${a.active?'checked':''} onchange="toggleAlarmActive(${a.id})">
+                            <span class="slider-j"></span>
+                        </label>
+                        <button onclick="deleteAlarm(${a.id})" style="background:none;border:none;color:#d4537e;cursor:pointer;font-weight:bold;font-size:15px;padding:4px 8px;">✕</button>
                     </div>
                 </div>`).join('');
         }
@@ -2179,6 +2384,28 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             overlay.style.opacity = '0';
             setTimeout(() => { overlay.style.display = 'none'; }, 1200);
             setLabelJ('Idle Dashboard', 'System empfangsbereit');
+        }
+
+        function toggleSettings() {
+            const drawer = document.getElementById('settingsDrawer');
+            const backdrop = document.getElementById('settingsBackdrop');
+            const btn = document.getElementById('settingsToggleBtn');
+            const isOpen = drawer.classList.contains('open');
+            if (isOpen) {
+                drawer.classList.remove('open');
+                backdrop.classList.remove('open');
+                btn.textContent = '⚙️';
+            } else {
+                drawer.classList.add('open');
+                backdrop.classList.add('open');
+                btn.textContent = '✕';
+            }
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsDrawer').classList.remove('open');
+            document.getElementById('settingsBackdrop').classList.remove('open');
+            document.getElementById('settingsToggleBtn').textContent = '⚙️';
         }
 
         function saveGroqKey() {
