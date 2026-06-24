@@ -172,6 +172,11 @@
         .lidJ { animation: lidBlinkJ 7s ease-in-out infinite; }
         .ringJ { animation: pulseJ 1.6s ease-in-out infinite; transform-origin: 640px 330px; }
         .talkJ { animation: mouthTalkJ 0.35s ease-in-out infinite; transform-origin: center; }
+        .fl-btn { background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;white-space:nowrap; }
+        .fl-btn:hover,.fl-btn.active { background:#2a2548;color:#eef1f9;border-color:#6c85bd; }
+        .alarm-item { display:flex;align-items:center;justify-content:space-between;background:#1a1630;border:1px solid #2a2548;border-radius:12px;padding:12px 16px;margin-bottom:10px; }
+        .alarm-item.firing { border-color:#f39c12;animation:alarmPulse 0.5s ease-in-out infinite alternate; }
+        @keyframes alarmPulse { from{background:#1a1630} to{background:#2d2010} }
         .pupilJ { animation: pupilDriftJ 3.6s ease-in-out infinite; }
         .fadeJ { transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1); }
         .fadeFastJ { transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1); }
@@ -519,6 +524,71 @@
                                 </div>
                             </div>
                         </foreignObject>
+                    <!-- SPOTIFY FULL VIEW -->
+                    <g id="musicFullModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="530" y1="40" x2="530" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
+                        <!-- Cover Art links (groß) -->
+                        <defs><clipPath id="fullCoverClipJ"><rect x="60" y="130" width="420" height="420" rx="22"/></clipPath></defs>
+                        <rect x="60" y="130" width="420" height="420" rx="22" fill="#1a1630"/>
+                        <image id="fullCoverImgJ" href="" x="60" y="130" width="420" height="420" clip-path="url(#fullCoverClipJ)" preserveAspectRatio="xMidYMid slice"/>
+                        <text id="fullCoverFallbackJ" x="270" y="360" text-anchor="middle" style="font-size:90px">🎵</text>
+                        <!-- Glow unterm Cover -->
+                        <rect x="80" y="548" width="380" height="20" rx="10" fill="#1DB954" opacity="0.08"/>
+
+                        <!-- Song Info rechts -->
+                        <text x="570" y="115" style="font-size:10px;fill:#3B355E;letter-spacing:4px">NOW PLAYING</text>
+                        <text id="fullTitleJ" x="570" y="200" style="font-size:28px;fill:#EEF1F9;font-weight:700">Lade...</text>
+                        <text id="fullArtistJ" x="570" y="238" style="font-size:17px;fill:#1DB954">Künstler</text>
+                        <text id="fullAlbumJ" x="570" y="268" style="font-size:13px;fill:#3B355E">Album</text>
+
+                        <!-- Progress -->
+                        <rect x="570" y="310" width="660" height="5" rx="2.5" fill="#1a1630"/>
+                        <rect id="fullProgressJ" x="570" y="310" width="0" height="5" rx="2.5" fill="#1DB954"/>
+                        <text id="fullTimeJ" x="570" y="330" style="font-size:11px;fill:#3B355E">0:00</text>
+                        <text id="fullDurJ" x="1230" y="330" text-anchor="end" style="font-size:11px;fill:#3B355E">0:00</text>
+
+                        <!-- Controls -->
+                        <foreignObject x="560" y="348" width="400" height="72">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;align-items:center;gap:18px;">
+                                <button onclick="prevTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:20px;">⏮</button>
+                                <button onclick="toggleMusicPlay()" id="fullPlayBtnJ" style="background:#1DB954;border:none;color:#000;width:64px;height:64px;border-radius:50%;cursor:pointer;font-size:26px;">⏸</button>
+                                <button onclick="skipTrack()" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:20px;">⏭</button>
+                                <button onclick="toggleMusicView()" style="background:#1a1630;border:1px solid #2a2548;color:#6c85bd;width:50px;height:50px;border-radius:50%;cursor:pointer;font-size:18px;">⊞</button>
+                            </div>
+                        </foreignObject>
+
+                        <!-- Volume -->
+                        <text x="570" y="460" style="font-size:11px;fill:#3B355E;letter-spacing:2px">LAUTSTÄRKE</text>
+                        <foreignObject x="568" y="468" width="300" height="30">
+                            <input xmlns="http://www.w3.org/1999/xhtml" type="range" min="0" max="100" value="70" id="spotifyVolumeJ" oninput="setSpotifyVolume(this.value)" style="width:100%;accent-color:#1DB954;cursor:pointer;"/>
+                        </foreignObject>
+                    </g>
+
+                    <!-- FUSSBALL PANEL -->
+                    <g id="footballModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
+                        <!-- League selector -->
+                        <foreignObject x="680" y="55" width="560" height="50">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;gap:8px;align-items:center;">
+                                <button onclick="loadFootball('ger.1')"  class="fl-btn" id="fb-ger">🇩🇪 Bundesliga</button>
+                                <button onclick="loadFootball('eng.1')"  class="fl-btn" id="fb-eng">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
+                                <button onclick="loadFootball('uefa.champions')" class="fl-btn" id="fb-ucl">⭐ UCL</button>
+                                <button onclick="loadFootball('esp.1')"  class="fl-btn" id="fb-esp">🇪🇸 LaLiga</button>
+                            </div>
+                        </foreignObject>
+                        <text id="fbLeagueNameJ" x="690" y="130" style="font-size:17px;fill:#EEF1F9;font-weight:600">Bundesliga</text>
+                        <text id="fbDateJ" x="690" y="152" style="font-size:11px;fill:#3B355E;letter-spacing:2px">HEUTE</text>
+                        <g id="fbMatchListJ"></g>
+                    </g>
+
+                    <!-- WECKER / ALARM PANEL -->
+                    <g id="alarmModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
+                        <text x="690" y="100" style="font-size:20px;fill:#EEF1F9;font-weight:600">⏰ Wecker</text>
+                        <foreignObject x="680" y="115" width="560" height="530">
+                            <div xmlns="http://www.w3.org/1999/xhtml" id="alarmPanelHtmlJ" style="color:#eef1f9;font-family:inherit;"></div>
+                        </foreignObject>
+                    </g>
                     </g>
                 </g>
             </svg>
@@ -626,6 +696,8 @@
             setInterval(updateIdleSpotify, 10000);
             startIdleAvatarAnimations();
             loadGoveeDevices();
+            loadAlarms();
+            setInterval(checkAlarms, 30000);
             startWakeWord();
             handleSpotifyCallback();
             updateSpotifyStatus();
@@ -680,6 +752,10 @@
             showJ('ledControlWindowModeJ', 0);
             showJ('notesListModeJ', 0);
             showJ('musicModeJ', 0);
+            showJ('musicFullModeJ', 0);
+            showJ('footballModeJ', 0);
+            showJ('alarmModeJ', 0);
+            musicViewFull = false;
             showJ('ringListenJ', 0);
             const ng = document.getElementById('noteGroupN');
             ng.style.animation = 'none'; ng.style.opacity = 0;
@@ -710,7 +786,7 @@
                             content: `Du bist Jarvis, ein KI-Assistent. Analysiere den Benutzer-Befehl und antworte NUR mit gültigem JSON – kein Text davor oder danach.
 
 Mögliche intent-Werte:
-notiz, timer, timer_stopp, musik, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage
+notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage, fussball, wecker, alarm_setzen
 
 JSON-Format: {"intent":"...","param":"...","antwort":null}
 
@@ -721,6 +797,10 @@ Regeln für param:
 - spiele → Suchbegriff für Spotify
 - mathe → mathematischer Ausdruck (z.B. "5*6+2")
 - notiz_loeschen → Nummer oder "alle"
+- fussball → Liga-Code: "ger.1" (Bundesliga), "eng.1" (Premier League), "uefa.champions" (Champions League), "esp.1" (La Liga) - Standard: "ger.1"
+- alarm_setzen → Uhrzeit im Format "HH:MM" plus optionales Label (z.B. "07:30 Aufstehen")
+- wecker → param ist null (zeigt Wecker-Liste)
+- musik_voll → param ist null (große Musikansicht)
 - frage → param ist null, schreib stattdessen eine kurze Antwort in "antwort" (max 3 Sätze Deutsch)
 - alle anderen → param ist null
 
@@ -737,7 +817,13 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 "nächster song" → skip
 "song zurück" → zurueck
 "musik stopp" → pause
-"musik an" → play`
+"musik an" → play
+"musik groß" / "vollbild musik" → musik_voll
+"bundesliga ergebnisse" → fussball "ger.1"
+"champions league" → fussball "uefa.champions"
+"stell wecker auf 7" → alarm_setzen "07:00"
+"wecker 6:30 aufstehen" → alarm_setzen "06:30 Aufstehen"
+"zeig wecker" / "meine wecker" → wecker`
                         }, { role: 'user', content: query }],
                         max_tokens: 200,
                         temperature: 0.1,
@@ -801,6 +887,21 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 case 'pause':        if(getSpotifyToken()&&spotifyPlayer){spotifyPlayer.pause();}else{musicIsPlaying=false;} openMusicMode(); break;
                 case 'play':         if(getSpotifyToken()&&spotifyPlayer){spotifyPlayer.resume();}else{musicIsPlaying=true;} openMusicMode(); break;
                 case 'spiele':       openMusicMode(); spotifyPlay(param || originalQuery); break;
+                case 'musik_voll':   openMusicFull(); break;
+                case 'fussball':     openFootball(param || 'ger.1'); break;
+                case 'wecker':       openAlarmMode(); break;
+                case 'alarm_setzen': {
+                    // param z.B. "07:30" oder "7 Uhr" oder "7:30 Aufstehen"
+                    const tm = (param||'').match(/(\d{1,2})[:\.]?(\d{2})?/);
+                    if (tm) {
+                        const h = tm[1].padStart(2,'0'), m = (tm[2]||'00').padStart(2,'0');
+                        const label = (param||'').replace(/\d+[:\.]?\d*/,'').trim() || 'Wecker';
+                        addAlarm(`${h}:${m}`, label);
+                        const msg = `Wecker auf ${h}:${m} Uhr gestellt.`;
+                        setLabelJ('Wecker', msg); jarvisSpeak(msg); openAlarmMode();
+                    } else { openAlarmMode(); }
+                    break;
+                }
                 case 'schlaf':       sleepMode(); break;
                 case 'mathe':        runCenteredMath(param || originalQuery); break;
                 case 'reset':        resetToHome(); break;
@@ -1431,6 +1532,244 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const el = document.getElementById('idleVoiceStatusJ');
                 if (el) el.textContent = 'VOICE ACTIVE';
             } catch(e) {}
+        }
+
+        // ── SPOTIFY FULL VIEW ─────────────────────────────────────
+        let musicViewFull = false;
+
+        function toggleMusicView() {
+            musicViewFull = !musicViewFull;
+            if (musicViewFull) {
+                showJ('musicModeJ', 0);
+                showJ('musicFullModeJ', 1);
+                showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            } else {
+                showJ('musicFullModeJ', 0);
+                showJ('musicModeJ', 1);
+                showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+            }
+        }
+
+        function openMusicFull() {
+            hideAllPanels();
+            musicViewFull = true;
+            showJ('focusScreenJ', 1);
+            document.getElementById('avatarBundleJ').style.transform = '';
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            showJ('musicFullModeJ', 1);
+            setLabelJ('Spotify', 'Musik');
+            const interval = setInterval(async () => {
+                const d = await spotifyAPI('GET', '/me/player/currently-playing');
+                if (!d || !d.item) return;
+                const t = d.item;
+                const artist = t.artists.map(a => a.name).join(', ');
+                const img = t.album?.images?.[0]?.url || '';
+                const pct = Math.round((d.progress_ms / t.duration_ms) * 660);
+                const fi = document.getElementById('fullCoverImgJ');
+                const ff = document.getElementById('fullCoverFallbackJ');
+                if (img) { fi.setAttribute('href', img); fi.style.opacity = 1; ff.style.opacity = 0; }
+                else { fi.style.opacity = 0; ff.style.opacity = 1; }
+                document.getElementById('fullTitleJ').textContent = t.name.length > 28 ? t.name.slice(0,26)+'…' : t.name;
+                document.getElementById('fullArtistJ').textContent = artist;
+                document.getElementById('fullAlbumJ').textContent = t.album?.name || '';
+                document.getElementById('fullProgressJ').setAttribute('width', pct);
+                document.getElementById('fullTimeJ').textContent = fmtMs(d.progress_ms);
+                document.getElementById('fullDurJ').textContent = fmtMs(t.duration_ms);
+                document.getElementById('fullPlayBtnJ').textContent = d.is_playing ? '⏸' : '▶';
+            }, 2000);
+            spotifyPollInterval = interval;
+        }
+
+        async function setSpotifyVolume(val) {
+            await spotifyAPI('PUT', `/me/player/volume?volume_percent=${val}`);
+        }
+
+        // ── FUSSBALL ──────────────────────────────────────────────
+        const FOOTBALL_LEAGUES = {
+            'ger.1': 'Bundesliga', 'eng.1': 'Premier League',
+            'uefa.champions': 'Champions League', 'esp.1': 'La Liga', 'ita.1': 'Serie A'
+        };
+        let currentLeague = 'ger.1';
+
+        async function openFootball(league) {
+            hideAllPanels();
+            showJ('focusScreenJ', 1);
+            showJ('footballModeJ', 1);
+            document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
+            showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+            setLabelJ('Fußball', FOOTBALL_LEAGUES[league] || 'Fußball');
+            document.getElementById('fbLeagueNameJ').textContent = FOOTBALL_LEAGUES[league] || league;
+            document.getElementById('fbDateJ').textContent = new Date().toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
+            document.getElementById('fbMatchListJ').innerHTML = '';
+            renderFbLoading();
+            await loadFootball(league);
+        }
+
+        function renderFbLoading() {
+            const g = document.getElementById('fbMatchListJ');
+            g.innerHTML = `<text x="690" y="220" style="font-size:14px;fill:#3B355E">Lade Spiele…</text>`;
+        }
+
+        async function loadFootball(league) {
+            currentLeague = league;
+            document.querySelectorAll('.fl-btn').forEach(b => b.classList.remove('active'));
+            const map = {'ger.1':'fb-ger','eng.1':'fb-eng','uefa.champions':'fb-ucl','esp.1':'fb-esp'};
+            if (map[league]) { const el = document.getElementById(map[league]); if(el) el.classList.add('active'); }
+            document.getElementById('fbLeagueNameJ').textContent = FOOTBALL_LEAGUES[league] || league;
+
+            try {
+                const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/scoreboard`);
+                const data = await res.json();
+                const events = data.events || [];
+                renderFootballMatches(events);
+            } catch(e) {
+                document.getElementById('fbMatchListJ').innerHTML = `<text x="690" y="220" style="font-size:13px;fill:#a0415d">Fehler beim Laden</text>`;
+            }
+        }
+
+        function renderFootballMatches(events) {
+            const g = document.getElementById('fbMatchListJ');
+            if (!events.length) {
+                g.innerHTML = `<text x="690" y="220" style="font-size:13px;fill:#3B355E">Keine Spiele heute</text>`;
+                return;
+            }
+            let svg = '';
+            const max = Math.min(events.length, 7);
+            for (let i = 0; i < max; i++) {
+                const e = events[i];
+                const comp = e.competitions?.[0];
+                const home = comp?.competitors?.find(c => c.homeAway === 'home');
+                const away = comp?.competitors?.find(c => c.homeAway === 'away');
+                const status = comp?.status?.type;
+                const stateStr = status?.state; // pre, in, post
+                const clock = status?.displayClock || '';
+                const period = comp?.status?.period || 0;
+                const homeScore = home?.score ?? '-';
+                const awayScore = away?.score ?? '-';
+                const homeName = (home?.team?.shortDisplayName || home?.team?.name || '?').slice(0,14);
+                const awayName = (away?.team?.shortDisplayName || away?.team?.name || '?').slice(0,14);
+                const time = e.date ? new Date(e.date).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}) : '';
+
+                const y = 175 + i * 72;
+                const isLive = stateStr === 'in';
+                const isDone = stateStr === 'post';
+                const borderColor = isLive ? '#1d9e75' : isDone ? '#3B355E' : '#2a2548';
+                const scoreColor = isLive ? '#1d9e75' : isDone ? '#EEF1F9' : '#3B355E';
+                const statusLabel = isLive ? `🟢 ${period}' ${clock}` : isDone ? 'Abpfiff' : time;
+
+                svg += `<g>
+                    <rect x="688" y="${y}" width="552" height="58" rx="12" fill="#0f0d1e" stroke="${borderColor}" stroke-width="1"/>
+                    <text x="710" y="${y+24}" style="font-size:14px;fill:#EEF1F9;font-weight:600">${homeName}</text>
+                    <text x="710" y="${y+44}" style="font-size:11px;fill:#6C85BD">${awayName}</text>
+                    <text x="900" y="${y+34}" text-anchor="middle" style="font-size:22px;fill:${scoreColor};font-weight:700">${homeScore} : ${awayScore}</text>
+                    <text x="1100" y="${y+26}" text-anchor="middle" style="font-size:10px;fill:${isLive?'#1d9e75':'#3B355E'}">${statusLabel}</text>
+                </g>`;
+            }
+            g.innerHTML = svg;
+        }
+
+        // ── WECKER / ALARM ────────────────────────────────────────
+        let alarms = [];
+
+        function loadAlarms() {
+            try { alarms = JSON.parse(localStorage.getItem('jarvisAlarms') || '[]'); } catch(e) { alarms = []; }
+        }
+
+        function saveAlarms() {
+            try { localStorage.setItem('jarvisAlarms', JSON.stringify(alarms)); } catch(e) {}
+        }
+
+        function addAlarm(timeStr, label) {
+            alarms.push({ id: Date.now(), time: timeStr, label: label || 'Wecker', active: true, fired: false });
+            saveAlarms();
+            renderAlarmPanel();
+        }
+
+        function deleteAlarm(id) {
+            alarms = alarms.filter(a => a.id !== id);
+            saveAlarms();
+            renderAlarmPanel();
+        }
+
+        function toggleAlarmActive(id) {
+            const a = alarms.find(x => x.id === id);
+            if (a) { a.active = !a.active; a.fired = false; saveAlarms(); renderAlarmPanel(); }
+        }
+
+        function checkAlarms() {
+            const now = new Date();
+            const cur = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            alarms.forEach(a => {
+                if (a.active && !a.fired && a.time === cur) {
+                    a.fired = true;
+                    saveAlarms();
+                    triggerAlarm(a);
+                }
+                // Fired-Flag um Mitternacht zurücksetzen
+                if (a.fired && a.time !== cur) a.fired = false;
+            });
+        }
+
+        function triggerAlarm(alarm) {
+            // Ton
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.4, 0.8, 1.2].forEach(t => {
+                    const o = ctx.createOscillator(); const g = ctx.createGain();
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = 880; g.gain.setValueAtTime(0.3, ctx.currentTime+t);
+                    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+0.35);
+                    o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+0.35);
+                });
+            } catch(e) {}
+            jarvisSpeak(`Wecker! ${alarm.label}`);
+            setLabelJ('⏰ Wecker', alarm.label);
+        }
+
+        function renderAlarmPanel() {
+            const el = document.getElementById('alarmPanelHtmlJ');
+            if (!el) return;
+            let html = `<div style="margin-bottom:12px;">
+                <div style="display:flex;gap:8px;margin-bottom:8px;">
+                    <input type="time" id="newAlarmTime" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:8px;border-radius:8px;font-size:14px;flex:1;">
+                    <input type="text" id="newAlarmLabel" placeholder="Label…" style="background:#1a1630;border:1px solid #2a2548;color:#eef1f9;padding:8px;border-radius:8px;font-size:13px;flex:2;">
+                    <button onclick="addAlarmFromUI()" style="background:#6c85bd;border:none;color:#0a0813;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:16px;font-weight:700;">+</button>
+                </div>
+            </div>`;
+            if (!alarms.length) {
+                html += `<div style="color:#3B355E;font-size:13px;text-align:center;margin-top:30px;">Noch keine Wecker gestellt.<br><br>Sag: <span style="color:#6c85bd">"Stell Wecker auf 7 Uhr"</span></div>`;
+            } else {
+                alarms.forEach(a => {
+                    const col = a.active ? '#EEF1F9' : '#3B355E';
+                    html += `<div class="alarm-item${a.fired?' firing':''}">
+                        <div>
+                            <div style="font-size:28px;font-weight:300;color:${col};letter-spacing:2px">${a.time}</div>
+                            <div style="font-size:12px;color:#6C85BD;margin-top:2px">${a.label}</div>
+                        </div>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#2a2548'};border:none;color:#fff;width:44px;height:24px;border-radius:12px;cursor:pointer;font-size:10px;">${a.active?'AN':'AUS'}</button>
+                            <button onclick="deleteAlarm(${a.id})" style="background:#3c1f2e;border:1px solid #a0415d;color:#a0415d;width:30px;height:30px;border-radius:8px;cursor:pointer;">✕</button>
+                        </div>
+                    </div>`;
+                });
+            }
+            el.innerHTML = html;
+        }
+
+        function addAlarmFromUI() {
+            const t = document.getElementById('newAlarmTime')?.value;
+            const l = document.getElementById('newAlarmLabel')?.value || 'Wecker';
+            if (t) { addAlarm(t, l); jarvisSpeak(`Wecker auf ${t} Uhr gestellt.`); }
+        }
+
+        function openAlarmMode() {
+            hideAllPanels();
+            showJ('focusScreenJ', 1);
+            showJ('alarmModeJ', 1);
+            document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
+            showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+            setLabelJ('Wecker', `${alarms.filter(a=>a.active).length} aktiv`);
+            renderAlarmPanel();
         }
 
         function startIdleAvatarAnimations() {
