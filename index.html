@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis OS - Ultimate Assistant</title>
+    <style>
+        :root {
+            --bg-main: #0a0813;
+            --bg-card: #151226;
+            --bg-accent: #241f3e;
+            --border-color: #3b355e;
+            --text-primary: #eef1f9;
+            --text-secondary: #a9bbe0;
+            --text-muted: #6c85bd;
+            --color-success: #1d9e75;
+            --color-sun: #f39c12;
+            
+            /* Lichter-Modus (HomeKit Farb-Variablen) */
+            --color-bg-light: #100e1e;
+            --color-border-light: #514980;
+            --color-text-warning: #f39c12;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        @media (min-width: 1024px) {
+            .app-container {
+                grid-template-columns: 2.5fr 1fr;
+            }
+        }
+
+        .monitor-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .monitor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(59, 53, 94, 0.4);
+            padding-bottom: 12px;
+        }
+
+        .phase-j { font-size: 16px; font-weight: 600; color: var(--text-muted); margin: 0; }
+        .trigger-j { font-size: 13px; color: var(--text-secondary); margin: 0; }
+
+        .control-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: fit-content;
+        }
+
+        .control-section h2 {
+            font-size: 18px;
+            margin: 0 0 4px 0;
+            color: var(--text-secondary);
+        }
+
+        .config-box {
+            background: rgba(10, 8, 19, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .config-box h3 {
+            font-size: 12px;
+            margin: 0;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-input-group, .input-row-j {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        input[type="text"], input[type="number"] {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .btn-j {
+            background: var(--bg-accent);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn-j:hover {
+            background: #2e284f;
+            border-color: var(--text-muted);
+        }
+
+        /* HTML-Form-Elemente im SVG Lichter-Modus */
+        .color-swatch { width: 34px; height: 34px; border-radius: 50%; padding: 0; cursor: pointer; position: relative; border: none; }
+        .color-swatch.active::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--text-primary); border-radius: 50%; }
+
+        /* Animationen */
+        @keyframes lidBlinkJ { 0%,97%,100% { opacity: 0; } 98.5% { opacity: 1; } }
+        @keyframes pulseJ { 0%,100% { opacity: 0.45; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.015); } }
+        @keyframes mouthTalkJ { 0%,100% { ry: 5; } 50% { ry: 13; } }
+        @keyframes pupilDriftJ { 0%,100% { transform: translate(0px,0px); } 33% { transform: translate(2.5px,1px); } 66% { transform: translate(-2px,1.5px); } }
+        @keyframes idleBounceJ { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-18px)} 60%{transform:translateY(-10px)} 80%{transform:translateY(-16px)} }
+        @keyframes idleWobbleJ { 0%,100%{transform:rotate(0deg)} 20%{transform:rotate(-6deg)} 50%{transform:rotate(5deg)} 75%{transform:rotate(-3deg)} }
+        @keyframes idleNodJ { 0%,100%{transform:scaleY(1)} 25%{transform:scaleY(0.92)} 50%{transform:scaleY(1.05)} 75%{transform:scaleY(0.96)} }
+        @keyframes idleShakeJ { 0%,100%{transform:translateX(0)} 15%{transform:translateX(-8px)} 35%{transform:translateX(8px)} 55%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+        @keyframes idleSpinJ { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        @keyframes mathChipInJ { 0% { opacity:0; transform: translateY(12px); } 100% { opacity:1; transform: translateY(0); } }
+        @keyframes lineInJ { 0% { opacity:0; transform: translateX(-6px); } 100% { opacity:1; transform: translateX(0); } }
+        @keyframes sunRotateJ { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes notePopN { 0% { opacity:0; transform: scale(0.85) rotate(-2deg); } 60% { opacity:1; transform: scale(1.02) rotate(1deg); } 100% { opacity:1; transform: scale(1) rotate(-1deg); } }
+
+        .lidJ { animation: lidBlinkJ 7s ease-in-out infinite; }
+        .ringJ { animation: pulseJ 1.6s ease-in-out infinite; transform-origin: 640px 330px; }
+        .talkJ { animation: mouthTalkJ 0.35s ease-in-out infinite; transform-origin: center; }
+        .pupilJ { animation: pupilDriftJ 3.6s ease-in-out infinite; }
+        .fadeJ { transition: opacity 0.6s cubic-bezier(0.4,0,0.2,1); }
+        .fadeFastJ { transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1); }
+        .sunRaysJ { animation: sunRotateJ 25s linear infinite; transform-origin: 610px 300px; }
+        
+        #avatarBundleJ { transform-origin: 640px 330px; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+        svg { border-radius: 16px; background: #100e1e; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
+    </style>
+</head>
+<body>
+
+    <div id="sleepOverlay" onclick="wakeUp()" style="display:none;position:fixed;inset:0;background:#000;z-index:9999;cursor:pointer;transition:opacity 1.2s ease;opacity:0;">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#1a1630;">
+            <div style="font-size:48px;margin-bottom:12px;">🌙</div>
+            <div style="font-size:13px;letter-spacing:2px;">Tippen zum Aufwecken</div>
+        </div>
+    </div>
+
+    <h1>Jarvis Autonomous Assistant Terminal</h1>
+
+    <div class="app-container">
+        
+        <!-- SVG HAUPTMONITOR -->
+        <div class="monitor-section">
+            <div class="monitor-header">
+                <p class="phase-j" id="phaseJ">Idle Dashboard</p>
+                <p class="trigger-j" id="triggerJ">System bereit</p>
+            </div>
+            
+            <svg width="100%" viewBox="0 0 1280 720">
+                <defs>
+                    <linearGradient id="bgGJ" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1C1830"/><stop offset="100%" stop-color="#100E1E"/></linearGradient>
+                    <radialGradient id="ambSmallJ" cx="20%" cy="50%" r="50%"><stop offset="0%" stop-color="#3C3489" stop-opacity="0.25"/><stop offset="100%" stop-color="#3C3489" stop-opacity="0"/></radialGradient>
+                    <radialGradient id="ambBigJ" cx="50%" cy="46%" r="55%"><stop offset="0%" stop-color="#3C3489" stop-opacity="0.35"/><stop offset="100%" stop-color="#3C3489" stop-opacity="0"/></radialGradient>
+                    <clipPath id="eyeClipJ"><circle cx="0" cy="0" r="25"/></clipPath>
+                    <clipPath id="noteClipN"><rect x="665" y="190" width="380" height="280" rx="4"/></clipPath>
+                    <clipPath id="musicCoverClipJ"><circle cx="640" cy="330" r="148"/></clipPath>
+                    <clipPath id="idleAlbumClipJ"><rect x="0" y="0" width="48" height="48" rx="8"/></clipPath>
+                </defs>
+
+                <rect x="0" y="0" width="1280" height="720" fill="url(#bgGJ)"/>
+
+                <!-- STARTSEITE (IDLE) -->
+                <g id="idleScreenJ" class="fadeJ">
+
+                    <!-- Ambient glow -->
+                    <circle cx="280" cy="360" r="300" fill="url(#ambSmallJ)"/>
+                    <circle cx="870" cy="360" r="420" fill="url(#ambBigJ)" opacity="0.35"/>
+
+                    <!-- Orbit rings around avatar -->
+                    <circle cx="280" cy="340" r="182" fill="none" stroke="#3B355E" stroke-width="1" stroke-dasharray="3 9" opacity="0.5"/>
+                    <circle cx="280" cy="340" r="198" fill="none" stroke="#3B355E" stroke-width="0.8" opacity="0.2"/>
+
+                    <!-- Avatar label -->
+                    <text x="280" y="170" text-anchor="middle" style="font-size:10px;fill:#3B355E;letter-spacing:4px">JARVIS UNIT-01</text>
+                    <text x="280" y="525" text-anchor="middle" style="font-size:10px;fill:#1d9e75;letter-spacing:3px">● ACTIVE</text>
+
+                    <!-- Avatar -->
+                    <g id="idleAvatarJ">
+                        <circle cx="280" cy="340" r="150" fill="#241F3E"/>
+                        <circle cx="280" cy="340" r="150" fill="none" stroke="#3B355E" stroke-width="3"/>
+                        <circle cx="280" cy="340" r="130" fill="#15132A"/>
+                        <path d="M 226 290 Q 244 280 262 290" stroke="#3B355E" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+                        <path d="M 298 290 Q 316 280 334 290" stroke="#3B355E" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+                        <circle cx="244" cy="332" r="40" fill="#6C85BD" opacity="0.18"/>
+                        <circle cx="244" cy="332" r="25" fill="#6C85BD"/>
+                        <circle class="pupilJ" cx="236" cy="322" r="6" fill="#EEF1F9" opacity="0.9"/>
+                        <rect class="lidJ" x="-25" y="-25" width="50" height="50" fill="#241F3E" clip-path="url(#eyeClipJ)" transform="translate(244,332)" style="transform-box: fill-box"/>
+                        <circle cx="316" cy="332" r="40" fill="#6C85BD" opacity="0.18"/>
+                        <circle cx="316" cy="332" r="25" fill="#6C85BD"/>
+                        <circle class="pupilJ" cx="308" cy="322" r="6" fill="#EEF1F9" opacity="0.9" style="animation-delay:0.5s"/>
+                        <rect class="lidJ" x="-25" y="-25" width="50" height="50" fill="#241F3E" clip-path="url(#eyeClipJ)" transform="translate(316,332)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                        <path d="M 252 398 Q 280 414 308 398" stroke="#6C85BD" stroke-width="8" fill="none" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- Vertical divider -->
+                    <line x1="490" y1="60" x2="490" y2="660" stroke="#2a2548" stroke-width="1" opacity="0.7"/>
+
+                    <!-- HUD corner brackets -->
+                    <path d="M 518 50 L 518 78 L 546 78" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                    <path d="M 1230 50 L 1230 78 L 1202 78" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                    <path d="M 518 670 L 518 642 L 546 642" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                    <path d="M 1230 670 L 1230 642 L 1202 642" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+
+                    <!-- OS label -->
+                    <text x="874" y="80" text-anchor="middle" style="font-size:10px;fill:#3B355E;letter-spacing:6px">JARVIS  OS  2.0</text>
+
+                    <!-- Big clock -->
+                    <text id="liveClockJ" x="874" y="225" text-anchor="middle" style="font-size:118px;fill:#EEF1F9;font-weight:300;letter-spacing:-4px">12:00</text>
+
+                    <!-- Live date -->
+                    <text id="liveDateJ" x="874" y="262" text-anchor="middle" style="font-size:13px;fill:#6C85BD;letter-spacing:3px">DIENSTAG · 24. JUNI</text>
+
+                    <!-- Separator -->
+                    <line x1="555" y1="285" x2="1193" y2="285" stroke="#2a2548" stroke-width="1" opacity="0.8"/>
+
+                    <!-- Weather card -->
+                    <rect x="553" y="302" width="640" height="138" rx="18" fill="#0f0d1e" stroke="#2a2548" stroke-width="1.5"/>
+                    <rect x="553" y="302" width="640" height="138" rx="18" fill="url(#ambBigJ)" opacity="0.15"/>
+
+                    <!-- Weather icon -->
+                    <text id="weatherIconJ" x="618" y="385" text-anchor="middle" style="font-size:54px">⛅</text>
+
+                    <!-- Temperature -->
+                    <text id="weatherTempJ" x="695" y="383" style="font-size:52px;fill:#EEF1F9;font-weight:500">--°</text>
+
+                    <!-- Card vertical divider -->
+                    <line x1="830" y1="316" x2="830" y2="430" stroke="#2a2548" stroke-width="1.5"/>
+
+                    <!-- City + desc -->
+                    <text x="858" y="335" style="font-size:10px;fill:#3B355E;letter-spacing:3px">STANDORT</text>
+                    <text id="weatherCityStatusJ" x="858" y="368" style="font-size:22px;fill:#a9bbe0;font-weight:500">Dachau</text>
+                    <text id="weatherDescIdleJ" x="858" y="396" style="font-size:14px;fill:#6C85BD">Lade Wetter…</text>
+                    <text x="858" y="428" style="font-size:10px;fill:#2a2548;letter-spacing:2px">CELSIUS · METRISCH</text>
+
+                    <!-- Status bar -->
+                    <rect x="553" y="460" width="640" height="42" rx="10" fill="#0a0817" stroke="#2a2548" stroke-width="1"/>
+                    <circle cx="582" cy="481" r="4" fill="#1d9e75"/>
+                    <text x="596" y="486" style="font-size:11px;fill:#4a6090;letter-spacing:1.5px">SYSTEM ONLINE</text>
+                    <line x1="748" y1="466" x2="748" y2="496" stroke="#2a2548" stroke-width="1"/>
+                    <circle cx="768" cy="481" r="4" fill="#6C85BD" opacity="0.5"/>
+                    <text x="782" y="486" style="font-size:11px;fill:#3B355E;letter-spacing:1.5px">NEURAL NET READY</text>
+                    <line x1="958" y1="466" x2="958" y2="496" stroke="#2a2548" stroke-width="1"/>
+                    <circle cx="978" cy="481" r="4" fill="#6C85BD" opacity="0.3"/>
+                    <text x="992" y="486" style="font-size:11px;fill:#3B355E;letter-spacing:1.5px">VOICE ACTIVE</text>
+
+                    <!-- Bottom tagline -->
+                    <text x="874" y="642" text-anchor="middle" style="font-size:10px;fill:#2a2548;letter-spacing:5px">CENTRAL TERMINAL READY</text>
+
+                    <!-- Spotify Now Playing (nur sichtbar wenn was läuft) -->
+                    <g id="idleSpotifyJ" opacity="0" style="transition:opacity 0.6s">
+                        <rect x="553" y="524" width="640" height="88" rx="14" fill="#0a0817" stroke="#1DB954" stroke-width="1" stroke-opacity="0.25"/>
+
+                        <!-- Animierte Balken -->
+                        <rect x="572" y="562" width="5" height="14" rx="2" fill="#1DB954">
+                            <animate attributeName="height" values="6;22;6" dur="0.7s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="574;558;574" dur="0.7s" repeatCount="indefinite"/>
+                        </rect>
+                        <rect x="581" y="558" width="5" height="20" rx="2" fill="#1DB954">
+                            <animate attributeName="height" values="20;6;20" dur="0.7s" begin="0.15s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="558;572;558" dur="0.7s" begin="0.15s" repeatCount="indefinite"/>
+                        </rect>
+                        <rect x="590" y="562" width="5" height="14" rx="2" fill="#1DB954">
+                            <animate attributeName="height" values="12;22;12" dur="0.7s" begin="0.3s" repeatCount="indefinite"/>
+                            <animate attributeName="y" values="564;558;564" dur="0.7s" begin="0.3s" repeatCount="indefinite"/>
+                        </rect>
+
+                        <!-- Cover Art -->
+                        <image id="idleAlbumImgJ" href="" x="607" y="532" width="68" height="68" clip-path="url(#idleAlbumClipJ)" preserveAspectRatio="xMidYMid slice" style="transform:translate(607px,532px)" transform="translate(0,0)"/>
+                        <rect x="607" y="532" width="68" height="68" rx="8" fill="none" stroke="#1DB954" stroke-width="1" opacity="0.25"/>
+
+                        <!-- Song Info -->
+                        <text id="idleSongTitleJ" x="688" y="558" style="font-size:15px;fill:#EEF1F9;font-weight:500">Songtitel</text>
+                        <text id="idleSongArtistJ" x="688" y="578" style="font-size:12px;fill:#1DB954;opacity:0.85">Künstler</text>
+
+                        <!-- Progress bar -->
+                        <rect x="688" y="595" width="478" height="3" rx="1.5" fill="#1a1730"/>
+                        <rect id="idleProgressBarJ" x="688" y="595" width="0" height="3" rx="1.5" fill="#1DB954" opacity="0.7"/>
+
+                        <!-- Label -->
+                        <text x="1170" y="537" text-anchor="end" style="font-size:9px;fill:#1DB954;letter-spacing:2px;opacity:0.5">NOW PLAYING</text>
+                    </g>
+                </g>
+
+                <!-- DYNAMISCHER FOKUS-MODUS -->
+                <g id="focusScreenJ" class="fadeJ" opacity="0">
+                    
+                    <!-- AVATAR-CORE BUNDLE -->
+                    <g id="avatarBundleJ">
+                        <circle cx="640" cy="340" r="340" fill="url(#ambBigJ)"/>
+
+                        <!-- Fortschrittsring für den TIMER -->
+                        <g id="timerRingGroupO" opacity="0">
+                            <circle cx="640" cy="330" r="195" fill="none" stroke="#241F3E" stroke-width="16"/>
+                            <path id="progressArcO" fill="none" stroke="#6C85BD" stroke-width="16" stroke-linecap="round"/>
+                            <circle id="progressDotO" r="9" fill="#A9BBE0"/>
+                        </g>
+
+                        <g id="ringListenJ" class="ringJ fadeFastJ" opacity="0"><circle cx="640" cy="330" r="168" fill="none" stroke="#6C85BD" stroke-width="3"/></g>
+                        <g id="mathRingJ" class="fadeFastJ" opacity="0"><circle cx="640" cy="330" r="168" fill="none" stroke="#6C85BD" stroke-width="2" opacity="0.35" stroke-dasharray="3 7"/></g>
+
+                        <g id="avatarBodyJ">
+                            <circle cx="640" cy="330" r="150" fill="#241F3E"/>
+                            <circle cx="640" cy="330" r="150" fill="none" stroke="#3B355E" stroke-width="3"/>
+                            <circle cx="640" cy="330" r="130" fill="#15132A"/>
+
+                            <g id="faceFeaturesJ" class="fadeFastJ">
+                                <circle cx="604" cy="322" r="25" fill="#6C85BD"/>
+                                <circle class="pupilJ" cx="596" cy="312" r="6" fill="#EEF1F9" opacity="0.9"/>
+                                <circle cx="676" cy="322" r="25" fill="#6C85BD"/>
+                                <circle class="pupilJ" cx="668" cy="312" r="6" fill="#EEF1F9" opacity="0.9"/>
+                                <path id="mouthIdleJ" d="M 612 388 Q 640 404 668 388" stroke="#6C85BD" stroke-width="8" fill="none" stroke-linecap="round"/>
+                                <ellipse id="mouthTalkJ" class="talkJ" cx="640" cy="390" rx="16" ry="6" fill="#6C85BD" opacity="0"/>
+                            </g>
+                        </g>
+                    </g>
+
+                    <!-- TIMER TEXT & DETAILS -->
+                    <g id="timerDetailsGroupO" class="fadeFastJ" opacity="0">
+                        <text id="timerNameO" x="640" y="90" text-anchor="middle" style="font-size:24px;fill:#EEF1F9;font-weight:500">Timer</text>
+                        <text id="timeDisplayO" x="640" y="585" text-anchor="middle" style="font-size:56px;fill:#EEF1F9;font-weight:500">10:00</text>
+                        <text x="640" y="615" text-anchor="middle" style="font-size:14px;fill:#A9BBE0">verbleibend</text>
+                        <text id="endTimeO" x="640" y="650" text-anchor="middle" style="font-size:14px;fill:#A9BBE0">Endet um --:--</text>
+                    </g>
+
+                    <!-- KARIERTER NOTIZZETTEL -->
+                    <g id="noteGroupN" class="fadeFastJ" opacity="0" style="transform-origin: 855px 330px;">
+                        <rect x="669" y="196" width="380" height="280" rx="4" fill="#1A1810" opacity="0.3"/>
+                        <rect x="665" y="190" width="380" height="280" rx="4" fill="#F2DD6B"/>
+                        <g clip-path="url(#noteClipN)">
+                            <g stroke="#D8C44A" stroke-width="1">
+                                <line x1="665" y1="218" x2="1045" y2="218"/><line x1="665" y1="246" x2="1045" y2="246"/>
+                                <line x1="665" y1="274" x2="1045" y2="274"/><line x1="665" y1="302" x2="1045" y2="302"/>
+                                <line x1="665" y1="330" x2="1045" y2="330"/><line x1="665" y1="358" x2="1045" y2="358"/>
+                                <line x1="665" y1="386" x2="1045" y2="386"/><line x1="665" y1="414" x2="1045" y2="414"/>
+                                <line x1="693" y1="190" x2="693" y2="470"/><line x1="721" y1="190" x2="721" y2="470"/>
+                                <line x1="749" y1="190" x2="749" y2="470"/><line x1="777" y1="190" x2="777" y2="470"/>
+                            </g>
+                        </g>
+                        <rect x="825" y="178" width="60" height="24" rx="2" fill="#F2DD6B" stroke="#D8C44A" stroke-width="1" transform="rotate(-3 855 190)"/>
+                        <g id="noteTextN"></g>
+                    </g>
+
+                    <!-- RECHNER-ANSICHT -->
+                    <g id="mathTextJ" opacity="0">
+                        <g id="mathChipsGroupJ"></g>
+                        <line x1="340" y1="600" x2="940" y2="600" stroke="#3B355E" stroke-width="2"/>
+                        <text id="mathResultJ" x="640" y="660" text-anchor="middle" style="font-size:46px;fill:#6C85BD;font-weight:600">0</text>
+                    </g>
+
+                    <!-- EXTRA WETTER ANSICHT -->
+                    <g id="detailWeatherModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+                        <text id="detWeatherCityJ" x="730" y="110" style="font-size:18px; fill:#6C85BD; font-weight:500;">Dachau</text>
+                        <text id="detWeatherDayJ" x="730" y="135" style="font-size:14px; fill:#a9bbe0;">Dienstag</text>
+                        <g transform="translate(120, -30)">
+                            <g class="sunRaysJ" stroke="#f39c12" stroke-width="4" stroke-linecap="round">
+                                <line x1="610" y1="235" x2="610" y2="215" /><line x1="610" y1="365" x2="610" y2="385" />
+                            </g>
+                            <circle cx="610" cy="300" r="40" fill="#f39c12"/>
+                        </g>
+                        <text id="detWeatherTempJ" x="910" y="295" style="font-size:84px; fill:#EEF1F9; font-weight:600;">32°</text>
+                        <text id="detWeatherDescJ" x="910" y="340" style="font-size:15px; fill:#6C85BD;">Heiter</text>
+                        <line x1="730" y1="410" x2="1170" y2="410" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+
+                        <!-- MAX -->
+                        <rect x="728" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3b355e" stroke-width="1.2"/>
+                        <text x="793" y="448" text-anchor="middle" style="font-size:18px;">🌡️</text>
+                        <text x="793" y="466" text-anchor="middle" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">HOCH</text>
+                        <text id="detWeatherMaxJ" x="793" y="500" text-anchor="middle" style="font-size:28px;fill:#f39c12;font-weight:700;">35°</text>
+
+                        <!-- MIN -->
+                        <rect x="878" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3b355e" stroke-width="1.2"/>
+                        <text x="943" y="448" text-anchor="middle" style="font-size:18px;">❄️</text>
+                        <text x="943" y="466" text-anchor="middle" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">TIEF</text>
+                        <text id="detWeatherMinJ" x="943" y="500" text-anchor="middle" style="font-size:28px;fill:#a9bbe0;font-weight:700;">20°</text>
+
+                        <!-- REGEN -->
+                        <rect x="1028" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3b355e" stroke-width="1.2"/>
+                        <text x="1093" y="448" text-anchor="middle" style="font-size:18px;">💧</text>
+                        <text x="1093" y="466" text-anchor="middle" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">REGEN</text>
+                        <text id="detWeatherRainJ" x="1093" y="500" text-anchor="middle" style="font-size:28px;fill:#378ADD;font-weight:700;">0%</text>
+                    </g>
+
+                    <!-- WIKIPEDIA / KNOWLEDGE BASE ("WAS IST...") -->
+                    <g id="infoModeJ" opacity="0">
+                        <rect x="460" y="130" width="780" height="400" rx="24" fill="#241F3E" stroke="#3B355E" stroke-width="1.5"/>
+                        <text x="500" y="176" style="font-size:13px;fill:#888780">Jarvis Knowledge Base Response</text>
+                        <line x1="500" y1="192" x2="1200" y2="192" stroke="#3B355E" stroke-width="1"/>
+                        <g id="infoLinesJ"></g>
+                    </g>
+
+                    <!-- NOTIZEN LISTE -->
+                    <g id="notesListModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+                        <foreignObject x="710" y="70" width="490" height="580">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="background:rgba(26,22,54,0.7);border:1px solid #3b355e;border-radius:20px;padding:22px;color:#fff;box-sizing:border-box;height:100%;display:flex;flex-direction:column;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+                                    <span style="font-size:18px;font-weight:600;color:#eef1f9;">📋 Notizen</span>
+                                    <span id="notesCountBadge" style="font-size:12px;color:#6c85bd;background:#151226;padding:4px 10px;border-radius:20px;">0 gespeichert</span>
+                                </div>
+                                <div id="notesListContainer" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+                                <div style="margin-top:14px;font-size:11px;color:#3b355e;text-align:center;">Befehle: "notiz löschen 1" · "notiz löschen alle"</div>
+                            </div>
+                        </foreignObject>
+                    </g>
+
+                    <!-- MUSIK PLAYER -->
+                    <g id="musicModeJ" class="fadeFastJ" opacity="0">
+                        <!-- Cover Art im Avatar-Kreis -->
+                        <image id="musicCoverImgJ" href="" x="492" y="182" width="296" height="296"
+                               clip-path="url(#musicCoverClipJ)" preserveAspectRatio="xMidYMid slice" opacity="0"/>
+                        <text id="musicCoverFallbackJ" x="640" y="350" text-anchor="middle"
+                              style="font-size:72px;">🎵</text>
+
+                        <!-- Titel & Künstler -->
+                        <text id="musicTitleJ" x="640" y="516" text-anchor="middle"
+                              style="font-size:20px;fill:#eef1f9;font-weight:700;">Lade...</text>
+                        <text id="musicArtistJ" x="640" y="544" text-anchor="middle"
+                              style="font-size:14px;fill:#6c85bd;">Spotify</text>
+
+                        <!-- Progress Bar -->
+                        <rect x="380" y="566" width="520" height="5" rx="2.5" fill="#241f3e"/>
+                        <rect id="musicProgressBarJ" x="380" y="566" width="0" height="5" rx="2.5" fill="#6c85bd"/>
+                        <text id="musicTimeJ" x="380" y="584" style="font-size:11px;fill:#3b355e;">0:00</text>
+                        <text id="musicDurJ" x="900" y="584" text-anchor="end" style="font-size:11px;fill:#3b355e;">0:00</text>
+
+                        <!-- Steuerung -->
+                        <foreignObject x="490" y="592" width="300" height="64">
+                            <div xmlns="http://www.w3.org/1999/xhtml"
+                                 style="display:flex;justify-content:center;align-items:center;gap:16px;">
+                                <button onclick="prevTrack()" style="background:#241f3e;border:1px solid #3b355e;color:#eef1f9;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:18px;">⏮</button>
+                                <button onclick="toggleMusicPlay()" id="playPauseBtnJ" style="background:#6c85bd;border:none;color:#0a0813;width:58px;height:58px;border-radius:50%;cursor:pointer;font-size:22px;">⏸</button>
+                                <button onclick="skipTrack()" style="background:#241f3e;border:1px solid #3b355e;color:#eef1f9;width:46px;height:46px;border-radius:50%;cursor:pointer;font-size:18px;">⏭</button>
+                            </div>
+                        </foreignObject>
+                    </g>
+
+                    <!-- INTEGRIERTES LED CONTROL WINDOW ("LICHTER") -->
+                    <g id="ledControlWindowModeJ" class="fadeFastJ" opacity="0">
+                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+                        <foreignObject x="710" y="120" width="460" height="480">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="background: rgba(26,22,54,0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; color:#fff; box-sizing:border-box; height:100%;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                                    <h3 style="margin:0; font-size:18px; font-weight:600; color:var(--text-primary);">Schreibtisch-LEDs</h3>
+                                    <button onclick="togglePower()" id="powerBtn" class="btn-j" style="border-radius:50%; width:44px; height:44px; padding:0; display:flex; align-items:center; justify-content:center; font-size:16px;">⚡</button>
+                                </div>
+                                <div id="mainCard" style="background:var(--color-bg-light); border-radius:14px; border:1px solid var(--border-color); padding:18px; margin-bottom:20px;">
+                                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+                                        <span id="bulbIcon" style="font-size:22px; color:var(--color-text-warning);">💡</span>
+                                        <span id="statusText" style="font-size:15px; font-weight:500;">An, 72%</span>
+                                    </div>
+                                    <input type="range" min="1" max="100" value="72" id="brightnessSlider" style="width:100%; cursor:pointer;" oninput="updateBrightness(this.value)">
+                                </div>
+                                <div style="background:var(--color-bg-light); border-radius:14px; border:1px solid var(--border-color); padding:18px;">
+                                    <p style="font-size:13px; color:var(--text-secondary); margin:0 0 14px 0;">Lichtfarbe anpassen</p>
+                                    <div style="display:flex; justify-content:space-between; gap:6px;">
+                                        <button onclick="setLedColor('#F2A623', this)" class="color-swatch" style="background:#F2A623;"></button>
+                                        <button onclick="setLedColor('#FFFFFF', this)" class="color-swatch" style="background:#FFFFFF; border:1px solid var(--color-border-light);"></button>
+                                        <button onclick="setLedColor('#378ADD', this)" class="color-swatch" style="background:#378ADD;"></button>
+                                        <button onclick="setLedColor('#1D9E75', this)" class="color-swatch" style="background:#1D9E75;"></button>
+                                        <button onclick="setLedColor('#D4537E', this)" class="color-swatch" style="background:#D4537E;"></button>
+                                        <button onclick="setLedColor('#7F77DD', this)" class="color-swatch active" style="background:#7F77DD;"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </foreignObject>
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <!-- STEUERUNGSZENTRALE RECHTS -->
+        <div class="control-section">
+            <h2>Command Center</h2>
+            <div class="config-box">
+                <h3>System Befehl</h3>
+                <div class="chat-input-group">
+                    <input type="text" id="assistantInput" placeholder="Tippen oder 🎤 drücken…">
+                    <button class="btn-j" id="micBtnJ" onclick="toggleVoiceInput()" title="Spracheingabe">🎤</button>
+                    <button class="btn-j" onclick="processCommand()">➤</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                    <label style="font-size:11px;color:#3b355e;display:flex;align-items:center;gap:6px;cursor:pointer;">
+                        <input type="checkbox" id="ttsToggle" checked onchange="speechEnabled=this.checked" style="width:auto;">
+                        Sprachausgabe aktiv
+                    </label>
+                </div>
+            </div>
+            <div class="config-box">
+                <h3>Spotify</h3>
+                <div class="input-row-j">
+                    <input type="text" id="spotifyClientId" placeholder="Client ID (developer.spotify.com)…" style="font-size:12px;font-family:monospace;">
+                    <button class="btn-j" onclick="spotifyLogin()">🔗</button>
+                </div>
+                <div id="spotifyStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Nicht verbunden</div>
+            </div>
+            <div class="config-box">
+                <h3>Govee LEDs</h3>
+                <div class="input-row-j">
+                    <input type="text" id="goveeApiKey" placeholder="Govee API Key…" style="font-size:12px;font-family:monospace;">
+                    <button class="btn-j" onclick="saveGoveeKey()">💾</button>
+                </div>
+                <div id="goveeStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Demo-Modus</div>
+            </div>
+            <div class="config-box">
+                <h3>ElevenLabs (Stimme)</h3>
+                <div class="input-row-j">
+                    <input type="text" id="elevenLabsKey" placeholder="API Key von elevenlabs.io…" style="font-size:12px;font-family:monospace;">
+                    <button class="btn-j" onclick="saveElevenLabsKey()">💾</button>
+                </div>
+                <div id="elevenLabsStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Browser-Stimme</div>
+            </div>
+            <div class="config-box">
+                <h3>Groq API Key</h3>
+                <div class="input-row-j">
+                    <input type="text" id="groqApiKey" placeholder="gsk_..." style="font-family:monospace;font-size:12px;">
+                    <button class="btn-j" onclick="saveGroqKey()">💾</button>
+                </div>
+                <div id="groqKeyStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key gespeichert</div>
+            </div>
+            <button class="btn-j" style="text-align: center;" onclick="resetToHome()">Dashboard (Reset)</button>
+        </div>
+    </div>
+
+    <script>
+        let timerTicker;
+        let globalWeatherData = null;
+        let isLightOn = true;
+        let lightBrightness = 72;
+
+        // Notizen (localStorage mit Fallback falls blockiert)
+        let savedNotes = [];
+        try { const _s = localStorage.getItem('jarvisNotes'); if (_s) savedNotes = JSON.parse(_s); } catch(e) {}
+
+        function saveNotesToStorage() {
+            try { localStorage.setItem('jarvisNotes', JSON.stringify(savedNotes)); } catch(e) {}
+        }
+
+        // ── MUSIK ─────────────────────────────────────────────────
+        const playlist = [
+            { title: "Midnight Drive",      artist: "Synthwave Collective", emoji: "🌃" },
+            { title: "Neon Horizon",        artist: "The Electric Feel",    emoji: "🌆" },
+            { title: "Deep Focus",          artist: "Lo-Fi Dreams",         emoji: "🎧" },
+            { title: "Starlight Protocol",  artist: "Orbital Systems",      emoji: "🚀" },
+            { title: "Rain on Glass",       artist: "Ambient Stories",      emoji: "🌧️" },
+            { title: "Cyber Morning",       artist: "Circuit Bloom",        emoji: "☀️" },
+        ];
+        let currentTrackIndex = 0;
+        let musicIsPlaying = true;
+        let musicProgressInterval = null;
+        let musicProgress = 0;
+
+        function startDashboardSystem() {
+            document.getElementById('assistantInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') processCommand();
+            });
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('liveClockJ').textContent = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                const dateEl = document.getElementById('liveDateJ');
+                if (dateEl) {
+                    const day = now.toLocaleDateString('de-DE', {weekday:'long'}).toUpperCase();
+                    const d = now.toLocaleDateString('de-DE', {day:'numeric', month:'long'}).toUpperCase();
+                    dateEl.textContent = `${day} · ${d}`;
+                }
+            }, 1000);
+            getLiveWeather();
+            updateGroqKeyStatus();
+            updateElevenLabsStatus();
+            updateIdleSpotify();
+            setInterval(updateIdleSpotify, 10000);
+            startIdleAvatarAnimations();
+            loadGoveeDevices();
+            startWakeWord();
+            handleSpotifyCallback();
+            updateSpotifyStatus();
+            if (getSpotifyToken()) initSpotifyWebPlayer();
+        }
+        window.onload = startDashboardSystem;
+
+        function weatherIcon(id) {
+            if (id >= 200 && id < 300) return '⛈️';
+            if (id >= 300 && id < 400) return '🌦️';
+            if (id >= 500 && id < 510) return '🌧️';
+            if (id >= 510 && id < 600) return '🌨️';
+            if (id >= 600 && id < 700) return '❄️';
+            if (id >= 700 && id < 800) return '🌫️';
+            if (id === 800) return '☀️';
+            if (id === 801) return '🌤️';
+            if (id === 802) return '⛅';
+            if (id >= 803) return '☁️';
+            return '🌡️';
+        }
+
+        async function getLiveWeather() {
+            try {
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dachau,de&appid=dc73a9090b9cd0f45f276fd2497d2775&units=metric&lang=de`);
+                const data = await response.json();
+                if(data.cod === 200) {
+                    globalWeatherData = data;
+                    const wid = data.weather[0].id;
+                    const icon = weatherIcon(wid);
+                    document.getElementById('weatherTempJ').textContent = `${Math.round(data.main.temp)}°C`;
+                    document.getElementById('weatherCityStatusJ').textContent = data.name;
+                    const descEl = document.getElementById('weatherDescIdleJ');
+                    if (descEl) descEl.textContent = data.weather[0].description;
+                    const iconEl = document.getElementById('weatherIconJ');
+                    if (iconEl) iconEl.textContent = icon;
+                }
+            } catch(e) { document.getElementById('weatherTempJ').textContent = "--°C"; }
+        }
+
+        function showJ(id, v) { document.getElementById(id).style.opacity = v; }
+        function setLabelJ(p, t) {
+            document.getElementById('phaseJ').textContent = p;
+            document.getElementById('triggerJ').textContent = t;
+        }
+
+        function hideAllPanels() {
+            clearInterval(musicProgressInterval);
+            clearInterval(spotifyPollInterval);
+            showJ('mathTextJ', 0); showJ('mathRingJ', 0);
+            showJ('infoModeJ', 0); showJ('detailWeatherModeJ', 0);
+            showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0);
+            showJ('ledControlWindowModeJ', 0);
+            showJ('notesListModeJ', 0);
+            showJ('musicModeJ', 0);
+            showJ('ringListenJ', 0);
+            const ng = document.getElementById('noteGroupN');
+            ng.style.animation = 'none'; ng.style.opacity = 0;
+            showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+            document.getElementById('mouthTalkJ').style.opacity = 0;
+            document.getElementById('mouthIdleJ').style.opacity = 1;
+            document.getElementById('avatarBundleJ').style.transform = 'translate(0px, 0px) scale(1)';
+        }
+
+        function resetToHome() {
+            clearInterval(timerTicker);
+            hideAllPanels();
+            showJ('focusScreenJ', 0); showJ('idleScreenJ', 1);
+            setLabelJ('Idle Dashboard', 'System empfangsbereit');
+        }
+
+        async function classifyWithGroq(query) {
+            const apiKey = loadGroqKey();
+            if (!apiKey) return null;
+            try {
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'llama-3.3-70b-versatile',
+                        messages: [{
+                            role: 'system',
+                            content: `Du bist Jarvis, ein KI-Assistent. Analysiere den Benutzer-Befehl und antworte NUR mit gültigem JSON – kein Text davor oder danach.
+
+Mögliche intent-Werte:
+notiz, timer, timer_stopp, musik, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage
+
+JSON-Format: {"intent":"...","param":"...","antwort":null}
+
+Regeln für param:
+- timer → Anzahl Minuten als Zahl (z.B. "10")
+- notiz → exakter Notiztext
+- wetter → Stadtname auf Englisch (z.B. "Berlin", "New York")
+- spiele → Suchbegriff für Spotify
+- mathe → mathematischer Ausdruck (z.B. "5*6+2")
+- notiz_loeschen → Nummer oder "alle"
+- frage → param ist null, schreib stattdessen eine kurze Antwort in "antwort" (max 3 Sätze Deutsch)
+- alle anderen → param ist null
+
+Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
+"nozti milch" → notiz "milch"
+"tmer 5 min" → timer "5"
+"wie wird das wetter in münchen" → wetter "Munich"
+"spiel mal mark forster" → spiele "mark forster"
+"mach licht an" → lichter
+"schlaf modus" → schlaf
+"was ist 8 mal 7" → mathe "8*7"
+"lösch notiz 2" → notiz_loeschen "2"
+"zeig meine notizen" → notizen
+"nächster song" → skip
+"song zurück" → zurueck
+"musik stopp" → pause
+"musik an" → play`
+                        }, { role: 'user', content: query }],
+                        max_tokens: 200,
+                        temperature: 0.1,
+                        response_format: { type: 'json_object' }
+                    })
+                });
+                if (!res.ok) return null;
+                const data = await res.json();
+                const text = data.choices?.[0]?.message?.content?.trim();
+                return JSON.parse(text);
+            } catch(e) { return null; }
+        }
+
+        function directDispatch(query) {
+            const lq = query.toLowerCase().trim();
+            if (lq === "schlaf" || lq === "sleep") { showJ('ringListenJ', 0); sleepMode(); return; }
+            if (lq.includes("timer stopp") || lq === "stopp") { clearInterval(timerTicker); showJ('ringListenJ', 0); showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); setLabelJ('Timer', 'Gestoppt.'); return; }
+            if (lq.startsWith("timer")) { const m = lq.match(/\d+/); openTimerMode(m ? parseInt(m[0]) : 10); return; }
+            if (lq.startsWith("notiz löschen") || lq.startsWith("notiz loeschen")) { const m = lq.match(/\d+/); if (lq.includes("alle")) { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); } else deleteNote(m ? parseInt(m[0])-1 : savedNotes.length-1); return; }
+            if (lq === "notizen") { openNotesListMode(); return; }
+            if (lq.startsWith("notiz ")) { openNoteMode(query.substring(6).trim()); return; }
+            if (lq.startsWith("spiele ") || lq.startsWith("play ")) { openMusicMode(); spotifyPlay(query.replace(/^(spiele|play)\s+/i,'').trim()); return; }
+            if (lq === "skip" || lq === "weiter") { skipTrack(); openMusicMode(); return; }
+            if (lq === "zurück" || lq === "back") { prevTrack(); openMusicMode(); return; }
+            if (lq === "pause" || lq === "stop") { musicIsPlaying=false; openMusicMode(); return; }
+            if (lq === "play" || lq === "musik") { openMusicMode(); return; }
+            if (lq === "lichter" || lq === "licht") { openLedControlWindow(); return; }
+            if (lq === "wetter" || lq.startsWith("wetter ")) { openDetailWeather(lq.startsWith("wetter ") ? query.substring(7).trim() : 'Dachau'); return; }
+            if (/^[0-9+\-*/().^ ]+$/.test(query)) { runCenteredMath(query); return; }
+            askJarvisAI(query);
+        }
+
+        function executeIntent(intent, originalQuery) {
+            const { intent: action, param, antwort } = intent;
+            showJ('ringListenJ', 0);
+            switch(action) {
+                case 'notiz':        openNoteMode(param || originalQuery); break;
+                case 'timer':        openTimerMode(parseInt(param) || 10); break;
+                case 'timer_stopp':
+                    clearInterval(timerTicker);
+                    showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0);
+                    setLabelJ('Timer', 'Timer gestoppt.'); break;
+                case 'musik':        openMusicMode(); break;
+                case 'wetter':       openDetailWeather(param || 'Dachau'); break;
+                case 'lichter':
+                    if (getGoveeKey() && goveeDevices.length) {
+                        controlGoveeLights(param).then(msg => {
+                            if (msg) { setLabelJ('Govee LEDs', msg); jarvisSpeak(msg); }
+                            else openLedControlWindow();
+                        });
+                    } else {
+                        openLedControlWindow();
+                    }
+                    break;
+                case 'notizen':      openNotesListMode(); break;
+                case 'notiz_loeschen':
+                    if (param === 'alle') { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); setLabelJ('Notizblock','Alle gelöscht.'); }
+                    else { const n = parseInt(param); deleteNote(isNaN(n) ? savedNotes.length-1 : n-1); } break;
+                case 'skip':         skipTrack(); openMusicMode(); break;
+                case 'zurueck':      prevTrack(); openMusicMode(); break;
+                case 'pause':        if(getSpotifyToken()&&spotifyPlayer){spotifyPlayer.pause();}else{musicIsPlaying=false;} openMusicMode(); break;
+                case 'play':         if(getSpotifyToken()&&spotifyPlayer){spotifyPlayer.resume();}else{musicIsPlaying=true;} openMusicMode(); break;
+                case 'spiele':       openMusicMode(); spotifyPlay(param || originalQuery); break;
+                case 'schlaf':       sleepMode(); break;
+                case 'mathe':        runCenteredMath(param || originalQuery); break;
+                case 'reset':        resetToHome(); break;
+                case 'frage':
+                    if (antwort) { showGroqAnswer(antwort); }
+                    else { askJarvisAI(originalQuery); }
+                    break;
+                default:             askJarvisAI(originalQuery);
+            }
+        }
+
+        function showGroqAnswer(text) {
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-420px, 0px) scale(0.7)';
+            document.getElementById('mouthIdleJ').style.opacity = 0;
+            document.getElementById('mouthTalkJ').style.opacity = 1;
+            const container = document.getElementById('infoLinesJ');
+            container.innerHTML = '';
+            let yPos = 220, currentLine = '';
+            text.split(' ').forEach(word => {
+                if ((currentLine + word).length > 52) {
+                    createSvgLine(currentLine.trim(), yPos);
+                    currentLine = word + ' '; yPos += 32;
+                    if (yPos > 490) return;
+                } else { currentLine += word + ' '; }
+            });
+            if (currentLine.trim()) createSvgLine(currentLine.trim(), yPos);
+            showJ('infoModeJ', 1);
+            setLabelJ('Jarvis KI', 'Groq · llama-3.3-70b');
+            jarvisSpeak(text);
+        }
+
+        async function processCommand() {
+            const inputField = document.getElementById('assistantInput');
+            const query = inputField.value.trim();
+            if (!query) return;
+            inputField.value = "";
+
+            clearInterval(timerTicker);
+            hideAllPanels();
+            showJ('idleScreenJ', 0);
+            showJ('focusScreenJ', 1);
+            showJ('ringListenJ', 1);
+            setLabelJ('Jarvis denkt…', `"${query}"`);
+
+            // Mathe direkt abfangen – kein Groq nötig
+            if (/^[0-9+\-*/().^ \^]+$/.test(query)) {
+                runCenteredMath(query); return;
+            }
+
+            if (!loadGroqKey()) {
+                directDispatch(query); return;
+            }
+
+            const intent = await classifyWithGroq(query);
+            if (!intent) { directDispatch(query); return; }
+
+            executeIntent(intent, query);
+        }
+
+        function openTimerMode(durationMinutes) {
+            showJ('ringListenJ', 0);
+            showJ('timerRingGroupO', 1);
+            showJ('timerDetailsGroupO', 1);
+            
+            let totalSeconds = durationMinutes * 60;
+            let remainingSeconds = totalSeconds;
+
+            function drawArc() {
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+                document.getElementById('timeDisplayO').textContent = `${mins}:${String(secs).padStart(2,'0')}`;
+                
+                const factor = remainingSeconds / totalSeconds;
+                const angle = 360 * factor;
+                const rad = (angle - 90) * Math.PI / 180;
+                const cx = 640, cy = 330, r = 195;
+                const endX = cx + r * Math.cos(rad);
+                const endY = cy + r * Math.sin(rad);
+                const largeArc = angle > 180 ? 1 : 0;
+
+                const path = document.getElementById('progressArcO');
+                if (angle >= 359.99) {
+                    path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-0.01} ${cy-r}`);
+                } else if (angle <= 0.01) {
+                    path.setAttribute('d', '');
+                } else {
+                    path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY}`);
+                }
+                const dot = document.getElementById('progressDotO');
+                dot.setAttribute('cx', endX); dot.setAttribute('cy', endY);
+            }
+
+            drawArc();
+            timerTicker = setInterval(() => {
+                if(remainingSeconds <= 0) { clearInterval(timerTicker); return; }
+                remainingSeconds--;
+                drawArc();
+            }, 1000);
+
+            setLabelJ('Timer aktiv', `${durationMinutes} Minuten gestartet.`);
+            jarvisSpeak(`${durationMinutes} Minuten Timer gestartet.`);
+        }
+
+        function openNoteMode(text) {
+            showJ('ringListenJ', 0);
+
+            // In localStorage speichern
+            savedNotes.push({ text, time: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) });
+            saveNotesToStorage();
+
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-360px, 0px) scale(1)';
+            document.getElementById('mouthIdleJ').style.opacity = 0;
+            document.getElementById('mouthTalkJ').style.opacity = 1;
+
+            const group = document.getElementById('noteTextN');
+            group.innerHTML = '';
+            const words = text.split(' ');
+            const lines = []; let current = '';
+            words.forEach(w => {
+                if ((current + ' ' + w).trim().length > 22) { lines.push(current.trim()); current = w; }
+                else { current = (current + ' ' + w).trim(); }
+            });
+            if (current) lines.push(current);
+
+            let yPos = 250;
+            lines.forEach(line => {
+                const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                t.setAttribute('x', '710'); t.setAttribute('y', yPos);
+                t.setAttribute('style', "font-size:18px; font-family:'Comic Sans MS', cursive, sans-serif; fill:#3A2E0A; font-weight:600;");
+                t.textContent = line;
+                group.appendChild(t);
+                yPos += 28;
+            });
+
+            const noteGroup = document.getElementById('noteGroupN');
+            noteGroup.style.animation = 'none';
+            void noteGroup.offsetWidth; // reflow to restart animation
+            noteGroup.style.opacity = 1;
+            noteGroup.style.animation = 'notePopN 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+            setLabelJ('Notizblock', `Notiz #${savedNotes.length} gespeichert.`);
+            jarvisSpeak(`Notiz gespeichert: ${text}`);
+        }
+
+        function openNotesListMode() {
+            showJ('ringListenJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            renderNotesList();
+            showJ('notesListModeJ', 1);
+            setLabelJ('Notizblock', `${savedNotes.length} Notiz(en) gespeichert.`);
+        }
+
+        function renderNotesList() {
+            const container = document.getElementById('notesListContainer');
+            const badge = document.getElementById('notesCountBadge');
+            badge.textContent = `${savedNotes.length} gespeichert`;
+            container.innerHTML = '';
+            if (savedNotes.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:#3b355e;margin-top:40px;font-size:14px;">Keine Notizen vorhanden.<br><br>Befehl: "notiz Milch kaufen"</div>';
+                return;
+            }
+            savedNotes.forEach((note, i) => {
+                const div = document.createElement('div');
+                div.style.cssText = 'background:#151226;border:1px solid #3b355e;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;animation:lineInJ 0.3s ease forwards;opacity:0;';
+                div.style.animationDelay = (i * 0.06) + 's';
+                div.innerHTML = `
+                    <div style="flex:1;">
+                        <span style="font-size:11px;color:#3b355e;display:block;margin-bottom:4px;">#${i+1} · ${note.time}</span>
+                        <span style="font-size:14px;color:#eef1f9;line-height:1.4;">${note.text}</span>
+                    </div>
+                    <button onclick="deleteNote(${i})" style="background:#241f3e;border:1px solid #3b355e;color:#a9bbe0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;white-space:nowrap;">🗑</button>`;
+                container.appendChild(div);
+            });
+        }
+
+        function deleteNote(index) {
+            if (index < 0 || index >= savedNotes.length) {
+                showJ('ringListenJ', 0);
+                openNotesListMode();
+                setLabelJ('Notizblock', 'Notiz nicht gefunden.');
+                return;
+            }
+            savedNotes.splice(index, 1);
+            saveNotesToStorage();
+            openNotesListMode();
+            setLabelJ('Notizblock', `Notiz #${index + 1} gelöscht.`);
+        }
+
+        function openMusicMode() {
+            showJ('ringListenJ', 0);
+            showJ('faceFeaturesJ', 0);
+            showJ('musicModeJ', 1);
+            clearInterval(spotifyPollInterval);
+            if (getSpotifyToken()) {
+                setLabelJ('Spotify', 'Lädt…');
+                refreshSpotifyPlayer();
+                spotifyPollInterval = setInterval(refreshSpotifyPlayer, 5000);
+            } else {
+                renderMusicPlayer();
+            }
+        }
+
+        function renderMusicPlayer() {
+            const track = playlist[currentTrackIndex];
+            setMusicUI(track.title, track.artist, null, musicProgress, musicIsPlaying, '', '');
+            document.getElementById('musicCoverFallbackJ').textContent = track.emoji;
+            clearInterval(musicProgressInterval);
+            if (musicIsPlaying) startMusicProgress();
+            setLabelJ('Musik-Player', `${track.title} — ${track.artist}`);
+        }
+
+        function startMusicProgress() {
+            clearInterval(musicProgressInterval);
+            musicProgressInterval = setInterval(() => {
+                if (!musicIsPlaying) return;
+                musicProgress = (musicProgress + 0.5) % 100;
+                const bar = document.getElementById('musicProgressBarJ');
+                if (bar) bar.style.width = musicProgress + '%';
+                if (musicProgress < 0.5) { skipTrack(); renderMusicPlayer(); }
+            }, 300);
+        }
+
+        async function spotifyPlay(query) {
+            if (!getSpotifyToken()) { setLabelJ('Spotify', 'Kein Token — neu einloggen!'); return; }
+            setLabelJ('Spotify', `Suche "${query}"…`);
+
+            const deviceId = await ensureActiveDevice();
+            if (!deviceId) {
+                setLabelJ('Spotify', 'Kein Gerät aktiv — öffne Spotify auf deinem PC/Handy!');
+                document.getElementById('musicTitleJ').textContent = 'Kein aktives Gerät';
+                document.getElementById('musicArtistJ').textContent = 'Öffne Spotify zuerst';
+                return;
+            }
+
+            const search = await spotifyAPI('GET', `/search?q=${encodeURIComponent(query)}&type=track,artist&limit=5`);
+            if (search?._error) { setLabelJ('Spotify', 'Fehler: ' + search._error); return; }
+
+            const artist = search.artists?.items?.[0];
+            const track  = search.tracks?.items?.[0];
+
+            if (artist && artist.name.toLowerCase().includes(query.toLowerCase().split(' ')[0])) {
+                const top = await spotifyAPI('GET', `/artists/${artist.id}/top-tracks?market=DE`);
+                if (top?.tracks?.length > 0) {
+                    const res = await spotifyAPI('PUT', `/me/player/play?device_id=${deviceId}`, { uris: top.tracks.slice(0, 10).map(t => t.uri) });
+                    if (res?._error) { setLabelJ('Spotify', 'Play-Fehler: ' + res._error); return; }
+                    setTimeout(refreshSpotifyPlayer, 1000);
+                    setLabelJ('Spotify', `Spiele ${artist.name}`);
+                    return;
+                }
+            }
+
+            if (track) {
+                const res = await spotifyAPI('PUT', `/me/player/play?device_id=${deviceId}`, { uris: [track.uri] });
+                if (res?._error) { setLabelJ('Spotify', 'Play-Fehler: ' + res._error); return; }
+                setTimeout(refreshSpotifyPlayer, 1000);
+                setLabelJ('Spotify', `Spiele "${track.name}"`);
+            } else {
+                setLabelJ('Spotify', `Nichts gefunden für "${query}"`);
+            }
+        }
+
+        function skipTrack() {
+            if (getSpotifyToken()) {
+                if (spotifyPlayer) { spotifyPlayer.nextTrack(); return; }
+                spotifyAPI('POST', '/me/player/next').then(() => setTimeout(refreshSpotifyPlayer, 600));
+                return;
+            }
+            musicProgress = 0;
+            currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+            musicIsPlaying = true;
+        }
+
+        function prevTrack() {
+            if (getSpotifyToken()) {
+                if (spotifyPlayer) { spotifyPlayer.previousTrack(); return; }
+                spotifyAPI('POST', '/me/player/previous').then(() => setTimeout(refreshSpotifyPlayer, 600));
+                return;
+            }
+            musicProgress = 0;
+            currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+            musicIsPlaying = true;
+        }
+
+        function toggleMusicPlay() {
+            if (getSpotifyToken()) {
+                if (spotifyPlayer) { spotifyPlayer.togglePlay(); return; }
+                spotifyAPI('GET', '/me/player').then(d => {
+                    if (!d) return;
+                    spotifyAPI('PUT', d.is_playing ? '/me/player/pause' : '/me/player/play').then(() => setTimeout(refreshSpotifyPlayer, 600));
+                });
+                return;
+            }
+            musicIsPlaying = !musicIsPlaying;
+            renderMusicPlayer();
+        }
+
+        function openLedControlWindow() {
+            showJ('ringListenJ', 0);
+            showJ('noteGroupN', 0); // Notiz explizit ausschalten, damit nichts überlappt
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            showJ('ledControlWindowModeJ', 1);
+            setLabelJ('Hardware-Interface', 'Lichtsteuerung geöffnet.');
+        }
+
+        async function openDetailWeather(city = 'Dachau') {
+            showJ('ringListenJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            setLabelJ('Wetterstation', `Lade Wetter für ${city}…`);
+            showJ('detailWeatherModeJ', 1);
+
+            try {
+                const KEY = 'dc73a9090b9cd0f45f276fd2497d2775';
+                const [res, forecastRes] = await Promise.all([
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de`),
+                    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de&cnt=8`)
+                ]);
+                const data = await res.json();
+                if (data.cod !== 200) {
+                    setLabelJ('Wetterstation', `Stadt "${city}" nicht gefunden.`);
+                    document.getElementById('detWeatherCityJ').textContent = '?';
+                    document.getElementById('detWeatherTempJ').textContent = '--°';
+                    document.getElementById('detWeatherDescJ').textContent = 'Unbekannt';
+                    return;
+                }
+                // Echte Tages-Min/Max aus Forecast (nächste 24h)
+                let dayMax = -999, dayMin = 999, rainSum = 0;
+                try {
+                    const fc = await forecastRes.json();
+                    fc.list.forEach(item => {
+                        dayMax = Math.max(dayMax, item.main.temp_max);
+                        dayMin = Math.min(dayMin, item.main.temp_min);
+                        rainSum += item.pop ?? 0;
+                    });
+                    rainSum = Math.round((rainSum / fc.list.length) * 100);
+                } catch(e) {
+                    dayMax = data.main.temp_max;
+                    dayMin = data.main.temp_min;
+                    rainSum = data.clouds?.all ?? 0;
+                }
+
+                const day = new Date().toLocaleDateString('de-DE', { weekday: 'long' });
+                document.getElementById('detWeatherCityJ').textContent = data.name;
+                document.getElementById('detWeatherDayJ').textContent = day;
+                document.getElementById('detWeatherTempJ').textContent = `${Math.round(data.main.temp)}°`;
+                document.getElementById('detWeatherDescJ').textContent = data.weather[0].description;
+                document.getElementById('detWeatherMaxJ').textContent = `${Math.round(dayMax)}°`;
+                document.getElementById('detWeatherMinJ').textContent = `${Math.round(dayMin)}°`;
+                document.getElementById('detWeatherRainJ').textContent = `${rainSum}%`;
+                setLabelJ('Wetterstation', `${data.name} · ${data.weather[0].description}`);
+                jarvisSpeak(`In ${data.name} sind es ${Math.round(data.main.temp)} Grad. ${data.weather[0].description}.`);
+            } catch(e) {
+                setLabelJ('Wetterstation', 'Netzwerkfehler.');
+            }
+        }
+
+        // ── SPOTIFY ───────────────────────────────────────────────
+        let spotifyPollInterval = null;
+        let spotifyPlayer = null;
+        let spotifyWebDeviceId = null;
+
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            if (getSpotifyToken()) initSpotifyWebPlayer();
+        };
+
+        function initSpotifyWebPlayer() {
+            if (spotifyPlayer) return;
+            const token = getSpotifyToken();
+            if (!token) return;
+
+            spotifyPlayer = new Spotify.Player({
+                name: 'Jarvis OS',
+                getOAuthToken: cb => cb(getSpotifyToken()),
+                volume: 0.8
+            });
+
+            spotifyPlayer.addListener('ready', ({ device_id }) => {
+                spotifyWebDeviceId = device_id;
+                updateSpotifyStatus();
+                setLabelJ('Spotify', 'Jarvis-Player bereit ✓');
+            });
+
+            spotifyPlayer.addListener('not_ready', () => { spotifyWebDeviceId = null; });
+
+            spotifyPlayer.addListener('player_state_changed', state => {
+                if (!state || !state.track_window?.current_track) return;
+                const t = state.track_window.current_track;
+                const artist = t.artists.map(a => a.name).join(', ');
+                const img = t.album?.images?.[0]?.url || null;
+                const pct = state.duration ? (state.position / state.duration) * 100 : 0;
+                setMusicUI(t.name, artist, img, pct, !state.paused,
+                           fmtMs(state.position), fmtMs(state.duration));
+                setLabelJ('Spotify', `${t.name} — ${artist}`);
+            });
+
+            spotifyPlayer.connect();
+        }
+
+        function getSpotifyClientId() {
+            try { return localStorage.getItem('spotifyClientId') || ''; } catch(e) { return ''; }
+        }
+
+        const SPOTIFY_DEFAULT_TOKEN = '';
+
+        function getSpotifyToken() {
+            try {
+                const token = localStorage.getItem('spotifyToken');
+                const expiry = parseInt(localStorage.getItem('spotifyTokenExpiry') || '0');
+                if (token && Date.now() < expiry) return token;
+                return SPOTIFY_DEFAULT_TOKEN;
+            } catch(e) { return SPOTIFY_DEFAULT_TOKEN; }
+        }
+
+        function saveSpotifyToken(token, expiresIn) {
+            try {
+                localStorage.setItem('spotifyToken', token);
+                localStorage.setItem('spotifyTokenExpiry', String(Date.now() + expiresIn * 1000));
+            } catch(e) {}
+        }
+
+        function handleSpotifyCallback() {
+            const hash = window.location.hash;
+            if (!hash) return;
+            const params = new URLSearchParams(hash.substring(1));
+            const token = params.get('access_token');
+            const expiresIn = parseInt(params.get('expires_in') || '3600');
+            if (token) {
+                saveSpotifyToken(token, expiresIn);
+                history.replaceState(null, '', window.location.pathname);
+            }
+        }
+
+        function spotifyLogin() {
+            const inputId = document.getElementById('spotifyClientId').value.trim();
+            const clientId = inputId || getSpotifyClientId();
+            if (!clientId) { alert('Bitte Spotify Client ID eingeben.'); return; }
+            try { localStorage.setItem('spotifyClientId', clientId); } catch(e) {}
+            const redirectUri = window.location.href.split('#')[0].split('?')[0];
+            const scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
+            window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+        }
+
+        async function spotifyAPI(method, endpoint, body = null) {
+            const token = getSpotifyToken();
+            if (!token) return { _error: 'Kein Token' };
+            try {
+                const opts = { method, headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' } };
+                if (body) opts.body = JSON.stringify(body);
+                const res = await fetch('https://api.spotify.com/v1' + endpoint, opts);
+                if (res.status === 204) return {};
+                const json = await res.json().catch(() => ({}));
+                if (!res.ok) return { _error: json.error?.message || 'HTTP ' + res.status, _status: res.status };
+                return json;
+            } catch(e) { return { _error: 'Netzwerk: ' + e.message }; }
+        }
+
+        async function spotifyGetDevices() {
+            const data = await spotifyAPI('GET', '/me/player/devices');
+            return data?.devices || [];
+        }
+
+        async function ensureActiveDevice() {
+            // Web-Player im Browser bevorzugen
+            if (spotifyWebDeviceId) return spotifyWebDeviceId;
+
+            // Web-Player initialisieren und kurz warten
+            if (getSpotifyToken() && !spotifyPlayer) {
+                initSpotifyWebPlayer();
+                await new Promise(r => setTimeout(r, 2500));
+                if (spotifyWebDeviceId) return spotifyWebDeviceId;
+            }
+
+            // Fallback: vorhandene externe Geräte
+            const devices = await spotifyGetDevices();
+            if (!devices.length) return null;
+            const active = devices.find(d => d.is_active);
+            if (active) return active.id;
+            const first = devices[0];
+            await spotifyAPI('PUT', '/me/player', { device_ids: [first.id], play: false });
+            return first.id;
+        }
+
+        function fmtMs(ms) {
+            const s = Math.floor(ms / 1000);
+            return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+        }
+
+        function setMusicUI(title, artist, imgUrl, progressPct, isPlaying, timeStr, durStr) {
+            document.getElementById('musicTitleJ').textContent = title;
+            document.getElementById('musicArtistJ').textContent = artist;
+            document.getElementById('playPauseBtnJ').textContent = isPlaying ? '⏸' : '▶';
+            if (document.getElementById('musicTimeJ')) document.getElementById('musicTimeJ').textContent = timeStr || '';
+            if (document.getElementById('musicDurJ'))  document.getElementById('musicDurJ').textContent  = durStr  || '';
+
+            const bar = document.getElementById('musicProgressBarJ');
+            bar.setAttribute('width', Math.max(0, Math.min(520, 520 * progressPct / 100)));
+
+            const img = document.getElementById('musicCoverImgJ');
+            const fallback = document.getElementById('musicCoverFallbackJ');
+            if (imgUrl) {
+                img.setAttribute('href', imgUrl);
+                img.style.opacity = 1;
+                fallback.style.opacity = 0;
+            } else {
+                img.style.opacity = 0;
+                fallback.style.opacity = 1;
+            }
+        }
+
+        // ── GOVEE LEDs ────────────────────────────────────────────
+        const GOVEE_BASE = 'https://developer-api.govee.com/v1';
+        let goveeDevices = [];
+
+        function getGoveeKey() { try { return localStorage.getItem('goveeApiKey') || ''; } catch(e) { return ''; } }
+
+        function saveGoveeKey() {
+            const k = document.getElementById('goveeApiKey').value.trim();
+            if (!k) return;
+            try { localStorage.setItem('goveeApiKey', k); } catch(e) {}
+            document.getElementById('goveeApiKey').value = '';
+            loadGoveeDevices();
+        }
+
+        async function loadGoveeDevices() {
+            const key = getGoveeKey();
+            const el = document.getElementById('goveeStatus');
+            if (!key) { if (el) { el.style.color = '#3b355e'; el.textContent = 'Kein Key → Demo-Modus'; } return; }
+            try {
+                const res = await fetch(`${GOVEE_BASE}/devices`, { headers: { 'Govee-API-Key': key } });
+                const data = await res.json();
+                goveeDevices = data.data?.devices || [];
+                if (el) { el.style.color = '#1d9e75'; el.textContent = `${goveeDevices.length} Gerät(e) verbunden ✓`; }
+            } catch(e) { if (el) { el.style.color = '#a0415d'; el.textContent = 'Verbindungsfehler'; } }
+        }
+
+        async function goveeControl(cmd) {
+            const key = getGoveeKey();
+            if (!key || !goveeDevices.length) return false;
+            await Promise.all(goveeDevices.map(d =>
+                fetch(`${GOVEE_BASE}/devices/control`, {
+                    method: 'PUT',
+                    headers: { 'Govee-API-Key': key, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ device: d.device, model: d.model, cmd })
+                }).catch(() => {})
+            ));
+            return true;
+        }
+
+        const COLOR_MAP = {
+            'rot':    {r:255,g:0,  b:0  }, 'red':   {r:255,g:0,  b:0  },
+            'grün':   {r:0,  g:220,b:0  }, 'green': {r:0,  g:220,b:0  },
+            'blau':   {r:0,  g:80, b:255}, 'blue':  {r:0,  g:80, b:255},
+            'gelb':   {r:255,g:200,b:0  }, 'yellow':{r:255,g:200,b:0  },
+            'weiß':   {r:255,g:255,b:255}, 'white': {r:255,g:255,b:255},
+            'lila':   {r:160,g:0,  b:255}, 'purple':{r:160,g:0,  b:255},
+            'pink':   {r:255,g:0,  b:150}, 'rosa':  {r:255,g:100,b:180},
+            'orange': {r:255,g:80, b:0  }, 'cyan':  {r:0,  g:255,b:255},
+            'türkis': {r:0,  g:200,b:180}, 'mint':  {r:0,  g:255,b:150},
+        };
+
+        async function controlGoveeLights(param) {
+            const p = (param || '').toLowerCase().trim();
+
+            if (p === 'an' || p === 'on')  { await goveeControl({ name:'turn', value:'on'  }); return 'Lichter an.'; }
+            if (p === 'aus' || p === 'off') { await goveeControl({ name:'turn', value:'off' }); return 'Lichter aus.'; }
+
+            // Helligkeit: "50" oder "50%" oder "heller"/"dunkler"
+            const brightMatch = p.match(/(\d+)\s*%?/);
+            if (brightMatch) {
+                const b = Math.min(100, Math.max(1, parseInt(brightMatch[1])));
+                await goveeControl({ name:'turn', value:'on' });
+                await goveeControl({ name:'brightness', value: b });
+                return `Helligkeit auf ${b}%.`;
+            }
+            if (p.includes('heller')) { await goveeControl({ name:'brightness', value:100 }); return 'Lichter heller.'; }
+            if (p.includes('dunkler') || p.includes('dimm')) { await goveeControl({ name:'brightness', value:20 }); return 'Lichter gedimmt.'; }
+
+            // Farbe
+            for (const [name, rgb] of Object.entries(COLOR_MAP)) {
+                if (p.includes(name)) {
+                    await goveeControl({ name:'turn', value:'on' });
+                    await goveeControl({ name:'color', value: rgb });
+                    return `Lichter auf ${name} gestellt.`;
+                }
+            }
+            return null;
+        }
+
+        // ── WAKE WORD ─────────────────────────────────────────────
+        let wakeRecog = null;
+
+        function startWakeWord() {
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) return;
+            try {
+                wakeRecog = new SR();
+                wakeRecog.lang = 'de-DE';
+                wakeRecog.continuous = true;
+                wakeRecog.interimResults = true;
+
+                wakeRecog.onresult = e => {
+                    const text = Array.from(e.results).map(r => r[0].transcript).join(' ').toLowerCase();
+                    if (text.includes('jarvis') || text.includes('jarwis') || text.includes('jarfis')) {
+                        wakeRecog.stop();
+                        wakeRecog = null;
+                        // Kurzer Bestätigungston + Mikro aktivieren
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain); gain.connect(ctx.destination);
+                        osc.frequency.setValueAtTime(880, ctx.currentTime);
+                        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                        osc.start(); osc.stop(ctx.currentTime + 0.25);
+                        setTimeout(() => toggleVoiceInput(), 300);
+                    }
+                };
+
+                wakeRecog.onend = () => {
+                    if (!recognition) setTimeout(startWakeWord, 1500);
+                };
+
+                wakeRecog.onerror = e => {
+                    if (e.error !== 'aborted') setTimeout(startWakeWord, 3000);
+                };
+
+                wakeRecog.start();
+                // Kleiner Indikator im Status-Bar updaten
+                const el = document.getElementById('idleVoiceStatusJ');
+                if (el) el.textContent = 'VOICE ACTIVE';
+            } catch(e) {}
+        }
+
+        function startIdleAvatarAnimations() {
+            const avatar = document.getElementById('idleAvatarJ');
+            if (!avatar) return;
+            avatar.style.transformBox = 'fill-box';
+            avatar.style.transformOrigin = 'center';
+
+            const anims = [
+                { name: 'idleBounceJ', dur: '0.7s' },
+                { name: 'idleWobbleJ', dur: '0.8s' },
+                { name: 'idleNodJ',    dur: '0.6s' },
+                { name: 'idleShakeJ',  dur: '0.6s' },
+                { name: 'idleSpinJ',   dur: '0.9s' },
+            ];
+
+            function playRandom() {
+                const a = anims[Math.floor(Math.random() * anims.length)];
+                avatar.style.animation = `${a.name} ${a.dur} ease-in-out`;
+                setTimeout(() => { avatar.style.animation = ''; }, 1000);
+                // nächste Animation in 45–90 Sekunden
+                setTimeout(playRandom, 45000 + Math.random() * 45000);
+            }
+            // erste Animation nach 10–20 Sekunden starten
+            setTimeout(playRandom, 10000 + Math.random() * 10000);
+        }
+
+        async function updateIdleSpotify() {
+            if (!getSpotifyToken()) return;
+            try {
+                const data = await spotifyAPI('GET', '/me/player/currently-playing');
+                const widget = document.getElementById('idleSpotifyJ');
+                if (!widget) return;
+                if (!data || !data.item || !data.is_playing) {
+                    widget.style.opacity = '0';
+                    widget.style.pointerEvents = 'none';
+                    return;
+                }
+                const track = data.item;
+                const artist = track.artists.map(a => a.name).join(', ');
+                const imgUrl = track.album?.images?.[1]?.url || track.album?.images?.[0]?.url || '';
+                const pct = Math.round((data.progress_ms / track.duration_ms) * 478);
+
+                document.getElementById('idleSongTitleJ').textContent = track.name.length > 30 ? track.name.slice(0,28)+'…' : track.name;
+                document.getElementById('idleSongArtistJ').textContent = artist.length > 35 ? artist.slice(0,33)+'…' : artist;
+                document.getElementById('idleProgressBarJ').setAttribute('width', pct);
+                const img = document.getElementById('idleAlbumImgJ');
+                if (imgUrl && img.getAttribute('href') !== imgUrl) img.setAttribute('href', imgUrl);
+
+                widget.style.opacity = '1';
+                widget.style.pointerEvents = 'auto';
+            } catch(e) {}
+        }
+
+        async function refreshSpotifyPlayer() {
+            const data = await spotifyAPI('GET', '/me/player/currently-playing');
+            if (!data || !data.item) {
+                setMusicUI('Nichts spielt gerade', 'Spotify', null, 0, false, '', '');
+                setLabelJ('Spotify', 'Kein Track aktiv');
+                return;
+            }
+            const track = data.item;
+            const artist = track.artists.map(a => a.name).join(', ');
+            const imgUrl = track.album?.images?.[0]?.url || null;
+            const pct = (data.progress_ms / track.duration_ms) * 100;
+            setMusicUI(track.name, artist, imgUrl, pct, data.is_playing,
+                       fmtMs(data.progress_ms), fmtMs(track.duration_ms));
+            setLabelJ('Spotify', `${track.name} — ${artist}`);
+            jarvisSpeak(`Spielt jetzt ${track.name} von ${artist}`);
+        }
+
+        function updateSpotifyStatus() {
+            const el = document.getElementById('spotifyStatus');
+            if (!el) return;
+            if (getSpotifyToken()) {
+                el.style.color = '#1d9e75';
+                el.textContent = 'Verbunden ✓';
+            } else {
+                el.style.color = '#3b355e';
+                el.textContent = 'Nicht verbunden';
+            }
+            const saved = getSpotifyClientId();
+            if (saved) {
+                const inp = document.getElementById('spotifyClientId');
+                if (inp && !inp.value) inp.placeholder = saved.slice(0, 10) + '…';
+            }
+        }
+
+        // ── SPRACHE ───────────────────────────────────────────────
+        let recognition = null;
+        let speechEnabled = true;
+        let currentAudio = null;
+
+        // ElevenLabs – Rachel (multilingual, sehr natürlich)
+        const ELEVEN_VOICE_ID = 'cgSgspJ2msm6clMCkdW9';
+
+        const ELEVEN_DEFAULT_KEY = '';
+        function getElevenLabsKey() { try { return localStorage.getItem('elevenLabsKey') || ELEVEN_DEFAULT_KEY; } catch(e) { return ELEVEN_DEFAULT_KEY; } }
+
+        function saveElevenLabsKey() {
+            const k = document.getElementById('elevenLabsKey').value.trim();
+            if (!k) return;
+            try { localStorage.setItem('elevenLabsKey', k); } catch(e) {}
+            document.getElementById('elevenLabsKey').value = '';
+            updateElevenLabsStatus();
+        }
+
+        function updateElevenLabsStatus() {
+            const el = document.getElementById('elevenLabsStatus');
+            if (!el) return;
+            const k = getElevenLabsKey();
+            el.style.color = k ? '#1d9e75' : '#3b355e';
+            el.textContent = k ? 'ElevenLabs aktiv ✓ (Neural Voice)' : 'Kein Key → Browser-Stimme';
+        }
+
+        function mouthStart() {
+            const t = document.getElementById('mouthTalkJ'); const i = document.getElementById('mouthIdleJ');
+            if (t) { t.style.opacity = 1; i.style.opacity = 0; }
+        }
+        function mouthStop() {
+            const t = document.getElementById('mouthTalkJ'); const i = document.getElementById('mouthIdleJ');
+            if (t) { t.style.opacity = 0; i.style.opacity = 1; }
+        }
+
+        async function jarvisSpeak(text) {
+            if (!speechEnabled) return;
+            // Stop any current speech
+            if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+            if (window.speechSynthesis) speechSynthesis.cancel();
+
+            const elKey = getElevenLabsKey();
+            if (elKey) {
+                try {
+                    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE_ID}`, {
+                        method: 'POST',
+                        headers: { 'xi-api-key': elKey, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text,
+                            model_id: 'eleven_multilingual_v2',
+                            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.25, use_speaker_boost: true }
+                        })
+                    });
+                    if (!res.ok) throw new Error('ElevenLabs Fehler ' + res.status);
+                    const blob = await res.blob();
+                    const url = URL.createObjectURL(blob);
+                    currentAudio = new Audio(url);
+                    currentAudio.onplay  = mouthStart;
+                    currentAudio.onended = () => { mouthStop(); URL.revokeObjectURL(url); currentAudio = null; };
+                    currentAudio.onerror = () => { mouthStop(); currentAudio = null; };
+                    currentAudio.play();
+                    return;
+                } catch(e) { /* Fallback auf Browser-TTS */ }
+            }
+
+            // Browser-TTS Fallback
+            if (!window.speechSynthesis) return;
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.lang = 'de-DE'; utt.rate = 0.9; utt.pitch = 1.1;
+            const trySpeak = () => {
+                const v = speechSynthesis.getVoices();
+                const voice = v.find(x => x.lang === 'de-DE' && /natural|online|neural/i.test(x.name))
+                           || v.find(x => x.lang === 'de-DE' && /katja|helena|vicki/i.test(x.name))
+                           || v.find(x => x.lang.startsWith('de'));
+                if (voice) utt.voice = voice;
+                utt.onstart = mouthStart; utt.onend = utt.onerror = mouthStop;
+                speechSynthesis.speak(utt);
+            };
+            speechSynthesis.getVoices().length ? trySpeak() : (speechSynthesis.onvoiceschanged = trySpeak);
+        }
+
+        async function toggleVoiceInput() {
+            if (recognition) { recognition.stop(); return; }
+
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SR) {
+                setLabelJ('Fehler', 'Nur Chrome/Edge unterstützt Sprache');
+                jarvisSpeak('Spracherkennung funktioniert nur in Chrome oder Edge.');
+                return;
+            }
+
+            // Mikrofon-Erlaubnis explizit anfragen
+            try {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+            } catch(e) {
+                setLabelJ('Kein Mikrofon', 'Bitte Mikrofon-Erlaubnis erteilen');
+                jarvisSpeak('Bitte erlaube den Mikrofon-Zugriff im Browser.');
+                return;
+            }
+
+            const btn = document.getElementById('micBtnJ');
+            recognition = new SR();
+            recognition.lang = 'de-DE';
+            recognition.continuous = false;
+            recognition.interimResults = true;
+
+            recognition.onstart = () => {
+                btn.textContent = '🔴';
+                btn.style.background = '#3c1f2e';
+                btn.style.borderColor = '#a0415d';
+                showJ('ringListenJ', 1);
+                setLabelJ('Zuhören…', 'Sprich jetzt');
+            };
+
+            recognition.onresult = e => {
+                const interim = Array.from(e.results).map(r => r[0].transcript).join('');
+                document.getElementById('assistantInput').value = interim;
+                if (e.results[e.results.length - 1].isFinal) {
+                    processCommand();
+                }
+            };
+
+            recognition.onerror = e => {
+                const msgs = {
+                    'not-allowed': 'Mikrofon-Erlaubnis verweigert.',
+                    'no-speech':   'Nichts gehört – bitte nochmal versuchen.',
+                    'network':     'Netzwerkfehler bei der Spracherkennung.',
+                    'aborted':     ''
+                };
+                const msg = msgs[e.error] || `Fehler: ${e.error}`;
+                if (msg) setLabelJ('Mikrofon-Fehler', msg);
+            };
+
+            recognition.onend = () => {
+                recognition = null;
+                btn.textContent = '🎤';
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                setTimeout(startWakeWord, 1500);
+            };
+
+            recognition.start();
+        }
+
+        function sleepMode() {
+            const overlay = document.getElementById('sleepOverlay');
+            overlay.style.display = 'flex';
+            setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+            setLabelJ('Schlafmodus', 'Tippe um aufzuwecken');
+        }
+
+        function wakeUp() {
+            const overlay = document.getElementById('sleepOverlay');
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 1200);
+            setLabelJ('Idle Dashboard', 'System empfangsbereit');
+        }
+
+        function saveGroqKey() {
+            const key = document.getElementById('groqApiKey').value.trim();
+            if (!key) return;
+            try { localStorage.setItem('groqApiKey', key); } catch(e) {}
+            document.getElementById('groqApiKey').value = '';
+            updateGroqKeyStatus();
+        }
+
+        const GROQ_DEFAULT_KEY = '';
+
+        function loadGroqKey() {
+            try { return localStorage.getItem('groqApiKey') || GROQ_DEFAULT_KEY; } catch(e) { return GROQ_DEFAULT_KEY; }
+        }
+
+        function updateGroqKeyStatus() {
+            const key = loadGroqKey();
+            const el = document.getElementById('groqKeyStatus');
+            if (!el) return;
+            if (key) {
+                el.style.color = '#1d9e75';
+                el.textContent = 'Key gespeichert ✓ (' + key.slice(0,8) + '…)';
+            } else {
+                el.style.color = '#3b355e';
+                el.textContent = 'Kein Key gespeichert';
+            }
+        }
+
+        async function askJarvisAI(question) {
+            showJ('ringListenJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = 'translate(-420px, 0px) scale(0.7)';
+            document.getElementById('mouthIdleJ').style.opacity = 0;
+            document.getElementById('mouthTalkJ').style.opacity = 1;
+
+            const container = document.getElementById('infoLinesJ');
+            container.innerHTML = '';
+            showJ('infoModeJ', 1);
+            setLabelJ('Jarvis KI', 'Denke nach…');
+
+            const apiKey = loadGroqKey();
+
+            if (!apiKey) {
+                createSvgLine('Kein Groq API-Key gespeichert.', 220);
+                createSvgLine('Bitte Key rechts eingeben und 💾 drücken.', 255);
+                createSvgLine('Key bekommst du auf: console.groq.com', 290);
+                setLabelJ('Jarvis KI', 'API-Key fehlt.');
+                return;
+            }
+
+            try {
+                const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        model: 'llama-3.3-70b-versatile',
+                        messages: [
+                            { role: 'system', content: 'Du bist Jarvis, ein präziser KI-Assistent. Antworte immer auf Deutsch, kurz und klar. Maximal 3 Sätze.' },
+                            { role: 'user', content: question }
+                        ],
+                        max_tokens: 200,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    const msg = err.error?.message || 'API-Fehler ' + res.status;
+                    createSvgLine(msg.slice(0, 60), 240);
+                    setLabelJ('Jarvis KI', 'Fehler bei der Anfrage.');
+                    return;
+                }
+
+                const data = await res.json();
+                const text = data.choices?.[0]?.message?.content?.trim() || 'Keine Antwort erhalten.';
+
+                let yPos = 220;
+                let currentLine = '';
+                text.split(' ').forEach(word => {
+                    if ((currentLine + word).length > 52) {
+                        createSvgLine(currentLine.trim(), yPos);
+                        currentLine = word + ' ';
+                        yPos += 32;
+                        if (yPos > 490) return;
+                    } else {
+                        currentLine += word + ' ';
+                    }
+                });
+                if (currentLine.trim()) createSvgLine(currentLine.trim(), yPos);
+                setLabelJ('Jarvis KI', 'Antwort von Groq · llama-3.3-70b');
+
+            } catch(e) {
+                createSvgLine('Verbindung zu Groq fehlgeschlagen.', 240);
+                createSvgLine(String(e.message || e).slice(0, 55), 275);
+                setLabelJ('Jarvis KI', 'Netzwerkfehler.');
+            }
+        }
+
+        function createSvgLine(txt, y) {
+            const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            t.setAttribute("x", "500"); t.setAttribute("y", y);
+            t.setAttribute("style", "font-size:15px; fill:#EEF1F9; opacity:0; animation: lineInJ 0.4s ease forwards;");
+            t.textContent = txt;
+            document.getElementById('infoLinesJ').appendChild(t);
+        }
+
+        function renderMathChips(expr) {
+            const group = document.getElementById('mathChipsGroupJ');
+            group.innerHTML = '';
+
+            const tokens = expr.replace(/\s+/g, '').match(/\d+\.?\d*|[+\-*/^().]/g) || [];
+            if (!tokens.length) return;
+
+            const gap = 8;
+            const chipH = 52;
+            const chipW = Math.min(70, Math.floor((580 - (tokens.length - 1) * gap) / tokens.length));
+            const totalW = tokens.length * chipW + (tokens.length - 1) * gap;
+            let x = 640 - totalW / 2;
+            const y = 510;
+
+            tokens.forEach((token, i) => {
+                const isOp = /^[+\-*/^()]$/.test(token);
+                const delay = `${i * 0.06}s`;
+                const anim = `mathChipInJ 0.35s ease forwards ${delay}`;
+
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x); rect.setAttribute('y', y);
+                rect.setAttribute('width', chipW); rect.setAttribute('height', chipH);
+                rect.setAttribute('rx', '10');
+                rect.setAttribute('fill', isOp ? '#241F3E' : '#151226');
+                rect.setAttribute('stroke', '#3B355E'); rect.setAttribute('stroke-width', '1.5');
+                rect.style.cssText = `opacity:0; animation:${anim}`;
+                group.appendChild(rect);
+
+                const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                txt.setAttribute('x', x + chipW / 2); txt.setAttribute('y', y + chipH / 2 + 1);
+                txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('dominant-baseline', 'middle');
+                txt.setAttribute('style', `font-size:${isOp?26:22}px; font-weight:700; fill:${isOp?'#6C85BD':'#EEF1F9'}; opacity:0; animation:${anim}`);
+                txt.textContent = token === '*' ? '×' : token === '/' ? '÷' : token;
+                group.appendChild(txt);
+
+                x += chipW + gap;
+            });
+        }
+
+        function runCenteredMath(expr) {
+            showJ('ringListenJ', 0); showJ('mathRingJ', 1);
+            let result = 0;
+            try { result = eval(expr.replace(/\^/g, '**')); } catch(e) { result = "Error"; }
+            renderMathChips(expr);
+            document.getElementById('mathResultJ').textContent = result;
+            showJ('mathTextJ', 1);
+            setLabelJ('Rechenzentrum', `${expr} = ${result}`);
+            jarvisSpeak(`${expr} ergibt ${result}`);
+        }
+
+        /* HARDWARE LED LOGIKEN */
+        function togglePower() {
+            isLightOn = !isLightOn;
+            const card = document.getElementById('mainCard');
+            const slider = document.getElementById('brightnessSlider');
+            if(isLightOn) {
+                document.getElementById('statusText').textContent = `An, ${lightBrightness}%`;
+                slider.disabled = false; card.style.opacity = 1;
+            } else {
+                document.getElementById('statusText').textContent = "Aus";
+                slider.disabled = true; card.style.opacity = 0.4;
+            }
+        }
+        function updateBrightness(val) {
+            lightBrightness = val;
+            if(isLightOn) document.getElementById('statusText').textContent = `An, ${val}%`;
+        }
+        function setLedColor(hex, btn) {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
+            btn.classList.add('active');
+        }
+    </script>
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</body>
+</html>
