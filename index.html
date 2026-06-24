@@ -705,7 +705,7 @@
                     </g>
 
                     <!-- INTEGRIERTES LED CONTROL WINDOW ("LICHTER") -->
-                    <g id="ledControlWindowModeJ" class="fadeFastJ" opacity="0">
+                    <g id="ledControlWindowModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
                         <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
                         <foreignObject x="710" y="120" width="460" height="480">
                             <div xmlns="http://www.w3.org/1999/xhtml" style="background: rgba(26,22,54,0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; color:#fff; box-sizing:border-box; height:100%;">
@@ -1055,7 +1055,7 @@
 
         async function getLiveWeather() {
             try {
-                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dachau,de&appid=WEATHER_API_KEY_HERE&units=metric&lang=de`);
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Dachau,de&appid=dc73a9090b9cd0f45f276fd2497d2775&units=metric&lang=de`);
                 const data = await response.json();
                 if(data.cod === 200) {
                     globalWeatherData = data;
@@ -1076,6 +1076,7 @@
             if (!el) return;
             el.style.opacity = v;
             el.style.pointerEvents = v > 0 ? 'auto' : 'none';
+            el.style.visibility = v > 0 ? 'visible' : 'hidden';
         }
         function setLabelJ(p, t) {
             document.getElementById('phaseJ').textContent = p;
@@ -1554,7 +1555,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             showJ('detailWeatherModeJ', 1);
 
             try {
-                const KEY = 'WEATHER_API_KEY_HERE';
+                const KEY = 'dc73a9090b9cd0f45f276fd2497d2775';
                 const [res, forecastRes] = await Promise.all([
                     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de`),
                     fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de&cnt=8`)
@@ -1644,7 +1645,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             try { return localStorage.getItem('spotifyClientId') || ''; } catch(e) { return ''; }
         }
 
-        const SPOTIFY_DEFAULT_TOKEN = '';
+        const SPOTIFY_DEFAULT_TOKEN = 'BQBZ2bQ5OvhHGXNNqEyj1LfKc9KIEB4Kmk6oLYLHBu4kzOxeW3MZEde-SueY-tvBv7C1URQ523qu9rFc3RO-QcGIJF9Iuit6CFDkvQjl3Mh6Ru-ik2aSMcaaOcqsQZLA1Xz5fYUGZk04GPlNFJ69WKIjZ1aemNnp57iyL42s8BSAc1coTuDBDoLkWEZitliBexs4raZzl3PdP2hkJCw6e7y5Qt5zIuzj6QkNsuSI_93MarSILqUVgNIkR2onYgAwxDZSsFXp4fEyes_RYryayIMn4d-7hhvAv_bC-xwi72kP6XE6SBNwKJxDA0HnWYdpRBun01Y';
 
         function getSpotifyToken() {
             try {
@@ -2235,7 +2236,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         // ElevenLabs – Rachel (multilingual, sehr natürlich)
         const ELEVEN_VOICE_ID = 'cgSgspJ2msm6clMCkdW9';
 
-        const ELEVEN_DEFAULT_KEY = '';
+        const ELEVEN_DEFAULT_KEY = 'sk_1369b5da6ca0fafce5e9401e653df26948cd94c2556be9f3';
         function getElevenLabsKey() { try { return localStorage.getItem('elevenLabsKey') || ELEVEN_DEFAULT_KEY; } catch(e) { return ELEVEN_DEFAULT_KEY; } }
 
         function saveElevenLabsKey() {
