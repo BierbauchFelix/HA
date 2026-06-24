@@ -366,6 +366,7 @@
         @keyframes alarmPulse { from{background:#1a1630;border-color:#f39c12} to{background:#2d2010;border-color:#f39c12} }
         @keyframes alarmRing { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-10deg)} 40%{transform:rotate(10deg)} 60%{transform:rotate(-6deg)} 80%{transform:rotate(6deg)} }
         @keyframes eqBar { 0%, 100% { height: 6px; } 50% { height: 32px; } }
+        @keyframes wakeBreath { 0%,100% { opacity:0.5; transform:scale(1); } 50% { opacity:1; transform:scale(1.4); } }
         .eq-bar { height: 6px; }
 
         /* Wecker Styles */
@@ -412,6 +413,10 @@
         <div class="monitor-section">
             <div class="monitor-header">
                 <p class="phase-j" id="phaseJ">Idle Dashboard</p>
+                <div id="wakeIndicatorJ" style="display:flex;align-items:center;gap:7px;cursor:pointer;" onclick="toggleVoiceInput()" title="Mikrofon">
+                    <div id="wakeDotJ" style="width:8px;height:8px;border-radius:50%;background:#3b355e;transition:background 0.4s,box-shadow 0.4s;flex-shrink:0;"></div>
+                    <span id="wakeTextJ" style="font-size:11px;color:#3b355e;letter-spacing:1.5px;transition:color 0.4s;">HEY JARVIS</span>
+                </div>
                 <p class="trigger-j" id="triggerJ">System bereit</p>
             </div>
             
@@ -1833,48 +1838,108 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         // ── WAKE WORD ─────────────────────────────────────────────
         let wakeRecog = null;
+        let wakeRestartTimer = null;
+
+        function setWakeUI(state) {
+            const dot  = document.getElementById('wakeDotJ');
+            const text = document.getElementById('wakeTextJ');
+            if (!dot || !text) return;
+            if (state === 'ready') {
+                dot.style.background  = '#1d9e75';
+                dot.style.boxShadow   = '0 0 8px #1d9e75';
+                dot.style.animation   = 'wakeBreath 2.4s ease-in-out infinite';
+                text.style.color      = '#1d9e75';
+                text.textContent      = 'HEY JARVIS';
+            } else if (state === 'heard') {
+                dot.style.background  = '#6c85bd';
+                dot.style.boxShadow   = '0 0 14px #6c85bd';
+                dot.style.animation   = '';
+                text.style.color      = '#6c85bd';
+                text.textContent      = 'ZUHÖREN…';
+            } else if (state === 'speaking') {
+                dot.style.background  = '#f39c12';
+                dot.style.boxShadow   = '0 0 10px #f39c12';
+                dot.style.animation   = 'wakeBreath 0.6s ease-in-out infinite';
+                text.style.color      = '#f39c12';
+                text.textContent      = 'JARVIS SPRICHT';
+            } else {
+                dot.style.background  = '#3b355e';
+                dot.style.boxShadow   = 'none';
+                dot.style.animation   = '';
+                text.style.color      = '#3b355e';
+                text.textContent      = 'HEY JARVIS';
+            }
+        }
+
+        function playWakeSound() {
+            try {
+                const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+                const gain = ctx.createGain();
+                gain.connect(ctx.destination);
+                [[880, 0], [1100, 0.1], [1320, 0.2]].forEach(([freq, t]) => {
+                    const osc = ctx.createOscillator();
+                    osc.connect(gain);
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime + t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.18);
+                    osc.start(ctx.currentTime + t);
+                    osc.stop(ctx.currentTime + t + 0.2);
+                });
+            } catch(e) {}
+        }
 
         function startWakeWord() {
+            if (wakeRecog || recognition) return;
+            clearTimeout(wakeRestartTimer);
+
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SR) return;
+            if (!SR) { setWakeUI('off'); return; }
+
             try {
                 wakeRecog = new SR();
-                wakeRecog.lang = 'de-DE';
-                wakeRecog.continuous = true;
-                wakeRecog.interimResults = true;
+                wakeRecog.lang            = 'de-DE';
+                wakeRecog.continuous      = true;
+                wakeRecog.interimResults  = true;
+                wakeRecog.maxAlternatives = 3;
+
+                wakeRecog.onstart = () => setWakeUI('ready');
 
                 wakeRecog.onresult = e => {
-                    const text = Array.from(e.results).map(r => r[0].transcript).join(' ').toLowerCase();
-                    if (text.includes('jarvis') || text.includes('jarwis') || text.includes('jarfis')) {
-                        wakeRecog.stop();
+                    const texts = [];
+                    for (let i = e.resultIndex; i < e.results.length; i++)
+                        for (let j = 0; j < e.results[i].length; j++)
+                            texts.push(e.results[i][j].transcript.toLowerCase());
+                    const combined = texts.join(' ');
+
+                    const TRIGGERS = ['jarvis','jarwis','jarfis','djarvis','jarvis','harvey','charvis'];
+                    if (TRIGGERS.some(t => combined.includes(t))) {
+                        wakeRecog.abort();
                         wakeRecog = null;
-                        // Kurzer Bestätigungston + Mikro aktivieren
-                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                        const osc = ctx.createOscillator();
-                        const gain = ctx.createGain();
-                        osc.connect(gain); gain.connect(ctx.destination);
-                        osc.frequency.setValueAtTime(880, ctx.currentTime);
-                        osc.frequency.setValueAtTime(1100, ctx.currentTime + 0.1);
-                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-                        osc.start(); osc.stop(ctx.currentTime + 0.25);
-                        setTimeout(() => toggleVoiceInput(), 300);
+                        playWakeSound();
+                        setWakeUI('heard');
+                        wakeRestartTimer = setTimeout(() => toggleVoiceInput(), 350);
                     }
                 };
 
                 wakeRecog.onend = () => {
-                    if (!recognition) setTimeout(startWakeWord, 1500);
+                    wakeRecog = null;
+                    if (!recognition) wakeRestartTimer = setTimeout(startWakeWord, 800);
+                    else setWakeUI('off');
                 };
 
                 wakeRecog.onerror = e => {
-                    if (e.error !== 'aborted') setTimeout(startWakeWord, 3000);
+                    wakeRecog = null;
+                    setWakeUI('off');
+                    if (e.error === 'not-allowed') return;
+                    const delay = e.error === 'network' ? 5000 : 2000;
+                    if (e.error !== 'aborted') wakeRestartTimer = setTimeout(startWakeWord, delay);
                 };
 
                 wakeRecog.start();
-                // Kleiner Indikator im Status-Bar updaten
-                const el = document.getElementById('idleVoiceStatusJ');
-                if (el) el.textContent = 'VOICE ACTIVE';
-            } catch(e) {}
+            } catch(e) {
+                wakeRecog = null;
+                wakeRestartTimer = setTimeout(startWakeWord, 3000);
+            }
         }
 
         // ── SPOTIFY FULL VIEW ─────────────────────────────────────
@@ -2258,10 +2323,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function mouthStart() {
             const t = document.getElementById('mouthTalkJ'); const i = document.getElementById('mouthIdleJ');
             if (t) { t.style.opacity = 1; i.style.opacity = 0; }
+            setWakeUI('speaking');
         }
         function mouthStop() {
             const t = document.getElementById('mouthTalkJ'); const i = document.getElementById('mouthIdleJ');
             if (t) { t.style.opacity = 0; i.style.opacity = 1; }
+            setTimeout(startWakeWord, 800);
         }
 
         async function jarvisSpeak(text) {
@@ -2315,30 +2382,31 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
             const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SR) {
-                setLabelJ('Fehler', 'Nur Chrome/Edge unterstützt Sprache');
-                jarvisSpeak('Spracherkennung funktioniert nur in Chrome oder Edge.');
+                setLabelJ('Fehler', 'Nur Chrome unterstützt Sprache');
+                jarvisSpeak('Spracherkennung funktioniert nur in Chrome.');
                 return;
             }
 
-            // Mikrofon-Erlaubnis explizit anfragen
             try {
                 await navigator.mediaDevices.getUserMedia({ audio: true });
             } catch(e) {
                 setLabelJ('Kein Mikrofon', 'Bitte Mikrofon-Erlaubnis erteilen');
-                jarvisSpeak('Bitte erlaube den Mikrofon-Zugriff im Browser.');
+                jarvisSpeak('Bitte erlaube den Mikrofon-Zugriff.');
                 return;
             }
 
             const btn = document.getElementById('micBtnJ');
             recognition = new SR();
-            recognition.lang = 'de-DE';
-            recognition.continuous = false;
-            recognition.interimResults = true;
+            recognition.lang            = 'de-DE';
+            recognition.continuous      = false;
+            recognition.interimResults  = true;
+            recognition.maxAlternatives = 1;
 
             recognition.onstart = () => {
-                btn.textContent = '🔴';
-                btn.style.background = '#3c1f2e';
+                btn.textContent       = '🔴';
+                btn.style.background  = '#3c1f2e';
                 btn.style.borderColor = '#a0415d';
+                setWakeUI('heard');
                 showJ('ringListenJ', 1);
                 setLabelJ('Zuhören…', 'Sprich jetzt');
             };
@@ -2346,28 +2414,27 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             recognition.onresult = e => {
                 const interim = Array.from(e.results).map(r => r[0].transcript).join('');
                 document.getElementById('assistantInput').value = interim;
-                if (e.results[e.results.length - 1].isFinal) {
-                    processCommand();
-                }
+                if (e.results[e.results.length - 1].isFinal) processCommand();
             };
 
             recognition.onerror = e => {
                 const msgs = {
                     'not-allowed': 'Mikrofon-Erlaubnis verweigert.',
-                    'no-speech':   'Nichts gehört – bitte nochmal versuchen.',
-                    'network':     'Netzwerkfehler bei der Spracherkennung.',
+                    'no-speech':   'Nichts gehört – nochmal versuchen.',
+                    'network':     'Netzwerkfehler.',
                     'aborted':     ''
                 };
                 const msg = msgs[e.error] || `Fehler: ${e.error}`;
-                if (msg) setLabelJ('Mikrofon-Fehler', msg);
+                if (msg) setLabelJ('Mikrofon', msg);
             };
 
             recognition.onend = () => {
                 recognition = null;
-                btn.textContent = '🎤';
-                btn.style.background = '';
+                btn.textContent       = '🎤';
+                btn.style.background  = '';
                 btn.style.borderColor = '';
-                setTimeout(startWakeWord, 1500);
+                setWakeUI('off');
+                setTimeout(startWakeWord, 1200);
             };
 
             recognition.start();
