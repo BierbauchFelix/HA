@@ -268,6 +268,7 @@
     <button id="settingsGearJ" onclick="toggleSettingsDrawer()" title="Einstellungen">⚙️</button>
     <div id="drawerBackdropJ" onclick="toggleSettingsDrawer(false)"></div>
     <button id="voiceActivateJ" onclick="activateVoice()" style="display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:1001;background:#241f3e;border:1px solid #6c85bd;color:#eef1f9;padding:12px 24px;border-radius:26px;font-size:15px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.6);cursor:pointer;white-space:nowrap;">🎤 Tippen &amp; „Jarvis" sagen</button>
+    <button id="nightBadgeJ" onclick="nightModeOff()" title="Nachtmodus beenden" style="display:none;position:fixed;bottom:16px;left:16px;z-index:1001;background:#241f3e;border:1px solid #f39c12;color:#f39c12;padding:9px 16px;border-radius:22px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">🌙 Nachtmodus — tippen zum Beenden</button>
 
     <div class="app-container">
         
@@ -2340,6 +2341,16 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const auto = (h >= 22 || h < 6.5);
             const on = nightOverride === 'auto' ? auto : nightOverride === 'an';
             document.body.style.filter = on ? 'brightness(0.45)' : '';
+            // Sichtbarer Hinweis, WARUM das Display gedimmt ist
+            const badge = document.getElementById('nightBadgeJ');
+            if (badge) badge.style.display = on ? 'block' : 'none';
+        }
+
+        function nightModeOff() {
+            nightOverride = 'aus';
+            localStorage.setItem('jarvisNight', 'aus');
+            applyNightMode();
+            setLabelJ('🌙 Nachtmodus', 'Aus');
         }
         function handleNightCommand(lq) {
             showJ('ringListenJ', 0);
