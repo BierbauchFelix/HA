@@ -1667,19 +1667,33 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             badge.textContent = `${savedNotes.length} gespeichert`;
             container.innerHTML = '';
             if (savedNotes.length === 0) {
+                container.style.cssText = 'flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;';
                 container.innerHTML = '<div style="text-align:center;color:#3b355e;margin-top:40px;font-size:14px;">Keine Notizen vorhanden.<br><br>Befehl: "notiz Milch kaufen"</div>';
                 return;
             }
+            // Pinnwand: bunte Haftnotizen im Raster
+            container.style.cssText = 'flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;align-content:start;padding:10px 6px 6px;';
+            const noteColors = [
+                ['#F2DD6B', '#5c521c'], // gelb
+                ['#F5A8C0', '#6b2340'], // pink
+                ['#9FD8F5', '#1d4a63'], // blau
+                ['#B8EDA8', '#2c5c1e'], // grün
+                ['#E8C49A', '#5c3c1a'], // orange
+                ['#D3B8F0', '#43246b'], // lila
+            ];
             savedNotes.forEach((note, i) => {
+                const [bg, ink] = noteColors[i % noteColors.length];
+                const rot = [-2.5, 2, -1.5, 2.5, -2, 1.5][i % 6];
+                const safeText = String(note.text).replace(/&/g, '&amp;').replace(/</g, '&lt;');
                 const div = document.createElement('div');
-                div.style.cssText = 'background:#151226;border:1px solid #3b355e;border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;animation:lineInJ 0.3s ease forwards;opacity:0;';
-                div.style.animationDelay = (i * 0.06) + 's';
+                div.style.cssText = `background:${bg};border-radius:2px 2px 16px 2px;padding:24px 14px 12px;position:relative;transform:rotate(${rot}deg);box-shadow:3px 6px 14px rgba(0,0,0,0.5);animation:notePopN 0.45s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:${i * 0.07}s;min-height:120px;display:flex;flex-direction:column;`;
                 div.innerHTML = `
-                    <div style="flex:1;">
-                        <span style="font-size:11px;color:#3b355e;display:block;margin-bottom:4px;">#${i+1} · ${note.time}</span>
-                        <span style="font-size:14px;color:#eef1f9;line-height:1.4;">${note.text}</span>
-                    </div>
-                    <button onclick="deleteNote(${i})" style="background:#241f3e;border:1px solid #3b355e;color:#a9bbe0;border-radius:8px;padding:6px 10px;cursor:pointer;font-size:13px;white-space:nowrap;">🗑</button>`;
+                    <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%) rotate(${-rot * 2}deg);font-size:22px;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.35))">📌</div>
+                    <div style="flex:1;font-family:'Segoe Print','Comic Sans MS',cursive;font-size:14px;line-height:1.5;color:${ink};overflow-wrap:break-word;">${safeText}</div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;border-top:1px dashed rgba(0,0,0,0.15);padding-top:8px;">
+                        <span style="font-size:10px;color:${ink};opacity:0.6;font-weight:600;">#${i + 1} · ${note.time}</span>
+                        <button onclick="deleteNote(${i})" style="background:rgba(0,0,0,0.12);border:none;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:12px;">🗑</button>
+                    </div>`;
                 container.appendChild(div);
             });
         }
@@ -1755,7 +1769,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 if (top?.tracks?.length > 0) {
                     const res = await spotifyAPI('PUT', `/me/player/play?device_id=${deviceId}`, { uris: top.tracks.slice(0, 10).map(t => t.uri) });
                     if (res?._error) { setLabelJ('Spotify', 'Play-Fehler: ' + res._error); return; }
-                    setTimeout(refreshSpotifyPlayer, 1000);
+                    setTimeout(() => refreshSpotifyPlayer(true), 1000);
                     setLabelJ('Spotify', `Spiele ${artist.name}`);
                     return;
                 }
@@ -1764,7 +1778,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (track) {
                 const res = await spotifyAPI('PUT', `/me/player/play?device_id=${deviceId}`, { uris: [track.uri] });
                 if (res?._error) { setLabelJ('Spotify', 'Play-Fehler: ' + res._error); return; }
-                setTimeout(refreshSpotifyPlayer, 1000);
+                setTimeout(() => refreshSpotifyPlayer(true), 1000);
                 setLabelJ('Spotify', `Spiele "${track.name}"`);
             } else {
                 setLabelJ('Spotify', `Nichts gefunden für "${query}"`);
@@ -1894,7 +1908,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             }
         }
 
-        // ── ÖPNV: Abfahrten Dachau Bahnhof (v6.db.transport.rest, kein Key) ──
+        // ── ÖPNV: Abfahrten Dachau Bahnhof (MVG-API, kein Key) ──
         async function openTransitMode() {
             showJ('ringListenJ', 0);
             showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
@@ -1904,26 +1918,32 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const list = document.getElementById('transitListJ');
             list.innerHTML = '<div style="color:#6c85bd;font-size:14px;margin-top:30px;text-align:center">Lade Abfahrten…</div>';
             try {
-                const r = await fetch('https://v6.db.transport.rest/stops/8001354/departures?duration=90&results=12');
+                const r = await fetch('https://www.mvg.de/api/bgw-pt/v3/departures?globalId=de:09174:6840&limit=16');
                 const d = await r.json();
-                const deps = (d.departures || []).filter(x => x.when || x.plannedWhen).slice(0, 12);
+                const deps = (Array.isArray(d) ? d : []).filter(x => !x.cancelled).slice(0, 12);
                 if (!deps.length) {
-                    list.innerHTML = '<div style="color:#6c85bd;text-align:center;margin-top:30px">Keine Abfahrten in den nächsten 90 Min.</div>';
+                    list.innerHTML = '<div style="color:#6c85bd;text-align:center;margin-top:30px">Keine Abfahrten gefunden.</div>';
                     setLabelJ('🚆 ÖPNV', 'Keine Abfahrten gefunden.');
                     return;
                 }
                 list.innerHTML = deps.map(dep => {
-                    const when = new Date(dep.when || dep.plannedWhen);
+                    const when = new Date(dep.realtimeDepartureTime || dep.plannedDepartureTime);
                     const t = when.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-                    const delayMin = Math.round((dep.delay || 0) / 60);
-                    const line = dep.line?.name || '?';
-                    const dir = (dep.direction || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
-                    const lineCol = /^S/.test(line) ? '#2a5d3f;color:#b8f0ce' : '#3b2a5d;color:#d0c2f0';
+                    const inMin = Math.max(0, Math.round((when.getTime() - Date.now()) / 60000));
+                    const delayMin = Math.round(((dep.realtimeDepartureTime || 0) - (dep.plannedDepartureTime || 0)) / 60000);
+                    const line = dep.label || '?';
+                    const dir = (dep.destination || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+                    const lineCol = dep.transportType === 'SBAHN' ? '#2a5d3f;color:#b8f0ce'
+                                  : dep.transportType === 'BUS'   ? '#3b2a5d;color:#d0c2f0'
+                                  : '#5d3c2a;color:#f0d8c2';
+                    const gleis = dep.platform ? `<span style="font-size:11px;color:#6c85bd;min-width:38px;text-align:right">Gl. ${dep.platform}</span>` : '';
                     return `<div style="display:flex;align-items:center;gap:12px;background:#151226;border:1px solid #2a2548;border-radius:12px;padding:10px 14px;">
                         <span style="font-size:16px;font-weight:700;color:#EEF1F9;min-width:52px">${t}</span>
                         <span style="background:${lineCol};font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;min-width:34px;text-align:center">${line}</span>
                         <span style="flex:1;font-size:13px;color:#a9bbe0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dir}</span>
-                        ${delayMin > 0 ? `<span style="color:#f39c12;font-size:12px;font-weight:700">+${delayMin}</span>` : '<span style="color:#1d9e75;font-size:12px">✓</span>'}
+                        <span style="font-size:12px;color:#6c85bd;min-width:52px;text-align:right">in ${inMin} min</span>
+                        ${gleis}
+                        ${delayMin > 0 ? `<span style="color:#f39c12;font-size:12px;font-weight:700;min-width:28px">+${delayMin}</span>` : '<span style="color:#1d9e75;font-size:12px;min-width:28px">✓</span>'}
                     </div>`;
                 }).join('');
                 setLabelJ('🚆 ÖPNV', `${deps.length} Abfahrten ab Dachau Bahnhof.`);
@@ -2235,8 +2255,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             }
         }
 
-        // ── GOVEE LEDs ────────────────────────────────────────────
-        const GOVEE_BASE = 'https://developer-api.govee.com/v1';
+        // ── GOVEE LEDs (OpenAPI — die alte v1-API ist abgeschaltet) ──
+        const GOVEE_BASE = 'https://openapi.api.govee.com/router/api/v1';
         let goveeDevices = [];
 
         function getGoveeKey() { try { return localStorage.getItem('goveeApiKey') || ''; } catch(e) { return ''; } }
@@ -2254,21 +2274,44 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const el = document.getElementById('goveeStatus');
             if (!key) { if (el) { el.style.color = '#3b355e'; el.textContent = 'Kein Key → Demo-Modus'; } return; }
             try {
-                const res = await fetch(`${GOVEE_BASE}/devices`, { headers: { 'Govee-API-Key': key } });
-                const data = await res.json();
-                goveeDevices = data.data?.devices || [];
-                if (el) { el.style.color = '#1d9e75'; el.textContent = `${goveeDevices.length} Gerät(e) verbunden ✓`; }
-            } catch(e) { if (el) { el.style.color = '#a0415d'; el.textContent = 'Verbindungsfehler'; } }
+                const res = await fetch(`${GOVEE_BASE}/user/devices`, { headers: { 'Govee-API-Key': key } });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    goveeDevices = [];
+                    if (el) { el.style.color = '#a0415d'; el.textContent = `Fehler ${res.status}: ${data.message || 'API-Key prüfen'}`; }
+                    return;
+                }
+                goveeDevices = data.data || [];
+                if (el) {
+                    if (goveeDevices.length) {
+                        el.style.color = '#1d9e75';
+                        el.textContent = goveeDevices.map(d => d.deviceName || d.sku).join(' + ') + ' ✓';
+                    } else {
+                        el.style.color = '#f39c12';
+                        el.textContent = 'Key ok, aber keine Geräte gefunden';
+                    }
+                }
+            } catch(e) { if (el) { el.style.color = '#a0415d'; el.textContent = 'Verbindungsfehler: ' + e.message; } }
         }
 
         async function goveeControl(cmd) {
             const key = getGoveeKey();
-            if (!key || !goveeDevices.length) return false;
+            if (!key) return false;
+            if (!goveeDevices.length) await loadGoveeDevices();
+            if (!goveeDevices.length) return false;
+            let capability = null;
+            if (cmd.name === 'turn')       capability = { type: 'devices.capabilities.on_off',        instance: 'powerSwitch', value: cmd.value === 'on' ? 1 : 0 };
+            if (cmd.name === 'brightness') capability = { type: 'devices.capabilities.range',         instance: 'brightness',  value: cmd.value };
+            if (cmd.name === 'color')      capability = { type: 'devices.capabilities.color_setting', instance: 'colorRgb',    value: (cmd.value.r << 16) | (cmd.value.g << 8) | cmd.value.b };
+            if (!capability) return false;
             await Promise.all(goveeDevices.map(d =>
-                fetch(`${GOVEE_BASE}/devices/control`, {
-                    method: 'PUT',
+                fetch(`${GOVEE_BASE}/device/control`, {
+                    method: 'POST',
                     headers: { 'Govee-API-Key': key, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ device: d.device, model: d.model, cmd })
+                    body: JSON.stringify({
+                        requestId: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+                        payload: { sku: d.sku, device: d.device, capability }
+                    })
                 }).catch(() => {})
             ));
             return true;
@@ -2699,7 +2742,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             } catch(e) {}
         }
 
-        async function refreshSpotifyPlayer() {
+        async function refreshSpotifyPlayer(announce = false) {
             const data = await spotifyAPI('GET', '/me/player/currently-playing');
             if (!data || !data.item) {
                 setMusicUI('Nichts spielt gerade', 'Spotify', null, 0, false, '', '');
@@ -2713,7 +2756,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             setMusicUI(track.name, artist, imgUrl, pct, data.is_playing,
                        fmtMs(data.progress_ms), fmtMs(track.duration_ms));
             setLabelJ('Spotify', `${track.name} — ${artist}`);
-            jarvisSpeak(`Spielt jetzt ${track.name} von ${artist}`);
+            // Nur ansagen wenn explizit gewünscht (z.B. nach "spiele …")
+            if (announce) jarvisSpeak(`Spielt jetzt ${track.name} von ${artist}`);
         }
 
         function updateSpotifyStatus() {
@@ -2843,9 +2887,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             }
 
             const btn = document.getElementById('micBtnJ');
+            let silenceTimerV = null;
             recognition = new SR();
             recognition.lang = 'de-DE';
-            recognition.continuous = false;
+            recognition.continuous = true;
             recognition.interimResults = true;
 
             recognition.onstart = () => {
@@ -2853,15 +2898,17 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 btn.style.background = '#3c1f2e';
                 btn.style.borderColor = '#a0415d';
                 showJ('ringListenJ', 1);
-                setLabelJ('Zuhören…', 'Sprich jetzt');
+                setLabelJ('Zuhören…', 'Sprich jetzt — ich warte bis du fertig bist');
+                // Wenn 10s gar nichts kommt, beenden
+                silenceTimerV = setTimeout(() => { try { recognition && recognition.stop(); } catch(_) {} }, 10000);
             };
 
             recognition.onresult = e => {
-                const interim = Array.from(e.results).map(r => r[0].transcript).join('');
-                document.getElementById('assistantInput').value = interim;
-                if (e.results[e.results.length - 1].isFinal) {
-                    processCommand();
-                }
+                clearTimeout(silenceTimerV);
+                const full = Array.from(e.results).map(r => r[0].transcript).join('');
+                document.getElementById('assistantInput').value = full;
+                // Erst nach 2,5s Sprechpause auswerten — Zeit zum Weiterreden
+                silenceTimerV = setTimeout(() => { try { recognition && recognition.stop(); } catch(_) {} }, 2500);
             };
 
             recognition.onerror = e => {
@@ -2876,10 +2923,13 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             };
 
             recognition.onend = () => {
+                clearTimeout(silenceTimerV);
                 recognition = null;
                 btn.textContent = '🎤';
                 btn.style.background = '';
                 btn.style.borderColor = '';
+                // Erst jetzt auswerten — der komplette Satz steht im Eingabefeld
+                if (document.getElementById('assistantInput').value.trim()) processCommand();
                 setTimeout(startWakeWord, 1500);
             };
 
