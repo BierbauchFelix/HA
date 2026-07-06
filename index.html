@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- WICHTIG: KEIN apple-mobile-web-app-capable! Der Standalone-Modus
+         (Vollbild-Home-Screen-App) sperrt auf iOS die Spracherkennung.
+         Ohne den Tag läuft die Home-Screen-Verknüpfung im Safari-Kontext
+         → "Jarvis" funktioniert. -->
     <title>Jarvis OS - Ultimate Assistant</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Modak&display=swap" rel="stylesheet">
@@ -2865,20 +2867,31 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         let voiceUnlocked = false;
         const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent)
                     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-        // In-App-Browser (WebFrame & Co. = WKWebView): Apple stellt dort KEINE
-        // Spracherkennung bereit (WebKit-Bug 239816) — nur echtes Safari kann es
-        const IS_IOS_WEBVIEW = IS_IOS && !/Safari\//i.test(navigator.userAgent);
+        // Standalone = "Zum Home-Bildschirm" hinzugefügte Vollbild-App.
+        // In-App-Browser (WebFrame = WKWebView) UND Standalone sperren beide
+        // die Spracherkennung (WebKit-Bug 239816) — nur echtes Safari kann es.
+        const IS_STANDALONE = window.navigator.standalone === true
+                           || window.matchMedia('(display-mode: standalone)').matches;
+        const IS_IOS_WEBVIEW = IS_IOS && (IS_STANDALONE || !/Safari\//i.test(navigator.userAgent));
 
         function showVoiceActivateHint() {
             const b = document.getElementById('voiceActivateJ');
             if (!b) return;
             if (IS_IOS_WEBVIEW) {
-                b.innerHTML = '⚠️ Sprachsteuerung geht nur in Safari — nicht in dieser App';
+                b.innerHTML = IS_STANDALONE
+                    ? '⚠️ Sprache geht nicht als App — bitte in Safari öffnen'
+                    : '⚠️ Sprachsteuerung geht nur in Safari — nicht in dieser App';
                 b.style.borderColor = '#f39c12';
                 b.style.display = 'block';
+                b.onclick = IS_STANDALONE ? openInSafariHint : activateVoice;
                 return;
             }
             if (!voiceUnlocked) b.style.display = 'block';
+        }
+
+        function openInSafariHint() {
+            setLabelJ('⚠️ Nur in Safari', 'Home-App löschen, in Safari öffnen, dann testen');
+            alert('Die "Jarvis" Sprachsteuerung funktioniert nur im echten Safari-Browser.\n\nApple sperrt sie in Vollbild-Apps vom Home-Bildschirm.\n\nSo geht es:\n1. Diese App vom Home-Bildschirm löschen\n2. bierbauchfelix.github.io/ha in Safari öffnen\n3. Dort funktioniert "Jarvis" wieder\n\n(Neue Home-Bildschirm-Verknüpfungen öffnen jetzt automatisch Safari.)');
         }
 
         function activateVoice() {
