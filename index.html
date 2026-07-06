@@ -267,6 +267,7 @@
 
     <button id="settingsGearJ" onclick="toggleSettingsDrawer()" title="Einstellungen">⚙️</button>
     <div id="drawerBackdropJ" onclick="toggleSettingsDrawer(false)"></div>
+    <button id="voiceActivateJ" onclick="activateVoice()" style="display:none;position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:1001;background:#241f3e;border:1px solid #6c85bd;color:#eef1f9;padding:12px 24px;border-radius:26px;font-size:15px;font-weight:600;box-shadow:0 8px 30px rgba(0,0,0,0.6);cursor:pointer;white-space:nowrap;">🎤 Tippen &amp; „Jarvis" sagen</button>
 
     <div class="app-container">
         
@@ -1265,7 +1266,13 @@
             loadGoveeDevices();
             loadAlarms();
             setInterval(checkAlarms, 30000);
-            startWakeWord();
+            // iOS: Mikrofon & Ton brauchen einen Fingertipp → Hinweis-Button zeigen.
+            // Desktop: direkt lauschen; der erste Klick schaltet zusätzlich den Ton frei.
+            if (IS_IOS) showVoiceActivateHint();
+            else startWakeWord();
+            document.addEventListener('pointerdown', ev => {
+                if (!voiceUnlocked && ev.target.id !== 'voiceActivateJ') activateVoice();
+            });
             handleSpotifyCallback();
             updateSpotifyStatus();
             if (getSpotifyToken()) initSpotifyWebPlayer();
@@ -1702,7 +1709,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function timerFinished() {
             // Peep-Peep-Sound (Küchentimer-Style, 4 Doppel-Pieper)
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = getAudioCtx();
                 for (let r = 0; r < 4; r++) {
                     [0, 0.18].forEach(t => {
                         const o = ctx.createOscillator(); const g = ctx.createGain();
@@ -2718,9 +2725,18 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         let wakeRecog = null;
         let wakeRestartTimer = null;
 
+        // Ein gemeinsamer AudioContext für alle Töne — iOS erlaubt Ton nur,
+        // wenn der Context einmal per Fingertipp freigeschaltet wurde
+        let sharedAudioCtx = null;
+        function getAudioCtx() {
+            if (!sharedAudioCtx) sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (sharedAudioCtx.state === 'suspended') sharedAudioCtx.resume();
+            return sharedAudioCtx;
+        }
+
         function playWakeSound() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = getAudioCtx();
                 const gain = ctx.createGain();
                 gain.connect(ctx.destination);
                 [[880,0],[1100,0.1],[1320,0.2]].forEach(([freq,t]) => {
@@ -2735,6 +2751,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             } catch(e) {}
         }
 
+        const WAKE_TRIGGERS = ['jarvis', 'jarwis', 'jarfis', 'djarvis', 'harvey', 'charvis', 'travis', 'järvis'];
+
         function startWakeWord() {
             if (wakeRecog || recognition) return;
             clearTimeout(wakeRestartTimer);
@@ -2747,29 +2765,77 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 wakeRecog.interimResults  = true;
                 wakeRecog.maxAlternatives = 3;
 
-                wakeRecog.onresult = e => {
-                    const texts = [];
-                    for (let i = e.resultIndex; i < e.results.length; i++)
-                        for (let j = 0; j < e.results[i].length; j++)
-                            texts.push(e.results[i][j].transcript.toLowerCase());
-                    const combined = texts.join(' ');
-                    const TRIGGERS = ['jarvis','jarwis','jarfis','djarvis','harvey','charvis'];
-                    if (TRIGGERS.some(t => combined.includes(t))) {
-                        wakeRecog.abort();
-                        wakeRecog = null;
+                let triggered = false;
+                let done = false;
+                let captureTimer = null;
+                let afterCmd = '';
+
+                // Beendet die Wake-Session: Befehl im selben Satz? Direkt ausführen.
+                // Nur "Jarvis" allein? Signalton + aktives Zuhören starten.
+                const finishCapture = () => {
+                    if (done) return;
+                    done = true;
+                    clearTimeout(captureTimer);
+                    const cmd = afterCmd.trim();
+                    try { wakeRecog && wakeRecog.abort(); } catch(_) {}
+                    wakeRecog = null;
+                    if (cmd.length > 1) {
+                        document.getElementById('assistantInput').value = cmd;
+                        processCommand();
+                        wakeRestartTimer = setTimeout(startWakeWord, 1500);
+                    } else {
                         playWakeSound();
                         wakeRestartTimer = setTimeout(() => toggleVoiceInput(), 350);
                     }
                 };
 
+                wakeRecog.onresult = e => {
+                    if (done) return;
+                    let full = '';
+                    const alts = [];
+                    for (let i = 0; i < e.results.length; i++) {
+                        full += ' ' + e.results[i][0].transcript;
+                        for (let j = 0; j < e.results[i].length; j++)
+                            alts.push(e.results[i][j].transcript.toLowerCase());
+                    }
+                    full = full.toLowerCase();
+                    const heard = alts.join(' ');
+
+                    if (!triggered) {
+                        if (!WAKE_TRIGGERS.some(t => heard.includes(t))) return;
+                        triggered = true;
+                        setLabelJ('Jarvis', 'Ich höre…');
+                        showJ('ringListenJ', 1);
+                        // Kurz warten, ob im selben Satz noch ein Befehl folgt
+                        captureTimer = setTimeout(finishCapture, 1300);
+                    }
+
+                    // Text NACH dem Wake-Wort extrahieren ("jarvis licht aus" → "licht aus")
+                    const trig = WAKE_TRIGGERS.find(t => full.includes(t));
+                    if (trig) {
+                        const after = full.split(trig).pop().replace(/^[\s,.!?]+/, '').trim();
+                        if (after !== afterCmd) {
+                            afterCmd = after;
+                            // Es wird noch gesprochen → Fenster verlängern
+                            clearTimeout(captureTimer);
+                            captureTimer = setTimeout(finishCapture, 1100);
+                        }
+                    }
+
+                    // Finales Ergebnis mit Befehl → sofort ausführen
+                    if (triggered && afterCmd && e.results[e.results.length - 1].isFinal) finishCapture();
+                };
+
                 wakeRecog.onend = () => {
+                    if (triggered && !done) { finishCapture(); return; }
                     wakeRecog = null;
-                    if (!recognition) wakeRestartTimer = setTimeout(startWakeWord, 800);
+                    if (!recognition && !done) wakeRestartTimer = setTimeout(startWakeWord, 800);
                 };
 
                 wakeRecog.onerror = e => {
+                    if (done) return;
                     wakeRecog = null;
-                    if (e.error === 'not-allowed') return;
+                    if (e.error === 'not-allowed') { showVoiceActivateHint(); return; }
                     const delay = e.error === 'network' ? 5000 : 2000;
                     if (e.error !== 'aborted') wakeRestartTimer = setTimeout(startWakeWord, delay);
                 };
@@ -2780,6 +2846,44 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             } catch(e) {
                 wakeRestartTimer = setTimeout(startWakeWord, 3000);
             }
+        }
+
+        // ── SPRACH-FREISCHALTUNG (iOS braucht einen Fingertipp) ──
+        let voiceUnlocked = false;
+        const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent)
+                    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        function showVoiceActivateHint() {
+            const b = document.getElementById('voiceActivateJ');
+            if (b && !voiceUnlocked) b.style.display = 'block';
+        }
+
+        function activateVoice() {
+            if (voiceUnlocked) return;
+            voiceUnlocked = true;
+            // 1. AudioContext im Fingertipp erzeugen/aufwecken → Töne erlaubt
+            try {
+                const ctx = getAudioCtx();
+                const o = ctx.createOscillator(); const g = ctx.createGain();
+                g.gain.value = 0.001; o.connect(g); g.connect(ctx.destination);
+                o.start(); o.stop(ctx.currentTime + 0.05);
+            } catch(e) {}
+            // 2. TTS-Audio-Element mit Stille freischalten (für ElevenLabs)
+            try {
+                ttsAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+                ttsAudio.play().catch(() => {});
+            } catch(e) {}
+            // 3. Browser-TTS freischalten
+            try {
+                if (window.speechSynthesis) {
+                    const u = new SpeechSynthesisUtterance(' ');
+                    u.volume = 0;
+                    speechSynthesis.speak(u);
+                }
+            } catch(e) {}
+            const b = document.getElementById('voiceActivateJ');
+            if (b) b.style.display = 'none';
+            startWakeWord();
         }
 
         // ── SPOTIFY FULL VIEW ─────────────────────────────────────
@@ -3147,6 +3251,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         let recognition = null;
         let speechEnabled = true;
         let currentAudio = null;
+        // Ein einziges, per Fingertipp freigeschaltetes Audio-Element —
+        // iOS blockiert sonst jedes neue Audio() ohne Nutzer-Geste
+        const ttsAudio = new Audio();
 
         // ElevenLabs – Rachel (multilingual, sehr natürlich)
         const ELEVEN_VOICE_ID = 'cgSgspJ2msm6clMCkdW9';
@@ -3200,11 +3307,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     if (!res.ok) throw new Error('ElevenLabs Fehler ' + res.status);
                     const blob = await res.blob();
                     const url = URL.createObjectURL(blob);
-                    currentAudio = new Audio(url);
-                    currentAudio.onplay  = mouthStart;
-                    currentAudio.onended = () => { mouthStop(); URL.revokeObjectURL(url); currentAudio = null; };
-                    currentAudio.onerror = () => { mouthStop(); currentAudio = null; };
-                    currentAudio.play();
+                    ttsAudio.src = url;
+                    ttsAudio.onplay  = mouthStart;
+                    ttsAudio.onended = () => { mouthStop(); URL.revokeObjectURL(url); currentAudio = null; };
+                    ttsAudio.onerror = () => { mouthStop(); currentAudio = null; };
+                    currentAudio = ttsAudio;
+                    ttsAudio.play().catch(() => { mouthStop(); currentAudio = null; });
                     return;
                 } catch(e) { /* Fallback auf Browser-TTS */ }
             }
