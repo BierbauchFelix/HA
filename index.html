@@ -202,6 +202,8 @@
         @keyframes lineInJ { 0% { opacity:0; transform: translateX(-6px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes sunRotateJ { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes notePopN { 0% { opacity:0; transform: scale(0.85) rotate(-2deg); } 60% { opacity:1; transform: scale(1.02) rotate(1deg); } 100% { opacity:1; transform: scale(1) rotate(-1deg); } }
+        @keyframes stampInJ { 0% { opacity:0; transform: scale(2.4); } 55% { opacity:1; transform: scale(0.9); } 75% { transform: scale(1.06); } 100% { opacity:1; transform: scale(1); } }
+        @keyframes sparklePopJ { 0% { opacity:0; transform: scale(0.2); } 35% { opacity:1; transform: scale(1.25); } 100% { opacity:0; transform: scale(0.5) translateY(-18px); } }
 
         .lidJ { animation: lidBlinkJ 7s ease-in-out infinite; }
         .ringJ { animation: pulseJ 1.6s ease-in-out infinite; transform-origin: 640px 330px; }
@@ -1013,6 +1015,52 @@
                             <div xmlns="http://www.w3.org/1999/xhtml" id="transitListJ" style="height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:8px;color:#eef1f9;"></div>
                         </foreignObject>
                     </g>
+
+                    <!-- ROUTENPLANER -->
+                    <g id="routeModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden;pointer-events:none">
+                        <!-- Figur mit Karten-Schild -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <!-- Karten-Schild in der Hand -->
+                            <rect x="366" y="352" width="66" height="40" rx="8" fill="#1d9e75" stroke="#EEF1F9" stroke-width="2.5"/>
+                            <text x="399" y="380" text-anchor="middle" style="font-size:24px">🗺</text>
+                            <circle cx="392" cy="401" r="10" fill="url(#podGJ)"/>
+                        </g>
+
+                        <!-- Routen-Panel -->
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#2a2548" stroke-width="1.5"/>
+                        <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <text id="routeTitleJ" x="720" y="112" style="font-size:17px;fill:#EEF1F9;font-weight:600">🗺️ Routenplaner</text>
+                        <text x="1170" y="110" text-anchor="end" style="font-size:10px;fill:#3B355E;letter-spacing:3px">MVV</text>
+                        <line x1="710" y1="128" x2="1180" y2="128" stroke="#2a2548" stroke-width="1"/>
+                        <foreignObject x="706" y="140" width="480" height="478">
+                            <div xmlns="http://www.w3.org/1999/xhtml" id="routeListJ" style="height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:12px;color:#eef1f9;"></div>
+                        </foreignObject>
+                    </g>
                 </g>
             </svg>
         <!-- FOOTBALL OVERLAY -->
@@ -1263,6 +1311,7 @@
             showJ('footballModeJ', 0);
             showJ('alarmModeJ', 0);
             showJ('transitModeJ', 0);
+            showJ('routeModeJ', 0);
             musicViewFull = false;
             document.getElementById('footballOverlayJ')?.classList.remove('active');
             document.getElementById('alarmOverlayJ')?.classList.remove('active');
@@ -1298,7 +1347,7 @@
                             content: `Du bist Jarvis, ein KI-Assistent. Analysiere den Benutzer-Befehl und antworte NUR mit gültigem JSON – kein Text davor oder danach.
 
 Mögliche intent-Werte:
-notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage, fussball, wecker, alarm_setzen, bahn
+notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage, fussball, wecker, alarm_setzen, bahn, route
 
 JSON-Format: {"intent":"...","param":"...","antwort":null}
 
@@ -1313,6 +1362,7 @@ Regeln für param:
 - alarm_setzen → Uhrzeit im Format "HH:MM" plus optionales Label (z.B. "07:30 Aufstehen")
 - wecker → param ist null (zeigt Wecker-Liste)
 - bahn → param ist null (S-Bahn/Zug-Abfahrten, z.B. "wann fährt die bahn", "abfahrten", "s-bahn")
+- route → param ist "START nach ZIEL" (z.B. "dachau nach marienplatz"); fehlt der Start, nutze "Dachau Bahnhof"
 - musik_voll → param ist null (große Musikansicht)
 - frage → param ist null, schreib stattdessen eine kurze Antwort in "antwort" (max 3 Sätze Deutsch)
 - alle anderen → param ist null
@@ -1327,7 +1377,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 "schlaf modus" → schlaf
 "was ist 8 mal 7" → mathe "8*7"
 "lösch notiz 2" → notiz_loeschen "2"
+"alle notizen löschen" → notiz_loeschen "alle"
 "zeig meine notizen" → notizen
+"route dachau nach marienplatz" → route "dachau nach marienplatz"
+"wie komme ich zum hauptbahnhof" → route "Dachau Bahnhof nach hauptbahnhof münchen"
 "nächster song" → skip
 "song zurück" → zurueck
 "musik stopp" → pause
@@ -1357,11 +1410,13 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (lq === "schlaf" || lq === "sleep") { showJ('ringListenJ', 0); sleepMode(); return; }
             if (lq.includes('erinner')) { handleReminderCommand(lq); return; }
             if (lq.startsWith('nachtmodus')) { handleNightCommand(lq); return; }
+            if (lq.startsWith('route') || lq.startsWith('verbindung') || lq.includes('wie komme ich')) { const rq = parseRouteQuery(lq); if (rq) { openRouteMode(rq.from, rq.to); return; } }
             if (lq === 'bahn' || lq === 'zug' || lq === 'öpnv' || lq === 'oepnv' || lq.includes('abfahrt') || lq.includes('s-bahn') || lq === 'sbahn') { openTransitMode(); return; }
             if (lq === 'wm' || lq.includes('weltmeisterschaft')) { openFootball('fifa.world'); return; }
             if (lq === 'fußball' || lq === 'fussball' || lq === 'bundesliga') { openFootball(lq === 'bundesliga' ? 'ger.1' : 'fifa.world'); return; }
             if (lq.includes("timer stopp") || lq === "stopp") { clearInterval(timerTicker); showJ('ringListenJ', 0); showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); setLabelJ('Timer', 'Gestoppt.'); return; }
             if (lq.startsWith("timer")) { openTimerMode(parseDurationToSeconds(lq) || 600); return; }
+            if (lq.includes('notizen') && (lq.includes('lösch') || lq.includes('loesch')) && lq.includes('alle')) { savedNotes = []; saveNotesToStorage(); openNotesListMode(); setLabelJ('Notizblock', 'Alle Notizen gelöscht.'); jarvisSpeak('Alle Notizen gelöscht.'); return; }
             if (lq.startsWith("notiz löschen") || lq.startsWith("notiz loeschen")) { const m = lq.match(/\d+/); if (lq.includes("alle")) { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); } else deleteNote(m ? parseInt(m[0])-1 : savedNotes.length-1); return; }
             if (lq === "notizen") { openNotesListMode(); return; }
             if (lq.startsWith("notiz ")) { openNoteMode(query.substring(6).trim()); return; }
@@ -1419,6 +1474,11 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     openFootball(lg); break;
                 }
                 case 'bahn':         openTransitMode(); break;
+                case 'route': {
+                    const rq = parseRouteQuery('route ' + (param || originalQuery).toLowerCase());
+                    if (rq) openRouteMode(rq.from, rq.to); else openTransitMode();
+                    break;
+                }
                 case 'wecker':       openAlarmMode(); break;
                 case 'alarm_setzen': {
                     // param z.B. "07:30" oder "7 Uhr" oder "7:30 Aufstehen"
@@ -1484,6 +1544,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const lqPC = query.toLowerCase();
             if (lqPC.includes('erinner')) { handleReminderCommand(lqPC); return; }
             if (lqPC.startsWith('nachtmodus')) { handleNightCommand(lqPC); return; }
+            if (lqPC.startsWith('route') || lqPC.startsWith('verbindung') || lqPC.includes('wie komme ich')) { const rq = parseRouteQuery(lqPC); if (rq) { openRouteMode(rq.from, rq.to); return; } }
             if (lqPC === 'bahn' || lqPC === 'zug' || lqPC === 'öpnv' || lqPC === 'oepnv' || lqPC.includes('abfahrt') || lqPC.includes('s-bahn') || lqPC === 'sbahn') { openTransitMode(); return; }
 
             if (!loadGroqKey()) {
@@ -1628,6 +1689,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             jarvisSpeak('Timer abgelaufen!');
         }
 
+        let noteTypeTimerN = null;
         function openNoteMode(text) {
             showJ('ringListenJ', 0);
 
@@ -1639,6 +1701,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             document.getElementById('mouthIdleJ').style.opacity = 0;
             document.getElementById('mouthTalkJ').style.opacity = 1;
 
+            const svgNS = 'http://www.w3.org/2000/svg';
             const group = document.getElementById('noteTextN');
             group.innerHTML = '';
             const words = text.split(' ');
@@ -1649,15 +1712,21 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             });
             if (current) lines.push(current);
 
-            let yPos = 250;
-            lines.forEach(line => {
-                const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                t.setAttribute('x', '710'); t.setAttribute('y', yPos);
+            // Leere Textzeilen anlegen — werden Zeichen für Zeichen gefüllt
+            const textEls = lines.map((_, i) => {
+                const t = document.createElementNS(svgNS, 'text');
+                t.setAttribute('x', '710'); t.setAttribute('y', 250 + i * 28);
                 t.setAttribute('style', "font-size:18px; font-family:'Comic Sans MS', cursive, sans-serif; fill:#3A2E0A; font-weight:600;");
-                t.textContent = line;
                 group.appendChild(t);
-                yPos += 28;
+                return t;
             });
+
+            // Schreibender Stift
+            const pen = document.createElementNS(svgNS, 'text');
+            pen.textContent = '✏️';
+            pen.setAttribute('x', '710'); pen.setAttribute('y', 246);
+            pen.setAttribute('style', 'font-size:26px;');
+            group.appendChild(pen);
 
             const noteGroup = document.getElementById('noteGroupN');
             noteGroup.style.animation = 'none';
@@ -1666,6 +1735,40 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             noteGroup.style.visibility = 'visible';
             noteGroup.style.pointerEvents = 'auto';
             noteGroup.style.animation = 'notePopN 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
+
+            // Schreibmaschinen-Effekt: Stift schreibt den Text live
+            clearInterval(noteTypeTimerN);
+            let li = 0, ci = 0;
+            noteTypeTimerN = setInterval(() => {
+                if (li >= lines.length) {
+                    clearInterval(noteTypeTimerN);
+                    pen.remove();
+                    // Stempel "✓ GESPEICHERT" knallt aufs Papier
+                    const stamp = document.createElementNS(svgNS, 'g');
+                    stamp.setAttribute('transform', 'translate(950,438) rotate(-8)');
+                    stamp.innerHTML = `<g style="animation:stampInJ 0.45s cubic-bezier(0.2,1.4,0.4,1) 0.15s both;transform-box:fill-box;transform-origin:center">
+                        <rect x="-82" y="-19" width="164" height="38" rx="6" fill="none" stroke="#C0392B" stroke-width="3.5"/>
+                        <text x="0" y="7" text-anchor="middle" style="font-size:16px;fill:#C0392B;font-weight:800;letter-spacing:2px">✓ GESPEICHERT</text>
+                    </g>`;
+                    group.appendChild(stamp);
+                    // Funkeln rund um den Zettel
+                    [[688, 208], [1026, 222], [672, 428], [1032, 400], [858, 178]].forEach(([x, y], i) => {
+                        const s = document.createElementNS(svgNS, 'text');
+                        s.textContent = '✨';
+                        s.setAttribute('x', x); s.setAttribute('y', y);
+                        s.setAttribute('style', `font-size:22px;animation:sparklePopJ 1s ease ${0.3 + 0.12 * i}s both;transform-box:fill-box;transform-origin:center`);
+                        group.appendChild(s);
+                        setTimeout(() => s.remove(), 2200);
+                    });
+                    return;
+                }
+                ci++;
+                textEls[li].textContent = lines[li].slice(0, ci);
+                pen.setAttribute('x', Math.min(710 + ci * 10.5, 1020));
+                pen.setAttribute('y', 246 + li * 28);
+                if (ci >= lines[li].length) { li++; ci = 0; }
+            }, 42);
+
             setLabelJ('Notizblock', `Notiz #${savedNotes.length} gespeichert.`);
             jarvisSpeak(`Notiz gespeichert: ${text}`);
         }
@@ -1936,7 +2039,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const list = document.getElementById('transitListJ');
             list.innerHTML = '<div style="color:#6c85bd;font-size:14px;margin-top:30px;text-align:center">Lade Abfahrten…</div>';
             try {
-                const r = await fetch('https://www.mvg.de/api/bgw-pt/v3/departures?globalId=de:09174:6840&limit=16');
+                const r = await fetch('https://www.mvg.de/api/bgw-pt/v3/departures?globalId=de:09174:6800&limit=16');
                 const d = await r.json();
                 const deps = (Array.isArray(d) ? d : []).filter(x => !x.cancelled).slice(0, 12);
                 if (!deps.length) {
@@ -1968,6 +2071,95 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             } catch(e) {
                 list.innerHTML = '<div style="color:#f39c12;text-align:center;margin-top:30px">Abfahrten gerade nicht erreichbar.</div>';
                 setLabelJ('🚆 ÖPNV', 'Fehler beim Laden.');
+            }
+        }
+
+        // ── ROUTENPLANER (MVG) ────────────────────────────────────
+        function parseRouteQuery(lq) {
+            const m = lq.match(/(?:route|verbindung|wie\s+komme\s+ich|fahre?)\s*(?:von\s+)?(.*?)\s*(?:nach|bis|zum|zur)\s+(.+)/);
+            if (!m) return null;
+            return { from: (m[1] || '').trim() || 'Dachau Bahnhof', to: m[2].trim() };
+        }
+
+        async function mvgFindStation(q) {
+            const r = await fetch(`https://www.mvg.de/api/bgw-pt/v3/locations?query=${encodeURIComponent(q)}`);
+            const d = await r.json();
+            return (Array.isArray(d) ? d : []).find(l => l.type === 'STATION') || null;
+        }
+
+        function fmtTimeHM(iso) { return new Date(iso).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'}); }
+
+        const TRANSPORT_COLORS = { 'SBAHN': '#2a5d3f;color:#b8f0ce', 'UBAHN': '#2a3a5d;color:#b8d4f0', 'BUS': '#3b2a5d;color:#d0c2f0', 'TRAM': '#5d2a2a;color:#f0c2c2', 'BAHN': '#5d3c2a;color:#f0d8c2' };
+
+        async function openRouteMode(fromQ, toQ) {
+            showJ('ringListenJ', 0);
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
+            showJ('routeModeJ', 1);
+            setLabelJ('🗺️ Route', `${fromQ} → ${toQ}`);
+            document.getElementById('routeTitleJ').textContent = '🗺️ Routenplaner';
+            const list = document.getElementById('routeListJ');
+            list.innerHTML = '<div style="color:#6c85bd;font-size:14px;margin-top:30px;text-align:center">Suche Verbindung…</div>';
+            try {
+                const [fromSt, toSt] = await Promise.all([mvgFindStation(fromQ), mvgFindStation(toQ)]);
+                if (!fromSt || !toSt) {
+                    const missing = !fromSt ? fromQ : toQ;
+                    list.innerHTML = `<div style="color:#f39c12;text-align:center;margin-top:30px">Station "${missing}" nicht gefunden.</div>`;
+                    jarvisSpeak(`Ich konnte die Station ${missing} nicht finden.`);
+                    return;
+                }
+                document.getElementById('routeTitleJ').textContent = `🗺️ ${fromSt.name} → ${toSt.name}`;
+                const r = await fetch(`https://www.mvg.de/api/bgw-pt/v3/routes?originStationGlobalId=${fromSt.globalId}&destinationStationGlobalId=${toSt.globalId}`);
+                const routes = await r.json();
+                const conns = (Array.isArray(routes) ? routes : []).slice(0, 3);
+                if (!conns.length) {
+                    list.innerHTML = '<div style="color:#6c85bd;text-align:center;margin-top:30px">Keine Verbindung gefunden.</div>';
+                    jarvisSpeak('Ich habe keine Verbindung gefunden.');
+                    return;
+                }
+
+                const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+                list.innerHTML = conns.map((route, idx) => {
+                    const legs = (route.parts || []).filter(p => p.line && p.line.transportType !== 'PEDESTRIAN');
+                    if (!legs.length) return '';
+                    const dep = legs[0].from.plannedDeparture;
+                    const arr = legs[legs.length - 1].to.plannedArrival || legs[legs.length - 1].to.plannedDeparture;
+                    const durMin = Math.max(1, Math.round((new Date(arr) - new Date(dep)) / 60000));
+                    const transfers = legs.length - 1;
+                    const legsHtml = legs.map((p, i) => {
+                        const col = TRANSPORT_COLORS[p.line.transportType] || '#3b355e;color:#a9bbe0';
+                        const gleis = p.from.platform ? ` · Gl. ${p.from.platform}` : '';
+                        const umstieg = i > 0 ? `<div style="font-size:11px;color:#6c85bd;padding:2px 0 4px 14px;border-left:2px dotted #3b355e;margin-left:20px">⇄ Umsteigen in ${esc(p.from.name)}</div>` : '';
+                        return `${umstieg}<div style="display:flex;align-items:center;gap:8px;padding:3px 0">
+                            <span style="background:${col};font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;min-width:30px;text-align:center">${esc(p.line.label)}</span>
+                            <span style="font-size:12px;color:#eef1f9;font-weight:600">${fmtTimeHM(p.from.plannedDeparture)}</span>
+                            <span style="font-size:12px;color:#a9bbe0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.from.name)}${gleis} → ${esc(p.to.name)}</span>
+                            <span style="font-size:12px;color:#6c85bd">${fmtTimeHM(p.to.plannedArrival || p.to.plannedDeparture)}</span>
+                        </div>`;
+                    }).join('');
+                    return `<div style="background:#151226;border:1px solid ${idx === 0 ? '#6c85bd' : '#2a2548'};border-radius:12px;padding:12px 14px">
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+                            <span style="font-size:16px;font-weight:700;color:#EEF1F9">${fmtTimeHM(dep)} → ${fmtTimeHM(arr)}</span>
+                            <span style="font-size:12px;color:#6c85bd">${durMin} Min · ${transfers === 0 ? 'direkt' : transfers + '× umsteigen'}</span>
+                        </div>${legsHtml}</div>`;
+                }).join('');
+
+                // Sprachansage für die erste Verbindung
+                const legs0 = (conns[0].parts || []).filter(p => p.line && p.line.transportType !== 'PEDESTRIAN');
+                if (legs0.length) {
+                    const dep0 = legs0[0], arr0 = legs0[legs0.length - 1];
+                    const durMin0 = Math.max(1, Math.round((new Date(arr0.to.plannedArrival || arr0.to.plannedDeparture) - new Date(dep0.from.plannedDeparture)) / 60000));
+                    const umstiege = legs0.slice(1).map(p => p.from.name);
+                    let msg = `Nimm die ${dep0.line.label} um ${fmtTimeHM(dep0.from.plannedDeparture)} ab ${dep0.from.name}`;
+                    if (dep0.from.platform) msg += `, Gleis ${dep0.from.platform}`;
+                    if (umstiege.length) msg += `. Umsteigen in ${umstiege.join(' und ')}`;
+                    msg += `. Ankunft ${arr0.to.name} um ${fmtTimeHM(arr0.to.plannedArrival || arr0.to.plannedDeparture)} Uhr. Fahrzeit ${durMin0} Minuten.`;
+                    jarvisSpeak(msg);
+                }
+                setLabelJ('🗺️ Route', `${fromSt.name} → ${toSt.name}`);
+            } catch(e) {
+                list.innerHTML = '<div style="color:#f39c12;text-align:center;margin-top:30px">Routenplaner gerade nicht erreichbar.</div>';
+                setLabelJ('🗺️ Route', 'Fehler beim Laden.');
             }
         }
 
