@@ -1198,12 +1198,12 @@
                 <div id="goveeStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Demo-Modus</div>
             </div>
             <div class="config-box">
-                <h3>ElevenLabs (Stimme)</h3>
+                <h3>Deepgram (Stimme)</h3>
                 <div class="input-row-j">
-                    <input type="text" id="elevenLabsKey" placeholder="API Key von elevenlabs.io…" style="font-size:12px;font-family:monospace;">
-                    <button class="btn-j" onclick="saveElevenLabsKey()">💾</button>
+                    <input type="text" id="deepgramKey" placeholder="API Key von deepgram.com…" style="font-size:12px;font-family:monospace;">
+                    <button class="btn-j" onclick="saveDeepgramKey()">💾</button>
                 </div>
-                <div id="elevenLabsStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Browser-Stimme</div>
+                <div id="deepgramStatus" style="font-size:11px;color:#3b355e;margin-top:4px;">Kein Key → Browser-Stimme</div>
             </div>
             <div class="config-box">
                 <h3>Groq API Key</h3>
@@ -1259,7 +1259,7 @@
             }, 1000);
             getLiveWeather();
             updateGroqKeyStatus();
-            updateElevenLabsStatus();
+            updateDeepgramStatus();
             updateIdleSpotify();
             setInterval(updateIdleSpotify, 10000);
             startIdleAvatarAnimations();
@@ -2880,7 +2880,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 g.gain.value = 0.001; o.connect(g); g.connect(ctx.destination);
                 o.start(); o.stop(ctx.currentTime + 0.05);
             } catch(e) {}
-            // 2. TTS-Audio-Element mit Stille freischalten (für ElevenLabs)
+            // 2. TTS-Audio-Element mit Stille freischalten (für Deepgram-Stimme)
             try {
                 ttsAudio.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
                 ttsAudio.play().catch(() => {});
@@ -3269,26 +3269,25 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         // iOS blockiert sonst jedes neue Audio() ohne Nutzer-Geste
         const ttsAudio = new Audio();
 
-        // ElevenLabs – Rachel (multilingual, sehr natürlich)
-        const ELEVEN_VOICE_ID = 'cgSgspJ2msm6clMCkdW9';
+        // Deepgram Aura-2 – deutsche Stimme (viktoria = weiblich, klar)
+        const DEEPGRAM_VOICE = 'aura-2-viktoria-de';
 
-        const ELEVEN_DEFAULT_KEY = '';
-        function getElevenLabsKey() { try { return localStorage.getItem('elevenLabsKey') || ELEVEN_DEFAULT_KEY; } catch(e) { return ELEVEN_DEFAULT_KEY; } }
+        function getDeepgramKey() { try { return localStorage.getItem('deepgramKey') || ''; } catch(e) { return ''; } }
 
-        function saveElevenLabsKey() {
-            const k = document.getElementById('elevenLabsKey').value.trim();
+        function saveDeepgramKey() {
+            const k = document.getElementById('deepgramKey').value.trim();
             if (!k) return;
-            try { localStorage.setItem('elevenLabsKey', k); } catch(e) {}
-            document.getElementById('elevenLabsKey').value = '';
-            updateElevenLabsStatus();
+            try { localStorage.setItem('deepgramKey', k); } catch(e) {}
+            document.getElementById('deepgramKey').value = '';
+            updateDeepgramStatus();
         }
 
-        function updateElevenLabsStatus() {
-            const el = document.getElementById('elevenLabsStatus');
+        function updateDeepgramStatus() {
+            const el = document.getElementById('deepgramStatus');
             if (!el) return;
-            const k = getElevenLabsKey();
+            const k = getDeepgramKey();
             el.style.color = k ? '#1d9e75' : '#3b355e';
-            el.textContent = k ? 'ElevenLabs aktiv ✓ (Neural Voice)' : 'Kein Key → Browser-Stimme';
+            el.textContent = k ? 'Deepgram aktiv ✓ (Aura-2 · Viktoria)' : 'Kein Key → Browser-Stimme';
         }
 
         function mouthStart() {
@@ -3306,19 +3305,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (currentAudio) { currentAudio.pause(); currentAudio = null; }
             if (window.speechSynthesis) speechSynthesis.cancel();
 
-            const elKey = getElevenLabsKey();
-            if (elKey) {
+            const dgKey = getDeepgramKey();
+            if (dgKey) {
                 try {
-                    const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${ELEVEN_VOICE_ID}`, {
+                    const res = await fetch(`https://api.deepgram.com/v1/speak?model=${DEEPGRAM_VOICE}&encoding=mp3`, {
                         method: 'POST',
-                        headers: { 'xi-api-key': elKey, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            text,
-                            model_id: 'eleven_multilingual_v2',
-                            voice_settings: { stability: 0.45, similarity_boost: 0.80, style: 0.25, use_speaker_boost: true }
-                        })
+                        headers: { 'Authorization': 'Token ' + dgKey, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text })
                     });
-                    if (!res.ok) throw new Error('ElevenLabs Fehler ' + res.status);
+                    if (!res.ok) throw new Error('Deepgram Fehler ' + res.status);
                     const blob = await res.blob();
                     const url = URL.createObjectURL(blob);
                     ttsAudio.src = url;
