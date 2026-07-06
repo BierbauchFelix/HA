@@ -1267,8 +1267,9 @@
             loadAlarms();
             setInterval(checkAlarms, 30000);
             // iOS: Mikrofon & Ton brauchen einen Fingertipp → Hinweis-Button zeigen.
+            // In-App-Browser (WebFrame): Warnung, dass nur Safari Sprache kann.
             // Desktop: direkt lauschen; der erste Klick schaltet zusätzlich den Ton frei.
-            if (IS_IOS) showVoiceActivateHint();
+            if (IS_IOS_WEBVIEW || IS_IOS) showVoiceActivateHint();
             else startWakeWord();
             document.addEventListener('pointerdown', ev => {
                 if (!voiceUnlocked && ev.target.id !== 'voiceActivateJ') activateVoice();
@@ -2835,7 +2836,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 wakeRecog.onerror = e => {
                     if (done) return;
                     wakeRecog = null;
-                    if (e.error === 'not-allowed') { showVoiceActivateHint(); return; }
+                    // 'service-not-allowed' = WKWebView (WebFrame etc.) ohne Sprachdienst
+                    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') { showVoiceActivateHint(); return; }
                     const delay = e.error === 'network' ? 5000 : 2000;
                     if (e.error !== 'aborted') wakeRestartTimer = setTimeout(startWakeWord, delay);
                 };
@@ -2852,10 +2854,20 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         let voiceUnlocked = false;
         const IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent)
                     || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        // In-App-Browser (WebFrame & Co. = WKWebView): Apple stellt dort KEINE
+        // Spracherkennung bereit (WebKit-Bug 239816) — nur echtes Safari kann es
+        const IS_IOS_WEBVIEW = IS_IOS && !/Safari\//i.test(navigator.userAgent);
 
         function showVoiceActivateHint() {
             const b = document.getElementById('voiceActivateJ');
-            if (b && !voiceUnlocked) b.style.display = 'block';
+            if (!b) return;
+            if (IS_IOS_WEBVIEW) {
+                b.innerHTML = '⚠️ Sprachsteuerung geht nur in Safari — nicht in dieser App';
+                b.style.borderColor = '#f39c12';
+                b.style.display = 'block';
+                return;
+            }
+            if (!voiceUnlocked) b.style.display = 'block';
         }
 
         function activateVoice() {
@@ -2884,6 +2896,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const b = document.getElementById('voiceActivateJ');
             if (b) b.style.display = 'none';
             startWakeWord();
+            // Im In-App-Browser bleibt die Warnung sichtbar
+            if (IS_IOS_WEBVIEW) showVoiceActivateHint();
         }
 
         // ── SPOTIFY FULL VIEW ─────────────────────────────────────
