@@ -2,7 +2,9 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Jarvis OS - Ultimate Assistant</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Modak&display=swap" rel="stylesheet">
@@ -29,49 +31,41 @@
             color: var(--text-primary);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             min-height: 100vh;
+            min-height: 100svh;
             box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-            letter-spacing: 0.5px;
-        }
+        h1 { display: none; }
 
         .app-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
+            display: block;
             width: 100%;
-            max-width: 1400px;
         }
 
-        @media (min-width: 1024px) {
-            .app-container {
-                grid-template-columns: 2.5fr 1fr;
-            }
-        }
-
+        /* Monitor füllt das Display — Breite wird so gekappt, dass das
+           16:9-SVG samt Header exakt in die Viewport-Höhe passt (iPhone XR & Co.) */
         .monitor-section {
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 0;
+            padding: 8px 12px 12px;
             display: flex;
             flex-direction: column;
             position: relative;
+            box-sizing: border-box;
+            margin: 0 auto;
+            width: min(100vw, calc((100vh - 66px) * 1.7778 + 24px));
+            width: min(100vw, calc((100svh - 66px) * 1.7778 + 24px));
         }
         .svg-overlay {
             position: absolute;
-            top: 24px; left: 24px; right: 24px; bottom: 24px;
+            top: 8px; left: 12px; right: 12px; bottom: 12px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -82,7 +76,7 @@
         /* Right-side overlay (starts at ~51.5% = x:660/1280) */
         .svg-overlay-right {
             position: absolute;
-            top: 24px; left: calc(24px + 51.6%); right: 24px; bottom: 24px;
+            top: 8px; left: calc(12px + (100% - 24px) * 0.516); right: 12px; bottom: 12px;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.3s ease;
@@ -105,24 +99,61 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
+            margin-bottom: 6px;
             border-bottom: 1px solid rgba(59, 53, 94, 0.4);
-            padding-bottom: 12px;
+            padding-bottom: 6px;
+            padding-right: 46px; /* Platz für das Zahnrad */
         }
 
-        .phase-j { font-size: 16px; font-weight: 600; color: var(--text-muted); margin: 0; }
-        .trigger-j { font-size: 13px; color: var(--text-secondary); margin: 0; }
+        .phase-j { font-size: 14px; font-weight: 600; color: var(--text-muted); margin: 0; white-space: nowrap; }
+        .trigger-j { font-size: 12px; color: var(--text-secondary); margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+        /* Command Center = Einstellungs-Schublade (Zahnrad oben rechts) */
         .control-section {
+            position: fixed;
+            top: 0; right: 0; bottom: 0;
+            width: min(400px, 92vw);
             background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
+            border-left: 1px solid var(--border-color);
+            border-radius: 20px 0 0 20px;
+            padding: 60px 20px 24px;
             display: flex;
             flex-direction: column;
             gap: 16px;
-            height: fit-content;
+            overflow-y: auto;
+            box-sizing: border-box;
+            z-index: 1000;
+            transform: translateX(110%);
+            transition: transform 0.3s ease;
+            box-shadow: -12px 0 40px rgba(0,0,0,0.6);
         }
+        .control-section.open { transform: translateX(0); }
+
+        #settingsGearJ {
+            position: fixed;
+            top: 8px;
+            right: 10px;
+            z-index: 1001;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(21,18,38,0.85);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 19px;
+            cursor: pointer;
+            transition: transform 0.3s ease, border-color 0.2s;
+        }
+        #settingsGearJ:hover { transform: rotate(45deg); border-color: var(--text-muted); }
+
+        #drawerBackdropJ {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #drawerBackdropJ.open { opacity: 1; pointer-events: auto; }
 
         .control-section h2 {
             font-size: 18px;
@@ -160,7 +191,7 @@
             color: var(--text-primary);
             padding: 12px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 16px; /* verhindert iOS-Auto-Zoom beim Fokussieren */
             outline: none;
             box-sizing: border-box;
             width: 100%;
@@ -220,7 +251,7 @@
         .sunRaysJ { animation: sunRotateJ 25s linear infinite; transform-origin: 610px 300px; }
         
         #avatarBundleJ { transform-origin: 640px 330px; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); }
-        svg { border-radius: 16px; background: #100e1e; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
+        svg { display: block; width: 100%; height: auto; border-radius: 16px; background: #100e1e; box-shadow: inset 0 0 20px rgba(0,0,0,0.6); }
     </style>
 </head>
 <body>
@@ -233,6 +264,9 @@
     </div>
 
     <h1>Jarvis Autonomous Assistant Terminal</h1>
+
+    <button id="settingsGearJ" onclick="toggleSettingsDrawer()" title="Einstellungen">⚙️</button>
+    <div id="drawerBackdropJ" onclick="toggleSettingsDrawer(false)"></div>
 
     <div class="app-container">
         
@@ -1129,9 +1163,9 @@
         </div>
         </div>
 
-        <!-- STEUERUNGSZENTRALE RECHTS -->
-        <div class="control-section">
-            <h2>Command Center</h2>
+        <!-- STEUERUNGSZENTRALE (Schublade über Zahnrad) -->
+        <div class="control-section" id="controlDrawerJ">
+            <h2>⚙️ Einstellungen</h2>
             <div class="config-box">
                 <h3>System Befehl</h3>
                 <div class="chat-input-group">
@@ -1268,6 +1302,14 @@
                     if (iconEl) iconEl.textContent = icon;
                 }
             } catch(e) { document.getElementById('weatherTempJ').textContent = "--°C"; }
+        }
+
+        function toggleSettingsDrawer(force) {
+            const d = document.getElementById('controlDrawerJ');
+            const b = document.getElementById('drawerBackdropJ');
+            const open = typeof force === 'boolean' ? force : !d.classList.contains('open');
+            d.classList.toggle('open', open);
+            b.classList.toggle('open', open);
         }
 
         function showJ(id, v) {
@@ -2559,7 +2601,11 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     if (el) { el.style.color = '#a0415d'; el.textContent = `Fehler ${res.status}: ${data.message || 'API-Key prüfen'}`; }
                     return;
                 }
-                goveeDevices = data.data || [];
+                // Nur die echten Lampen anzeigen — Gruppen wie "Alle" ausblenden
+                const GOVEE_ALLOWED = ['zimmer', 'govee glide lively'];
+                const all = data.data || [];
+                goveeDevices = all.filter(d => GOVEE_ALLOWED.includes((d.deviceName || '').toLowerCase().trim()));
+                if (!goveeDevices.length) goveeDevices = all;
                 if (el) {
                     if (goveeDevices.length) {
                         el.style.color = '#1d9e75';
