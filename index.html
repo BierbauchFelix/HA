@@ -362,8 +362,9 @@
                     <circle cx="978" cy="481" r="4" fill="#6C85BD" opacity="0.3"/>
                     <text x="992" y="486" style="font-size:11px;fill:#3B355E;letter-spacing:1.5px">VOICE ACTIVE</text>
 
-                    <!-- Bottom tagline -->
-                    <text x="874" y="642" text-anchor="middle" style="font-size:10px;fill:#2a2548;letter-spacing:5px">CENTRAL TERMINAL READY</text>
+                    <!-- Bottom tagline / Newsticker -->
+                    <text id="idleTaglineJ" x="874" y="642" text-anchor="middle" style="font-size:10px;fill:#2a2548;letter-spacing:5px;transition:opacity 0.4s">CENTRAL TERMINAL READY</text>
+                    <text id="newsTickerJ" x="874" y="644" text-anchor="middle" style="font-size:13px;fill:#6C85BD;opacity:0;transition:opacity 0.4s"></text>
 
                     <!-- Spotify Now Playing (nur sichtbar wenn was läuft) -->
                     <g id="idleSpotifyJ" opacity="0" style="transition:opacity 0.6s">
@@ -412,6 +413,47 @@
                             <circle cx="640" cy="330" r="195" fill="none" stroke="#241F3E" stroke-width="16"/>
                             <path id="progressArcO" fill="none" stroke="#6C85BD" stroke-width="16" stroke-linecap="round"/>
                             <circle id="progressDotO" r="9" fill="#A9BBE0"/>
+                            <!-- Figur in der Ring-Mitte, Arm folgt dem Timer-Punkt -->
+                            <g transform="translate(416,40) scale(0.8)">
+                                <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                                <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                                <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                                <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                                <g id="timerRestLO" class="fadeFastJ">
+                                    <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                                    <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                                </g>
+                                <g id="timerRestRO" class="fadeFastJ" style="opacity:0">
+                                    <ellipse cx="354" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-22 354 468)"/>
+                                    <circle cx="366" cy="502" r="9" fill="url(#podGJ)"/>
+                                </g>
+                                <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                                <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                                <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                                <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                                <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                                <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                                <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                                <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                                <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                                <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                                <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                                <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                                <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                                <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                                <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                                <!-- Zeige-Arme (rotieren zum Timer-Punkt) -->
+                                <g id="timerArmRO" class="fadeFastJ" transform="rotate(-90 346 445)">
+                                    <ellipse cx="394" cy="445" rx="46" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                                    <circle cx="446" cy="445" r="10" fill="url(#podGJ)"/>
+                                </g>
+                                <g id="timerArmLO" class="fadeFastJ" style="opacity:0">
+                                    <ellipse cx="166" cy="445" rx="46" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                                    <circle cx="114" cy="445" r="10" fill="url(#podGJ)"/>
+                                </g>
+                            </g>
                         </g>
 
                         <g id="ringListenJ" class="ringJ fadeFastJ" opacity="0"><circle cx="640" cy="330" r="168" fill="none" stroke="#6C85BD" stroke-width="3"/></g>
@@ -455,7 +497,7 @@
                     </g>
 
                     <!-- KARIERTER NOTIZZETTEL -->
-                    <g id="noteGroupN" class="fadeFastJ" opacity="0" style="transform-origin: 855px 330px;">
+                    <g id="noteGroupN" class="fadeFastJ" opacity="0" style="visibility:hidden;transform-origin: 855px 330px;">
                         <rect x="669" y="196" width="380" height="280" rx="4" fill="#1A1810" opacity="0.3"/>
                         <rect x="665" y="190" width="380" height="280" rx="4" fill="#F2DD6B"/>
                         <g clip-path="url(#noteClipN)">
@@ -473,18 +515,113 @@
                     </g>
 
                     <!-- RECHNER-ANSICHT -->
-                    <g id="mathTextJ" opacity="0">
+                    <g id="mathTextJ" opacity="0" style="visibility:hidden">
+                        <!-- Schwebende Mathe-Symbole -->
+                        <text x="524" y="162" style="font-size:26px;fill:#6C85BD;opacity:0.25">√</text>
+                        <text x="1108" y="172" style="font-size:30px;fill:#6C85BD;opacity:0.22">π</text>
+                        <text x="1118" y="472" style="font-size:26px;fill:#6C85BD;opacity:0.2">∑</text>
+                        <text x="498" y="592" style="font-size:30px;fill:#6C85BD;opacity:0.22">÷</text>
+                        <text x="1082" y="588" style="font-size:24px;fill:#6C85BD;opacity:0.2">%</text>
+
+                        <!-- Rechen-Tafel -->
+                        <rect x="560" y="190" width="520" height="330" rx="20" fill="#0f0d1e" stroke="#2a2548" stroke-width="1.5"/>
+                        <rect x="560" y="190" width="520" height="330" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
+                        <path d="M 580 206 L 580 226 L 600 226" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1060 206 L 1060 226 L 1040 226" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 580 504 L 580 484 L 600 484" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1060 504 L 1060 484 L 1040 484" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <text x="820" y="230" text-anchor="middle" style="font-size:10px;fill:#3B355E;letter-spacing:4px">RECHENZENTRUM</text>
+
+                        <!-- Figur mit Zeigestock -->
+                        <g transform="translate(182,30) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <!-- linker Arm -->
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <!-- rechter Arm zeigt zur Tafel -->
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <line x1="392" y1="401" x2="470" y2="350" stroke="#c9a15e" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="392" cy="401" r="10" fill="url(#podGJ)"/>
+                            <!-- Körper -->
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <!-- Kopf -->
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                        </g>
+
+                        <!-- Aufgabe & Ergebnis -->
                         <g id="mathChipsGroupJ"></g>
-                        <line x1="340" y1="600" x2="940" y2="600" stroke="#3B355E" stroke-width="2"/>
-                        <text id="mathResultJ" x="640" y="660" text-anchor="middle" style="font-size:46px;fill:#6C85BD;font-weight:600">0</text>
+                        <line x1="620" y1="400" x2="1020" y2="400" stroke="#3B355E" stroke-width="2"/>
+                        <text x="668" y="466" text-anchor="middle" style="font-size:34px;fill:#3B355E;font-weight:600">=</text>
+                        <text id="mathResultJ" x="830" y="470" text-anchor="middle" style="font-size:52px;fill:#8fd0ff;font-weight:700" filter="url(#eyeGlowJ)">0</text>
                     </g>
 
                     <!-- EXTRA WETTER ANSICHT -->
-                    <g id="detailWeatherModeJ" class="fadeFastJ" opacity="0">
-                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
-                        <text id="detWeatherCityJ" x="730" y="110" style="font-size:18px; fill:#6C85BD; font-weight:500;">Dachau</text>
-                        <text id="detWeatherDayJ" x="730" y="135" style="font-size:14px; fill:#a9bbe0;">Dienstag</text>
-                        <g transform="translate(120, -30)">
+                    <g id="detailWeatherModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
+                        <!-- Wetter-Panel -->
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#2a2548" stroke-width="1.5"/>
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
+                        <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 710 614 L 710 594 L 730 594" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1180 614 L 1180 594 L 1160 594" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <text x="1160" y="108" text-anchor="end" style="font-size:10px;fill:#3B355E;letter-spacing:4px">WETTERSTATION</text>
+
+                        <!-- Figur mit Regenschirm -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <line x1="392" y1="401" x2="400" y2="100" stroke="#c9a15e" stroke-width="5" stroke-linecap="round"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <!-- Regenschirm -->
+                            <path d="M 310 182 A 90 90 0 0 1 490 182 A 30 18 0 0 1 430 182 A 30 18 0 0 1 370 182 A 30 18 0 0 1 310 182 Z" fill="#5FA8E6" stroke="#3b62c4" stroke-width="2"/>
+                            <line x1="400" y1="92" x2="400" y2="80" stroke="#c9a15e" stroke-width="4" stroke-linecap="round"/>
+                            <circle cx="392" cy="401" r="10" fill="url(#podGJ)"/>
+                            <path d="M 322 214 q 6 12 0 17 q -6 -5 0 -17" fill="#378ADD" opacity="0.55"/>
+                            <path d="M 468 226 q 6 12 0 17 q -6 -5 0 -17" fill="#378ADD" opacity="0.45"/>
+                        </g>
+
+                        <text id="detWeatherCityJ" x="730" y="130" style="font-size:18px; fill:#6C85BD; font-weight:500;">Dachau</text>
+                        <text id="detWeatherDayJ" x="730" y="155" style="font-size:14px; fill:#a9bbe0;">Dienstag</text>
+                        <g transform="translate(150, -30)">
                             <g class="sunRaysJ" stroke="#f39c12" stroke-width="4" stroke-linecap="round">
                                 <line x1="610" y1="235" x2="610" y2="215" /><line x1="610" y1="365" x2="610" y2="385" />
                             </g>
@@ -511,19 +648,116 @@
                         <text x="1093" y="448" text-anchor="middle" style="font-size:18px;">💧</text>
                         <text x="1093" y="466" text-anchor="middle" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">REGEN</text>
                         <text id="detWeatherRainJ" x="1093" y="500" text-anchor="middle" style="font-size:28px;fill:#378ADD;font-weight:700;">0%</text>
+
+                        <!-- LUFTQUALITÄT -->
+                        <rect x="728" y="530" width="210" height="82" rx="14" fill="#1a1630" stroke="#3b355e" stroke-width="1.2"/>
+                        <text x="748" y="556" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">🌬️ LUFTQUALITÄT</text>
+                        <text id="detAirJ" x="748" y="586" style="font-size:22px;fill:#a9bbe0;font-weight:700;">—</text>
+                        <text id="detAirValJ" x="748" y="603" style="font-size:10px;fill:#3b355e;"></text>
+
+                        <!-- POLLEN -->
+                        <rect x="958" y="530" width="200" height="82" rx="14" fill="#1a1630" stroke="#3b355e" stroke-width="1.2"/>
+                        <text x="978" y="556" style="font-size:10px;fill:#6c85bd;letter-spacing:1px;">🌼 POLLENFLUG</text>
+                        <text id="detPollenJ" x="978" y="586" style="font-size:22px;fill:#a9bbe0;font-weight:700;">—</text>
+                        <text id="detPollenValJ" x="978" y="603" style="font-size:10px;fill:#3b355e;"></text>
                     </g>
 
                     <!-- WIKIPEDIA / KNOWLEDGE BASE ("WAS IST...") -->
-                    <g id="infoModeJ" opacity="0">
-                        <rect x="460" y="130" width="780" height="400" rx="24" fill="#241F3E" stroke="#3B355E" stroke-width="1.5"/>
-                        <text x="500" y="176" style="font-size:13px;fill:#888780">Jarvis Knowledge Base Response</text>
-                        <line x1="500" y1="192" x2="1200" y2="192" stroke="#3B355E" stroke-width="1"/>
+                    <g id="infoModeJ" opacity="0" style="visibility:hidden">
+                        <!-- Figur -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="354" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-22 354 468)"/>
+                            <circle cx="366" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                        </g>
+                        <!-- Sprechblase -->
+                        <rect x="560" y="140" width="640" height="390" rx="24" fill="#241F3E" stroke="#3B355E" stroke-width="1.5"/>
+                        <polygon points="561,300 505,328 561,354" fill="#241F3E" stroke="#3B355E" stroke-width="1.5"/>
+                        <rect x="558" y="303" width="8" height="48" fill="#241F3E"/>
+                        <text x="600" y="182" style="font-size:12px;fill:#6C85BD;letter-spacing:2px">💬 JARVIS ANTWORT</text>
+                        <line x1="600" y1="198" x2="1160" y2="198" stroke="#3B355E" stroke-width="1"/>
                         <g id="infoLinesJ"></g>
                     </g>
 
                     <!-- NOTIZEN LISTE -->
-                    <g id="notesListModeJ" class="fadeFastJ" opacity="0">
-                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+                    <g id="notesListModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
+                        <!-- Schwebende Mini-Notizen -->
+                        <g transform="rotate(-8 195 165)">
+                            <rect x="150" y="130" width="90" height="70" rx="8" fill="#fff8dc" opacity="0.92"/>
+                            <line x1="162" y1="150" x2="228" y2="150" stroke="#c9b98a" stroke-width="2"/>
+                            <line x1="162" y1="164" x2="228" y2="164" stroke="#c9b98a" stroke-width="2"/>
+                            <line x1="162" y1="178" x2="210" y2="178" stroke="#c9b98a" stroke-width="2"/>
+                        </g>
+                        <g transform="rotate(6 485 195)">
+                            <rect x="440" y="160" width="90" height="70" rx="8" fill="#fff8dc" opacity="0.92"/>
+                            <line x1="452" y1="180" x2="518" y2="180" stroke="#c9b98a" stroke-width="2"/>
+                            <line x1="452" y1="194" x2="518" y2="194" stroke="#c9b98a" stroke-width="2"/>
+                            <line x1="452" y1="208" x2="500" y2="208" stroke="#c9b98a" stroke-width="2"/>
+                        </g>
+                        <g transform="rotate(-5 185 415)">
+                            <rect x="140" y="380" width="90" height="70" rx="8" fill="#fff8dc" opacity="0.85"/>
+                            <line x1="152" y1="400" x2="218" y2="400" stroke="#c9b98a" stroke-width="2"/>
+                            <line x1="152" y1="414" x2="218" y2="414" stroke="#c9b98a" stroke-width="2"/>
+                        </g>
+
+                        <!-- Figur mit Bleistift -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <!-- Bleistift -->
+                            <g transform="rotate(-10 392 340)">
+                                <rect x="384" y="272" width="16" height="118" fill="#f0c419" stroke="#b98850" stroke-width="1.5"/>
+                                <rect x="384" y="258" width="16" height="14" rx="4" fill="#e88fa5"/>
+                                <rect x="384" y="272" width="16" height="6" fill="#9aa3b8"/>
+                                <polygon points="384,390 400,390 392,414" fill="#f7e3b0"/>
+                                <polygon points="389,405 395,405 392,414" fill="#333333"/>
+                            </g>
+                            <circle cx="392" cy="398" r="10" fill="url(#podGJ)"/>
+                        </g>
                         <foreignObject x="710" y="70" width="490" height="580">
                             <div xmlns="http://www.w3.org/1999/xhtml" style="background:rgba(26,22,54,0.7);border:1px solid #3b355e;border-radius:20px;padding:22px;color:#fff;box-sizing:border-box;height:100%;display:flex;flex-direction:column;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
@@ -537,7 +771,7 @@
                     </g>
 
                     <!-- MUSIK PLAYER -->
-                    <g id="musicModeJ" class="fadeFastJ" opacity="0">
+                    <g id="musicModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
                         <!-- Figur (mittig, hinter dem Cover) -->
                         <g transform="translate(382,16) scale(0.92)">
                             <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
@@ -606,7 +840,44 @@
 
                     <!-- INTEGRIERTES LED CONTROL WINDOW ("LICHTER") -->
                     <g id="ledControlWindowModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
-                        <line x1="660" y1="50" x2="660" y2="670" stroke="#3B355E" stroke-width="1.5" opacity="0.4"/>
+                        <!-- Figur mit leuchtender Glühbirne -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <!-- Glühbirne über der Hand -->
+                            <circle cx="400" cy="336" r="52" fill="#f7d774" opacity="0.15"/>
+                            <line x1="400" y1="290" x2="400" y2="276" stroke="#f7d774" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                            <line x1="365" y1="301" x2="355" y2="291" stroke="#f7d774" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                            <line x1="435" y1="301" x2="445" y2="291" stroke="#f7d774" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+                            <circle cx="400" cy="336" r="26" fill="#f7d774" stroke="#b98850" stroke-width="2" filter="url(#eyeGlowJ)"/>
+                            <path d="M 392 344 Q 400 330 408 344" stroke="#b98850" stroke-width="2.5" fill="none"/>
+                            <rect x="390" y="360" width="20" height="14" rx="3" fill="#9aa3b8"/>
+                            <line x1="390" y1="365" x2="410" y2="365" stroke="#6b7383" stroke-width="1.5"/>
+                            <line x1="390" y1="369" x2="410" y2="369" stroke="#6b7383" stroke-width="1.5"/>
+                            <circle cx="392" cy="401" r="10" fill="url(#podGJ)"/>
+                        </g>
                         <foreignObject x="710" y="120" width="460" height="480">
                             <div xmlns="http://www.w3.org/1999/xhtml" style="background: rgba(26,22,54,0.6); border: 1px solid var(--border-color); border-radius: 20px; padding: 24px; color:#fff; box-sizing:border-box; height:100%;">
                                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
@@ -633,8 +904,10 @@
                                 </div>
                             </div>
                         </foreignObject>
+                    </g>
+
                     <!-- SPOTIFY FULL VIEW -->
-                    <g id="musicFullModeJ" opacity="0" style="pointer-events:none">
+                    <g id="musicFullModeJ" opacity="0" style="visibility:hidden;pointer-events:none">
                         <!-- Hintergrund -->
                         <rect x="0" y="0" width="1280" height="720" fill="url(#bgGJ)"/>
                         <!-- Cover Blur-Hintergrund (groß, unscharf) -->
@@ -685,7 +958,7 @@
                     </g>
 
                     <!-- FUSSBALL PANEL -->
-                    <g id="footballModeJ" opacity="0" style="pointer-events:none">
+                    <g id="footballModeJ" opacity="0" style="visibility:hidden;pointer-events:none">
                         <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
                         <foreignObject x="670" y="40" width="590" height="640">
                             <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;padding:16px 20px;box-sizing:border-box;overflow:hidden;">
@@ -708,7 +981,7 @@
                     </g>
 
                     <!-- WECKER PANEL -->
-                    <g id="alarmModeJ" opacity="0" style="pointer-events:none">
+                    <g id="alarmModeJ" opacity="0" style="visibility:hidden;pointer-events:none">
                         <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
                         <foreignObject x="670" y="40" width="590" height="640">
                             <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;padding:20px;box-sizing:border-box;">
@@ -717,6 +990,51 @@
                             </div>
                         </foreignObject>
                     </g>
+
+                    <!-- ÖPNV ABFAHRTEN -->
+                    <g id="transitModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
+                        <!-- Figur -->
+                        <g transform="translate(122,40) scale(0.85)">
+                            <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
+                            <line x1="280" y1="204" x2="280" y2="182" stroke="#39415c" stroke-width="5" stroke-linecap="round"/>
+                            <circle cx="280" cy="174" r="9" fill="url(#podGJ)"/>
+                            <rect x="262" y="376" width="36" height="42" rx="10" fill="url(#robotHeadGJ)"/>
+                            <ellipse cx="206" cy="468" rx="22" ry="40" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(22 206 468)"/>
+                            <circle cx="194" cy="502" r="9" fill="url(#podGJ)"/>
+                            <ellipse cx="352" cy="420" rx="40" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2" transform="rotate(-25 352 420)"/>
+                            <ellipse cx="280" cy="470" rx="66" ry="62" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <rect x="210" y="440" width="140" height="20" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <rect x="210" y="498" width="140" height="24" fill="#5FA8E6" clip-path="url(#bodyClipIdleJ)"/>
+                            <circle cx="280" cy="478" r="9" fill="#3b62c4"/>
+                            <ellipse cx="166" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="394" cy="316" rx="17" ry="36" fill="url(#podGJ)" stroke="#1a2036" stroke-width="2"/>
+                            <ellipse cx="280" cy="302" rx="108" ry="102" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                            <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
+                            <rect x="192" y="262" width="176" height="104" rx="48" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <circle cx="240" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="240" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="233" cy="306" r="6" fill="#EAF2FF" opacity="0.9"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <circle cx="320" cy="314" r="26" fill="none" stroke="#8fd0ff" stroke-width="6" filter="url(#eyeGlowJ)"/>
+                            <circle cx="320" cy="314" r="20" fill="#0a0d14"/>
+                            <circle class="pupilJ" cx="313" cy="306" r="6" fill="#EAF2FF" opacity="0.9" style="animation-delay:0.5s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <!-- Bahnhofsschild in der Hand -->
+                            <rect x="366" y="352" width="66" height="40" rx="8" fill="#1d4ed8" stroke="#EEF1F9" stroke-width="2.5"/>
+                            <text x="399" y="379" text-anchor="middle" style="font-size:22px;fill:#EEF1F9;font-weight:700">S</text>
+                            <circle cx="392" cy="401" r="10" fill="url(#podGJ)"/>
+                        </g>
+
+                        <!-- Abfahrts-Panel -->
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#2a2548" stroke-width="1.5"/>
+                        <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3B355E" stroke-width="1.5" opacity="0.8"/>
+                        <text x="720" y="112" style="font-size:18px;fill:#EEF1F9;font-weight:600">🚆 Abfahrten Dachau Bf</text>
+                        <text x="1170" y="110" text-anchor="end" style="font-size:10px;fill:#3B355E;letter-spacing:3px">LIVE</text>
+                        <line x1="710" y1="128" x2="1180" y2="128" stroke="#2a2548" stroke-width="1"/>
+                        <foreignObject x="706" y="140" width="480" height="478">
+                            <div xmlns="http://www.w3.org/1999/xhtml" id="transitListJ" style="height:100%;overflow-y:auto;display:flex;flex-direction:column;gap:8px;color:#eef1f9;"></div>
+                        </foreignObject>
                     </g>
                 </g>
             </svg>
@@ -966,6 +1284,7 @@
             showJ('musicFullModeJ', 0);
             showJ('footballModeJ', 0);
             showJ('alarmModeJ', 0);
+            showJ('transitModeJ', 0);
             musicViewFull = false;
             document.getElementById('footballOverlayJ')?.classList.remove('active');
             document.getElementById('alarmOverlayJ')?.classList.remove('active');
@@ -973,6 +1292,7 @@
             showJ('ringListenJ', 0);
             const ng = document.getElementById('noteGroupN');
             ng.style.animation = 'none'; ng.style.opacity = 0;
+            ng.style.visibility = 'hidden'; ng.style.pointerEvents = 'none';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
             document.getElementById('mouthTalkJ').style.opacity = 0;
             document.getElementById('mouthIdleJ').style.opacity = 1;
@@ -1000,7 +1320,7 @@
                             content: `Du bist Jarvis, ein KI-Assistent. Analysiere den Benutzer-Befehl und antworte NUR mit gültigem JSON – kein Text davor oder danach.
 
 Mögliche intent-Werte:
-notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage, fussball, wecker, alarm_setzen
+notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_loeschen, skip, zurueck, pause, play, spiele, schlaf, mathe, reset, frage, fussball, wecker, alarm_setzen, bahn
 
 JSON-Format: {"intent":"...","param":"...","antwort":null}
 
@@ -1014,6 +1334,7 @@ Regeln für param:
 - fussball → Liga-Code: "ger.1" (Bundesliga), "eng.1" (Premier League), "uefa.champions" (Champions League), "esp.1" (La Liga) - Standard: "ger.1"
 - alarm_setzen → Uhrzeit im Format "HH:MM" plus optionales Label (z.B. "07:30 Aufstehen")
 - wecker → param ist null (zeigt Wecker-Liste)
+- bahn → param ist null (S-Bahn/Zug-Abfahrten, z.B. "wann fährt die bahn", "abfahrten", "s-bahn")
 - musik_voll → param ist null (große Musikansicht)
 - frage → param ist null, schreib stattdessen eine kurze Antwort in "antwort" (max 3 Sätze Deutsch)
 - alle anderen → param ist null
@@ -1054,6 +1375,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function directDispatch(query) {
             const lq = query.toLowerCase().trim();
             if (lq === "schlaf" || lq === "sleep") { showJ('ringListenJ', 0); sleepMode(); return; }
+            if (lq.includes('erinner')) { handleReminderCommand(lq); return; }
+            if (lq.startsWith('nachtmodus')) { handleNightCommand(lq); return; }
+            if (lq === 'bahn' || lq === 'zug' || lq === 'öpnv' || lq === 'oepnv' || lq.includes('abfahrt') || lq.includes('s-bahn') || lq === 'sbahn') { openTransitMode(); return; }
             if (lq.includes("timer stopp") || lq === "stopp") { clearInterval(timerTicker); showJ('ringListenJ', 0); showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); setLabelJ('Timer', 'Gestoppt.'); return; }
             if (lq.startsWith("timer")) { const m = lq.match(/\d+/); openTimerMode(m ? parseInt(m[0]) : 10); return; }
             if (lq.startsWith("notiz löschen") || lq.startsWith("notiz loeschen")) { const m = lq.match(/\d+/); if (lq.includes("alle")) { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); } else deleteNote(m ? parseInt(m[0])-1 : savedNotes.length-1); return; }
@@ -1103,6 +1427,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 case 'spiele':       openMusicMode(); spotifyPlay(param || originalQuery); break;
                 case 'musik_voll':   openMusicFull(); break;
                 case 'fussball':     openFootball(param || 'ger.1'); break;
+                case 'bahn':         openTransitMode(); break;
                 case 'wecker':       openAlarmMode(); break;
                 case 'alarm_setzen': {
                     // param z.B. "07:30" oder "7 Uhr" oder "7:30 Aufstehen"
@@ -1128,9 +1453,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         }
 
         function showGroqAnswer(text) {
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-420px, 0px) scale(0.7)';
-            document.getElementById('mouthIdleJ').style.opacity = 0;
-            document.getElementById('mouthTalkJ').style.opacity = 1;
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             const container = document.getElementById('infoLinesJ');
             container.innerHTML = '';
             let yPos = 220, currentLine = '';
@@ -1165,6 +1489,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 runCenteredMath(query); return;
             }
 
+            // Erinnerungen, Nachtmodus & ÖPNV direkt abfangen
+            const lqPC = query.toLowerCase();
+            if (lqPC.includes('erinner')) { handleReminderCommand(lqPC); return; }
+            if (lqPC.startsWith('nachtmodus')) { handleNightCommand(lqPC); return; }
+            if (lqPC === 'bahn' || lqPC === 'zug' || lqPC === 'öpnv' || lqPC === 'oepnv' || lqPC.includes('abfahrt') || lqPC.includes('s-bahn') || lqPC === 'sbahn') { openTransitMode(); return; }
+
             if (!loadGroqKey()) {
                 directDispatch(query); return;
             }
@@ -1177,9 +1507,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function openTimerMode(durationMinutes) {
             showJ('ringListenJ', 0);
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             showJ('timerRingGroupO', 1);
             showJ('timerDetailsGroupO', 1);
-            
+            const tnReset = document.getElementById('timerNameO');
+            if (tnReset) tnReset.textContent = 'Timer';
+            const tdReset = document.getElementById('timeDisplayO');
+            if (tdReset) tdReset.style.fill = '#EEF1F9';
+
             let totalSeconds = durationMinutes * 60;
             let remainingSeconds = totalSeconds;
 
@@ -1206,6 +1542,25 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 }
                 const dot = document.getElementById('progressDotO');
                 dot.setAttribute('cx', endX); dot.setAttribute('cy', endY);
+
+                // Arm der Figur folgt dem Timer-Punkt (Schulter-Pivots in Screen-Koordinaten)
+                const armR = document.getElementById('timerArmRO');
+                const armL = document.getElementById('timerArmLO');
+                const restR = document.getElementById('timerRestRO');
+                const restL = document.getElementById('timerRestLO');
+                if (armR && armL) {
+                    if (endX >= 640) {
+                        const deg = Math.atan2(endY - 396, endX - 692.8) * 180 / Math.PI;
+                        armR.setAttribute('transform', `rotate(${deg} 346 445)`);
+                        armR.style.opacity = 1; armL.style.opacity = 0;
+                        restL.style.opacity = 1; restR.style.opacity = 0;
+                    } else {
+                        const deg = Math.atan2(endY - 396, endX - 587.2) * 180 / Math.PI - 180;
+                        armL.setAttribute('transform', `rotate(${deg} 214 445)`);
+                        armL.style.opacity = 1; armR.style.opacity = 0;
+                        restR.style.opacity = 1; restL.style.opacity = 0;
+                    }
+                }
             }
 
             drawArc();
@@ -1213,10 +1568,46 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 if(remainingSeconds <= 0) { clearInterval(timerTicker); return; }
                 remainingSeconds--;
                 drawArc();
+                if (remainingSeconds <= 0) { clearInterval(timerTicker); timerFinished(); }
             }, 1000);
 
             setLabelJ('Timer aktiv', `${durationMinutes} Minuten gestartet.`);
             jarvisSpeak(`${durationMinutes} Minuten Timer gestartet.`);
+        }
+
+        function timerFinished() {
+            // Peep-Peep-Sound (Küchentimer-Style, 4 Doppel-Pieper)
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                for (let r = 0; r < 4; r++) {
+                    [0, 0.18].forEach(t => {
+                        const o = ctx.createOscillator(); const g = ctx.createGain();
+                        o.connect(g); g.connect(ctx.destination);
+                        o.type = 'square';
+                        o.frequency.value = 1320;
+                        const start = ctx.currentTime + r * 0.9 + t;
+                        g.gain.setValueAtTime(0.25, start);
+                        g.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
+                        o.start(start); o.stop(start + 0.16);
+                    });
+                }
+            } catch(e) {}
+            // Anzeige
+            const td = document.getElementById('timeDisplayO');
+            if (td) { td.textContent = '0:00'; td.style.fill = '#f39c12'; }
+            const tn = document.getElementById('timerNameO');
+            if (tn) tn.textContent = '⏰ Timer fertig!';
+            // Figur jubelt: beide Arme hoch
+            const armR = document.getElementById('timerArmRO'), armL = document.getElementById('timerArmLO');
+            const restR = document.getElementById('timerRestRO'), restL = document.getElementById('timerRestLO');
+            if (armR && armL) {
+                armR.setAttribute('transform', 'rotate(-60 346 445)'); armR.style.opacity = 1;
+                armL.setAttribute('transform', 'rotate(60 214 445)'); armL.style.opacity = 1;
+                if (restR) restR.style.opacity = 0;
+                if (restL) restL.style.opacity = 0;
+            }
+            setLabelJ('⏰ Timer', 'Zeit abgelaufen!');
+            jarvisSpeak('Timer abgelaufen!');
         }
 
         function openNoteMode(text) {
@@ -1254,6 +1645,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             noteGroup.style.animation = 'none';
             void noteGroup.offsetWidth; // reflow to restart animation
             noteGroup.style.opacity = 1;
+            noteGroup.style.visibility = 'visible';
+            noteGroup.style.pointerEvents = 'auto';
             noteGroup.style.animation = 'notePopN 0.5s cubic-bezier(0.34,1.56,0.64,1) both';
             setLabelJ('Notizblock', `Notiz #${savedNotes.length} gespeichert.`);
             jarvisSpeak(`Notiz gespeichert: ${text}`);
@@ -1261,7 +1654,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function openNotesListMode() {
             showJ('ringListenJ', 0);
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             renderNotesList();
             showJ('notesListModeJ', 1);
             setLabelJ('Notizblock', `${savedNotes.length} Notiz(en) gespeichert.`);
@@ -1415,14 +1809,16 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function openLedControlWindow() {
             showJ('ringListenJ', 0);
             showJ('noteGroupN', 0); // Notiz explizit ausschalten, damit nichts überlappt
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             showJ('ledControlWindowModeJ', 1);
             setLabelJ('Hardware-Interface', 'Lichtsteuerung geöffnet.');
         }
 
         async function openDetailWeather(city = 'Dachau') {
             showJ('ringListenJ', 0);
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-320px, 0px) scale(1)';
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
             setLabelJ('Wetterstation', `Lade Wetter für ${city}…`);
             showJ('detailWeatherModeJ', 1);
 
@@ -1466,10 +1862,180 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 document.getElementById('detWeatherRainJ').textContent = `${rainSum}%`;
                 setLabelJ('Wetterstation', `${data.name} · ${data.weather[0].description}`);
                 jarvisSpeak(`In ${data.name} sind es ${Math.round(data.main.temp)} Grad. ${data.weather[0].description}.`);
+                loadAirAndPollen(data.coord?.lat ?? 48.26, data.coord?.lon ?? 11.43);
             } catch(e) {
                 setLabelJ('Wetterstation', 'Netzwerkfehler.');
             }
         }
+
+        // Luftqualität + Pollen via Open-Meteo (kostenlos, kein Key)
+        async function loadAirAndPollen(lat, lon) {
+            const setT = (id, v, col) => { const e = document.getElementById(id); if (e) { e.textContent = v; if (col) e.style.fill = col; } };
+            setT('detAirJ', '…'); setT('detPollenJ', '…');
+            try {
+                const r = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm2_5,grass_pollen,birch_pollen,alder_pollen,mugwort_pollen,ragweed_pollen`);
+                const d = await r.json();
+                const c = d.current || {};
+                const aqi = Math.round(c.european_aqi ?? -1);
+                const aqiTxt = aqi < 0 ? '—' : aqi <= 20 ? 'Sehr gut' : aqi <= 40 ? 'Gut' : aqi <= 60 ? 'Mäßig' : aqi <= 80 ? 'Schlecht' : 'Sehr schlecht';
+                const aqiCol = aqi < 0 ? '#6c85bd' : aqi <= 20 ? '#1d9e75' : aqi <= 40 ? '#7fd34e' : aqi <= 60 ? '#f39c12' : '#e74c3c';
+                setT('detAirJ', aqiTxt, aqiCol);
+                setT('detAirValJ', aqi < 0 ? '' : `EAQI ${aqi} · PM2.5: ${Math.round(c.pm2_5 || 0)} µg/m³`);
+
+                const pollens = { 'Gräser': c.grass_pollen, 'Birke': c.birch_pollen, 'Erle': c.alder_pollen, 'Beifuß': c.mugwort_pollen, 'Ambrosia': c.ragweed_pollen };
+                let topName = '', topVal = 0;
+                Object.entries(pollens).forEach(([n, v]) => { if ((v || 0) > topVal) { topVal = v; topName = n; } });
+                const lvl = topVal <= 0 ? 'Keine' : topVal < 20 ? 'Niedrig' : topVal < 60 ? 'Mittel' : 'Hoch';
+                const pCol = topVal <= 0 ? '#1d9e75' : topVal < 20 ? '#7fd34e' : topVal < 60 ? '#f39c12' : '#e74c3c';
+                setT('detPollenJ', lvl, pCol);
+                setT('detPollenValJ', topVal > 0 ? `vor allem ${topName}` : 'aktuell entspannt');
+            } catch(e) {
+                setT('detAirJ', '—', '#6c85bd'); setT('detPollenJ', '—', '#6c85bd');
+            }
+        }
+
+        // ── ÖPNV: Abfahrten Dachau Bahnhof (v6.db.transport.rest, kein Key) ──
+        async function openTransitMode() {
+            showJ('ringListenJ', 0);
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
+            showJ('transitModeJ', 1);
+            setLabelJ('🚆 ÖPNV', 'Lade Abfahrten…');
+            const list = document.getElementById('transitListJ');
+            list.innerHTML = '<div style="color:#6c85bd;font-size:14px;margin-top:30px;text-align:center">Lade Abfahrten…</div>';
+            try {
+                const r = await fetch('https://v6.db.transport.rest/stops/8001354/departures?duration=90&results=12');
+                const d = await r.json();
+                const deps = (d.departures || []).filter(x => x.when || x.plannedWhen).slice(0, 12);
+                if (!deps.length) {
+                    list.innerHTML = '<div style="color:#6c85bd;text-align:center;margin-top:30px">Keine Abfahrten in den nächsten 90 Min.</div>';
+                    setLabelJ('🚆 ÖPNV', 'Keine Abfahrten gefunden.');
+                    return;
+                }
+                list.innerHTML = deps.map(dep => {
+                    const when = new Date(dep.when || dep.plannedWhen);
+                    const t = when.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                    const delayMin = Math.round((dep.delay || 0) / 60);
+                    const line = dep.line?.name || '?';
+                    const dir = (dep.direction || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+                    const lineCol = /^S/.test(line) ? '#2a5d3f;color:#b8f0ce' : '#3b2a5d;color:#d0c2f0';
+                    return `<div style="display:flex;align-items:center;gap:12px;background:#151226;border:1px solid #2a2548;border-radius:12px;padding:10px 14px;">
+                        <span style="font-size:16px;font-weight:700;color:#EEF1F9;min-width:52px">${t}</span>
+                        <span style="background:${lineCol};font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;min-width:34px;text-align:center">${line}</span>
+                        <span style="flex:1;font-size:13px;color:#a9bbe0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dir}</span>
+                        ${delayMin > 0 ? `<span style="color:#f39c12;font-size:12px;font-weight:700">+${delayMin}</span>` : '<span style="color:#1d9e75;font-size:12px">✓</span>'}
+                    </div>`;
+                }).join('');
+                setLabelJ('🚆 ÖPNV', `${deps.length} Abfahrten ab Dachau Bahnhof.`);
+            } catch(e) {
+                list.innerHTML = '<div style="color:#f39c12;text-align:center;margin-top:30px">Abfahrten gerade nicht erreichbar.</div>';
+                setLabelJ('🚆 ÖPNV', 'Fehler beim Laden.');
+            }
+        }
+
+        // ── ERINNERUNGEN ──────────────────────────────────────────
+        let reminders = JSON.parse(localStorage.getItem('jarvisReminders') || '[]');
+        function saveReminders() { localStorage.setItem('jarvisReminders', JSON.stringify(reminders)); }
+
+        function handleReminderCommand(lq) {
+            showJ('ringListenJ', 0);
+            const m = lq.match(/in\s+(\d+)\s*(minuten|minute|min|stunden|stunde|std|h)?\s*(?:an\s+(.+))?$/);
+            if (m) {
+                const num = parseInt(m[1]);
+                const mins = /stund|std|^h$/.test(m[2] || '') ? num * 60 : num;
+                setReminder(mins, (m[3] || '').trim() || 'deine Erinnerung');
+            } else {
+                setLabelJ('⏳ Erinnerung', 'Sag: "Erinnere mich in 10 Minuten an Pizza"');
+                jarvisSpeak('Sag zum Beispiel: Erinnere mich in 10 Minuten an die Pizza.');
+            }
+        }
+
+        function setReminder(minutes, text) {
+            const at = Date.now() + minutes * 60000;
+            reminders.push({ text, at });
+            saveReminders();
+            const when = new Date(at).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+            setLabelJ('⏳ Erinnerung gesetzt', `${when} Uhr: ${text}`);
+            jarvisSpeak(`Alles klar, ich erinnere dich um ${when} Uhr an ${text}.`);
+        }
+
+        function triggerReminder(r) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                [0, 0.35, 0.7].forEach(t => {
+                    const o = ctx.createOscillator(); const g = ctx.createGain();
+                    o.connect(g); g.connect(ctx.destination);
+                    o.frequency.value = 988;
+                    g.gain.setValueAtTime(0.28, ctx.currentTime + t);
+                    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.3);
+                    o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.3);
+                });
+            } catch(e) {}
+            setLabelJ('⏳ Erinnerung!', r.text);
+            jarvisSpeak(`Erinnerung: ${r.text}`);
+        }
+
+        setInterval(() => {
+            const now = Date.now();
+            const due = reminders.filter(r => r.at <= now);
+            if (due.length) {
+                reminders = reminders.filter(r => r.at > now);
+                saveReminders();
+                due.forEach(triggerReminder);
+            }
+        }, 5000);
+
+        // ── NACHTMODUS ────────────────────────────────────────────
+        let nightOverride = localStorage.getItem('jarvisNight') || 'auto';
+        function applyNightMode() {
+            const h = new Date().getHours() + new Date().getMinutes() / 60;
+            const auto = (h >= 22 || h < 6.5);
+            const on = nightOverride === 'auto' ? auto : nightOverride === 'an';
+            document.body.style.filter = on ? 'brightness(0.45)' : '';
+        }
+        function handleNightCommand(lq) {
+            showJ('ringListenJ', 0);
+            if (lq.includes('aus')) nightOverride = 'aus';
+            else if (lq.includes('auto')) nightOverride = 'auto';
+            else if (lq.includes('an')) nightOverride = 'an';
+            else nightOverride = (document.body.style.filter ? 'aus' : 'an');
+            localStorage.setItem('jarvisNight', nightOverride);
+            applyNightMode();
+            const txt = nightOverride === 'auto' ? 'Automatik (22:00–6:30 Uhr)' : nightOverride === 'an' ? 'An' : 'Aus';
+            setLabelJ('🌙 Nachtmodus', txt);
+            jarvisSpeak(`Nachtmodus ${txt}.`);
+        }
+        applyNightMode();
+        setInterval(applyNightMode, 60000);
+
+        // ── NEWSTICKER (Tagesschau) ───────────────────────────────
+        let newsItems = [], newsIdx = -1;
+        async function loadNews() {
+            try {
+                const r = await fetch('https://www.tagesschau.de/api2u/homepage/');
+                const d = await r.json();
+                newsItems = (d.news || []).map(n => n.title).filter(Boolean).slice(0, 12);
+                if (newsItems.length && newsIdx < 0) rotateNews();
+            } catch(e) {}
+        }
+        function rotateNews() {
+            if (!newsItems.length) return;
+            const el = document.getElementById('newsTickerJ');
+            const tagline = document.getElementById('idleTaglineJ');
+            if (!el) return;
+            if (tagline) tagline.style.opacity = 0;
+            el.style.opacity = 0;
+            setTimeout(() => {
+                newsIdx = (newsIdx + 1) % newsItems.length;
+                let headline = newsItems[newsIdx];
+                if (headline.length > 90) headline = headline.slice(0, 87) + '…';
+                el.textContent = '+++ ' + headline + ' +++';
+                el.style.opacity = 1;
+            }, 400);
+        }
+        loadNews();
+        setInterval(loadNews, 900000);
+        setInterval(rotateNews, 8000);
 
         // ── SPOTIFY ───────────────────────────────────────────────
         let spotifyPollInterval = null;
@@ -1554,7 +2120,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             try { localStorage.setItem('spotifyClientId', clientId); } catch(e) {}
             const redirectUri = window.location.href.split('#')[0].split('?')[0];
             const scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
-            window.location.href = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+            const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&show_dialog=true`;
+            window.open(authUrl, 'spotify_auth', 'width=500,height=700,left=300,top=200');
         }
 
         async function spotifyAPI(method, endpoint, body = null) {
@@ -2310,9 +2877,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         async function askJarvisAI(question) {
             showJ('ringListenJ', 0);
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-420px, 0px) scale(0.7)';
-            document.getElementById('mouthIdleJ').style.opacity = 0;
-            document.getElementById('mouthTalkJ').style.opacity = 1;
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
 
             const container = document.getElementById('infoLinesJ');
             container.innerHTML = '';
@@ -2382,7 +2948,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function createSvgLine(txt, y) {
             const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-            t.setAttribute("x", "500"); t.setAttribute("y", y);
+            t.setAttribute("x", "600"); t.setAttribute("y", y);
             t.setAttribute("style", "font-size:15px; fill:#EEF1F9; opacity:0; animation: lineInJ 0.4s ease forwards;");
             t.textContent = txt;
             document.getElementById('infoLinesJ').appendChild(t);
@@ -2397,10 +2963,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
             const gap = 8;
             const chipH = 52;
-            const chipW = Math.min(70, Math.floor((580 - (tokens.length - 1) * gap) / tokens.length));
+            const chipW = Math.min(64, Math.floor((440 - (tokens.length - 1) * gap) / tokens.length));
             const totalW = tokens.length * chipW + (tokens.length - 1) * gap;
-            let x = 640 - totalW / 2;
-            const y = 510;
+            let x = 820 - totalW / 2;
+            const y = 280;
 
             tokens.forEach((token, i) => {
                 const isOp = /^[+\-*/^()]$/.test(token);
@@ -2428,7 +2994,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         }
 
         function runCenteredMath(expr) {
-            showJ('ringListenJ', 0); showJ('mathRingJ', 1);
+            showJ('ringListenJ', 0); showJ('mathRingJ', 0);
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
             let result = 0;
             try { result = eval(expr.replace(/\^/g, '**')); } catch(e) { result = "Error"; }
             renderMathChips(expr);
