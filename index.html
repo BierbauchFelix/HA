@@ -2114,6 +2114,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
         }
 
+        function getSpotifyRedirectUri() {
+            return window.location.href.split('#')[0].split('?')[0];
+        }
+
         function handleSpotifyCallback() {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
@@ -2121,7 +2125,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const verifier = localStorage.getItem('spotify_pkce_verifier');
             if (!verifier) return;
             const clientId = getSpotifyClientId();
-            const redirectUri = window.location.href.split('?')[0].split('#')[0];
+            const redirectUri = getSpotifyRedirectUri();
             fetch('https://accounts.spotify.com/api/token', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -2131,9 +2135,24 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     saveSpotifyToken(data.access_token, data.expires_in || 3600);
                     history.replaceState(null, '', window.location.pathname);
                     localStorage.removeItem('spotify_pkce_verifier');
+                    // Popup: Hauptfenster benachrichtigen und schließen
+                    if (window.opener && !window.opener.closed) {
+                        try { window.opener.postMessage('spotify_auth_ok', '*'); } catch(e) {}
+                        window.close();
+                    } else {
+                        updateSpotifyStatus();
+                    }
+                } else {
+                    console.error('Spotify Token Error:', data);
+                    alert('Spotify Login fehlgeschlagen: ' + (data.error_description || data.error || 'Unbekannt'));
                 }
             }).catch(e => console.error('Spotify Token Error:', e));
         }
+
+        // Token vom Popup empfangen
+        window.addEventListener('message', (ev) => {
+            if (ev.data === 'spotify_auth_ok') updateSpotifyStatus();
+        });
 
         async function spotifyLogin() {
             const inputId = document.getElementById('spotifyClientId').value.trim();
@@ -2143,7 +2162,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const verifier = generatePKCEVerifier();
             localStorage.setItem('spotify_pkce_verifier', verifier);
             const challenge = await generatePKCEChallenge(verifier);
-            const redirectUri = window.location.href.split('#')[0].split('?')[0];
+            const redirectUri = getSpotifyRedirectUri();
             const scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
             const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&code_challenge=${challenge}&code_challenge_method=S256`;
             window.open(authUrl, 'spotify_auth', 'width=500,height=700,left=300,top=200');
@@ -2705,7 +2724,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 el.textContent = 'Verbunden ✓';
             } else {
                 el.style.color = '#3b355e';
-                el.textContent = 'Nicht verbunden';
+                el.textContent = 'Redirect URI: ' + getSpotifyRedirectUri();
+                el.style.cursor = 'pointer';
+                el.title = 'Klicken zum Kopieren — diese URI im Spotify Dashboard eintragen';
+                el.onclick = () => {
+                    navigator.clipboard.writeText(getSpotifyRedirectUri()).then(() => {
+                        el.textContent = 'Kopiert! Im Spotify Dashboard eintragen ✓';
+                        setTimeout(updateSpotifyStatus, 3000);
+                    }).catch(() => {});
+                };
             }
             const saved = getSpotifyClientId();
             if (saved) {
