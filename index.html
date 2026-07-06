@@ -1474,6 +1474,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         function directDispatch(query) {
             const lq = query.toLowerCase().trim();
             if (lq === "schlaf" || lq === "sleep") { showJ('ringListenJ', 0); sleepMode(); return; }
+            if (isClockQuery(lq)) { handleClockQuery(lq); return; }
+            if (isDateQuery(lq)) { handleDateQuery(); return; }
             if (lq.includes('erinner')) { handleReminderCommand(lq); return; }
             if (lq.startsWith('nachtmodus')) { handleNightCommand(lq); return; }
             if (lq.startsWith('route') || lq.startsWith('verbindung') || lq.includes('wie komme ich')) { const rq = parseRouteQuery(lq); if (rq) { openRouteMode(rq.from, rq.to); return; } }
@@ -1613,8 +1615,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 runCenteredMath(query); return;
             }
 
-            // Erinnerungen, Nachtmodus & ÖPNV direkt abfangen
+            // Erinnerungen, Nachtmodus, Uhrzeit & ÖPNV direkt abfangen
             const lqPC = query.toLowerCase();
+            if (isClockQuery(lqPC)) { handleClockQuery(lqPC); return; }
+            if (isDateQuery(lqPC)) { handleDateQuery(); return; }
             if (lqPC.includes('erinner')) { handleReminderCommand(lqPC); return; }
             if (lqPC.startsWith('nachtmodus')) { handleNightCommand(lqPC); return; }
             if (lqPC.startsWith('route') || lqPC.startsWith('verbindung') || lqPC.includes('wie komme ich')) { const rq = parseRouteQuery(lqPC); if (rq) { openRouteMode(rq.from, rq.to); return; } }
@@ -2382,6 +2386,43 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             localStorage.setItem('jarvisNight', 'aus');
             applyNightMode();
             setLabelJ('🌙 Nachtmodus', 'Aus');
+        }
+
+        // ── UHRZEIT & DATUM (Alexa-Basics) ────────────────────────
+        const CITY_TZ = {
+            'tokio':'Asia/Tokyo','tokyo':'Asia/Tokyo','new york':'America/New_York',
+            'london':'Europe/London','paris':'Europe/Paris','moskau':'Europe/Moscow',
+            'peking':'Asia/Shanghai','shanghai':'Asia/Shanghai','sydney':'Australia/Sydney',
+            'los angeles':'America/Los_Angeles','dubai':'Asia/Dubai','istanbul':'Europe/Istanbul',
+            'new delhi':'Asia/Kolkata','delhi':'Asia/Kolkata','bangkok':'Asia/Bangkok'
+        };
+        function isClockQuery(lq) {
+            return /\bwie\s*(sp[äa]t|viel\s*uhr)\b/.test(lq) || /\buhrzeit\b/.test(lq) || /\bwie\s*viel\s*uhr\b/.test(lq);
+        }
+        function isDateQuery(lq) {
+            return /\bwelch\w*\s*(tag|datum|wochentag|monat)\b/.test(lq) || /\bder\s*wievielte\b/.test(lq)
+                || /\bwelches\s*datum\b/.test(lq) || /\bheutige[sn]?\s*datum\b/.test(lq) || /\bwas\s*(ist|haben\s*wir)\s*(heute\s*)?f[üu]r\s*ein\s*(tag|datum)\b/.test(lq);
+        }
+        function handleClockQuery(lq) {
+            showJ('ringListenJ', 0);
+            let tz = null, cityName = '';
+            for (const [c, z] of Object.entries(CITY_TZ)) {
+                if (lq.includes(c)) { tz = z; cityName = c.replace(/\b\w/g, m => m.toUpperCase()); break; }
+            }
+            const opts = { hour: '2-digit', minute: '2-digit' };
+            if (tz) opts.timeZone = tz;
+            const time = new Date().toLocaleTimeString('de-DE', opts);
+            const msg = cityName ? `In ${cityName} ist es ${time} Uhr.` : `Es ist ${time} Uhr.`;
+            resetToHome();
+            setLabelJ('🕐 Uhrzeit', msg);
+            jarvisSpeak(msg);
+        }
+        function handleDateQuery() {
+            showJ('ringListenJ', 0);
+            const msg = `Heute ist ${new Date().toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}.`;
+            resetToHome();
+            setLabelJ('📅 Datum', msg);
+            jarvisSpeak(msg);
         }
         function handleNightCommand(lq) {
             showJ('ringListenJ', 0);
@@ -3322,8 +3363,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         // iOS blockiert sonst jedes neue Audio() ohne Nutzer-Geste
         const ttsAudio = new Audio();
 
-        // Deepgram Aura-2 – deutsche Stimme (viktoria = weiblich, klar)
-        const DEEPGRAM_VOICE = 'aura-2-viktoria-de';
+        // Deepgram Aura-2 – deutsche Stimme (aurelia = weiblich, warm)
+        const DEEPGRAM_VOICE = 'aura-2-aurelia-de';
 
         function getDeepgramKey() { try { return localStorage.getItem('deepgramKey') || ''; } catch(e) { return ''; } }
 
@@ -3340,7 +3381,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (!el) return;
             const k = getDeepgramKey();
             el.style.color = k ? '#1d9e75' : '#3b355e';
-            el.textContent = k ? 'Deepgram aktiv ✓ (Aura-2 · Viktoria)' : 'Kein Key → Browser-Stimme';
+            el.textContent = k ? 'Deepgram aktiv ✓ (Aura-2 · Aurelia)' : 'Kein Key → Browser-Stimme';
         }
 
         function mouthStart() {
