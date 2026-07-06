@@ -253,7 +253,7 @@
                     <clipPath id="bodyClipIdleJ"><ellipse cx="280" cy="470" rx="66" ry="62"/></clipPath>
                     <clipPath id="noteClipN"><rect x="665" y="190" width="380" height="280" rx="4"/></clipPath>
                     <clipPath id="musicCoverClipJ"><circle cx="640" cy="330" r="148"/></clipPath>
-                    <clipPath id="idleAlbumClipJ"><rect x="0" y="0" width="48" height="48" rx="8"/></clipPath>
+                    <clipPath id="idleAlbumClipJ"><rect x="0" y="0" width="68" height="68" rx="10"/></clipPath>
                 </defs>
 
                 <rect x="0" y="0" width="1280" height="720" fill="url(#bgGJ)"/>
@@ -385,7 +385,7 @@
                         </rect>
 
                         <!-- Cover Art -->
-                        <image id="idleAlbumImgJ" href="" x="607" y="532" width="68" height="68" clip-path="url(#idleAlbumClipJ)" preserveAspectRatio="xMidYMid slice" style="transform:translate(607px,532px)" transform="translate(0,0)"/>
+                        <image id="idleAlbumImgJ" href="" x="0" y="0" width="68" height="68" clip-path="url(#idleAlbumClipJ)" preserveAspectRatio="xMidYMid slice" transform="translate(607,532)"/>
                         <rect x="607" y="532" width="68" height="68" rx="8" fill="none" stroke="#1DB954" stroke-width="1" opacity="0.25"/>
 
                         <!-- Song Info -->
@@ -957,29 +957,6 @@
                         </foreignObject>
                     </g>
 
-                    <!-- FUSSBALL PANEL -->
-                    <g id="footballModeJ" opacity="0" style="visibility:hidden;pointer-events:none">
-                        <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
-                        <foreignObject x="670" y="40" width="590" height="640">
-                            <div xmlns="http://www.w3.org/1999/xhtml" style="height:100%;display:flex;flex-direction:column;padding:16px 20px;box-sizing:border-box;overflow:hidden;">
-                                <!-- Liga-Buttons -->
-                                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
-                                    <button onclick="loadFootball('ger.1')"  id="fb-ger" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🇩🇪 Bundesliga</button>
-                                    <button onclick="loadFootball('eng.1')"  id="fb-eng" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
-                                    <button onclick="loadFootball('uefa.champions')" id="fb-ucl" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">⭐ UCL</button>
-                                    <button onclick="loadFootball('esp.1')"  id="fb-esp" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:11px;transition:all 0.2s">🇪🇸 LaLiga</button>
-                                </div>
-                                <!-- Liga-Name + Datum -->
-                                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-                                    <div id="fbLeagueNameJ" style="font-size:18px;color:#EEF1F9;font-weight:600">Bundesliga</div>
-                                    <div id="fbDateJ" style="font-size:10px;color:#3B355E;letter-spacing:2px">HEUTE</div>
-                                </div>
-                                <!-- Match Liste -->
-                                <div id="fbMatchListJ" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;"></div>
-                            </div>
-                        </foreignObject>
-                    </g>
-
                     <!-- WECKER PANEL -->
                     <g id="alarmModeJ" opacity="0" style="visibility:hidden;pointer-events:none">
                         <line x1="660" y1="40" x2="660" y2="680" stroke="#2a2548" stroke-width="1" opacity="0.6"/>
@@ -1042,6 +1019,7 @@
         <div id="footballOverlayJ" class="svg-overlay-right">
             <div class="panel-inner">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;flex-shrink:0">
+                    <button onclick="loadFootball('fifa.world')" id="fb-wm" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏆 WM</button>
                     <button onclick="loadFootball('ger.1')"  id="fb-ger" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🇩🇪 Bundesliga</button>
                     <button onclick="loadFootball('eng.1')"  id="fb-eng" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
                     <button onclick="loadFootball('uefa.champions')" id="fb-ucl" style="background:#1a1630;border:1px solid #2a2548;color:#a9bbe0;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">⭐ UCL</button>
@@ -1325,13 +1303,13 @@ notiz, timer, timer_stopp, musik, musik_voll, wetter, lichter, notizen, notiz_lo
 JSON-Format: {"intent":"...","param":"...","antwort":null}
 
 Regeln für param:
-- timer → Anzahl Minuten als Zahl (z.B. "10")
+- timer → Dauer MIT Einheit (z.B. "10 minuten", "30 sekunden", "1 stunde 30 minuten")
 - notiz → exakter Notiztext
 - wetter → Stadtname auf Englisch (z.B. "Berlin", "New York")
 - spiele → Suchbegriff für Spotify
 - mathe → mathematischer Ausdruck (z.B. "5*6+2")
 - notiz_loeschen → Nummer oder "alle"
-- fussball → Liga-Code: "ger.1" (Bundesliga), "eng.1" (Premier League), "uefa.champions" (Champions League), "esp.1" (La Liga) - Standard: "ger.1"
+- fussball → Liga-Code: "fifa.world" (WM/Weltmeisterschaft), "ger.1" (Bundesliga), "eng.1" (Premier League), "uefa.champions" (Champions League), "esp.1" (La Liga) - Standard: "fifa.world"
 - alarm_setzen → Uhrzeit im Format "HH:MM" plus optionales Label (z.B. "07:30 Aufstehen")
 - wecker → param ist null (zeigt Wecker-Liste)
 - bahn → param ist null (S-Bahn/Zug-Abfahrten, z.B. "wann fährt die bahn", "abfahrten", "s-bahn")
@@ -1341,7 +1319,8 @@ Regeln für param:
 
 Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 "nozti milch" → notiz "milch"
-"tmer 5 min" → timer "5"
+"tmer 5 min" → timer "5 minuten"
+"timer 30 sekunden" → timer "30 sekunden"
 "wie wird das wetter in münchen" → wetter "Munich"
 "spiel mal mark forster" → spiele "mark forster"
 "mach licht an" → lichter
@@ -1356,6 +1335,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 "musik groß" / "vollbild musik" → musik_voll
 "bundesliga ergebnisse" → fussball "ger.1"
 "champions league" → fussball "uefa.champions"
+"wm spiele" / "weltmeisterschaft" / "wm ergebnisse" → fussball "fifa.world"
 "stell wecker auf 7" → alarm_setzen "07:00"
 "wecker 6:30 aufstehen" → alarm_setzen "06:30 Aufstehen"
 "zeig wecker" / "meine wecker" → wecker`
@@ -1378,8 +1358,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (lq.includes('erinner')) { handleReminderCommand(lq); return; }
             if (lq.startsWith('nachtmodus')) { handleNightCommand(lq); return; }
             if (lq === 'bahn' || lq === 'zug' || lq === 'öpnv' || lq === 'oepnv' || lq.includes('abfahrt') || lq.includes('s-bahn') || lq === 'sbahn') { openTransitMode(); return; }
+            if (lq === 'wm' || lq.includes('weltmeisterschaft')) { openFootball('fifa.world'); return; }
+            if (lq === 'fußball' || lq === 'fussball' || lq === 'bundesliga') { openFootball(lq === 'bundesliga' ? 'ger.1' : 'fifa.world'); return; }
             if (lq.includes("timer stopp") || lq === "stopp") { clearInterval(timerTicker); showJ('ringListenJ', 0); showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); setLabelJ('Timer', 'Gestoppt.'); return; }
-            if (lq.startsWith("timer")) { const m = lq.match(/\d+/); openTimerMode(m ? parseInt(m[0]) : 10); return; }
+            if (lq.startsWith("timer")) { openTimerMode(parseDurationToSeconds(lq) || 600); return; }
             if (lq.startsWith("notiz löschen") || lq.startsWith("notiz loeschen")) { const m = lq.match(/\d+/); if (lq.includes("alle")) { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); } else deleteNote(m ? parseInt(m[0])-1 : savedNotes.length-1); return; }
             if (lq === "notizen") { openNotesListMode(); return; }
             if (lq.startsWith("notiz ")) { openNoteMode(query.substring(6).trim()); return; }
@@ -1399,7 +1381,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             showJ('ringListenJ', 0);
             switch(action) {
                 case 'notiz':        openNoteMode(param || originalQuery); break;
-                case 'timer':        openTimerMode(parseInt(param) || 10); break;
+                case 'timer':        openTimerMode(parseDurationToSeconds(param) || 600); break;
                 case 'timer_stopp':
                     clearInterval(timerTicker);
                     showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0);
@@ -1426,7 +1408,16 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 case 'play':         if(getSpotifyToken()&&spotifyPlayer){spotifyPlayer.resume();}else{musicIsPlaying=true;} openMusicMode(); break;
                 case 'spiele':       openMusicMode(); spotifyPlay(param || originalQuery); break;
                 case 'musik_voll':   openMusicFull(); break;
-                case 'fussball':     openFootball(param || 'ger.1'); break;
+                case 'fussball': {
+                    const lp = (param || '').toLowerCase();
+                    const lg = lp.includes('wm') || lp.includes('weltmeister') ? 'fifa.world'
+                             : lp.includes('bundes') ? 'ger.1'
+                             : lp.includes('premier') ? 'eng.1'
+                             : lp.includes('champions') || lp.includes('ucl') ? 'uefa.champions'
+                             : lp.includes('liga') && lp.includes('la') ? 'esp.1'
+                             : FOOTBALL_LEAGUES[lp] ? lp : 'fifa.world';
+                    openFootball(lg); break;
+                }
                 case 'bahn':         openTransitMode(); break;
                 case 'wecker':       openAlarmMode(); break;
                 case 'alarm_setzen': {
@@ -1505,7 +1496,33 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             executeIntent(intent, query);
         }
 
-        function openTimerMode(durationMinutes) {
+        // "10 sekunden", "5 min", "1 stunde 30 minuten" → Sekunden (Zahl ohne Einheit = Minuten)
+        function parseDurationToSeconds(str) {
+            let total = 0;
+            const re = /(\d+)\s*(stunden?|std|h|minuten?|min|m|sekunden?|sek|sec|s)?/g;
+            let m;
+            while ((m = re.exec(String(str || '').toLowerCase())) !== null) {
+                const n = parseInt(m[1]);
+                const u = m[2] || '';
+                if (/^st|^h/.test(u)) total += n * 3600;
+                else if (/^se|^s$/.test(u)) total += n;
+                else total += n * 60;
+            }
+            return total;
+        }
+
+        function formatDurationNice(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            const parts = [];
+            if (h) parts.push(`${h} Stunde${h > 1 ? 'n' : ''}`);
+            if (mins) parts.push(`${mins} Minute${mins > 1 ? 'n' : ''}`);
+            if (secs) parts.push(`${secs} Sekunden`);
+            return parts.join(' ') || '0 Sekunden';
+        }
+
+        function openTimerMode(durationSeconds) {
             showJ('ringListenJ', 0);
             showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
             document.getElementById('avatarBundleJ').style.transform = '';
@@ -1516,7 +1533,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const tdReset = document.getElementById('timeDisplayO');
             if (tdReset) tdReset.style.fill = '#EEF1F9';
 
-            let totalSeconds = durationMinutes * 60;
+            let totalSeconds = Math.max(5, durationSeconds || 600);
             let remainingSeconds = totalSeconds;
 
             function drawArc() {
@@ -1571,8 +1588,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 if (remainingSeconds <= 0) { clearInterval(timerTicker); timerFinished(); }
             }, 1000);
 
-            setLabelJ('Timer aktiv', `${durationMinutes} Minuten gestartet.`);
-            jarvisSpeak(`${durationMinutes} Minuten Timer gestartet.`);
+            const niceDur = formatDurationNice(totalSeconds);
+            setLabelJ('Timer aktiv', `${niceDur} gestartet.`);
+            jarvisSpeak(`Timer über ${niceDur} gestartet.`);
         }
 
         function timerFinished() {
@@ -1959,11 +1977,19 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function handleReminderCommand(lq) {
             showJ('ringListenJ', 0);
-            const m = lq.match(/in\s+(\d+)\s*(minuten|minute|min|stunden|stunde|std|h)?\s*(?:an\s+(.+))?$/);
+            // Zeitangabe irgendwo im Satz finden: "in 10 minuten/sekunden/stunden"
+            const m = lq.match(/in\s+(\d+)\s*(sekunden|sekunde|sek|minuten|minute|min|stunden|stunde|std|h)?/);
             if (m) {
                 const num = parseInt(m[1]);
-                const mins = /stund|std|^h$/.test(m[2] || '') ? num * 60 : num;
-                setReminder(mins, (m[3] || '').trim() || 'deine Erinnerung');
+                const unit = m[2] || 'minuten';
+                const mins = /^st|^h$/.test(unit) ? num * 60 : /^sek/.test(unit) ? num / 60 : num;
+                // Text = Satz ohne Trigger-Wörter und ohne die Zeitangabe
+                // ("Erinnerung Nhu kommt in 10 Minuten" → "Nhu kommt")
+                let text = lq.replace(m[0], ' ')
+                    .replace(/erinnere\s+mich|erinnerungen|erinnerung|erinnere|erinner|daran|bitte|jarvis/g, ' ')
+                    .replace(/\s+/g, ' ').trim()
+                    .replace(/^an\s+/, '').replace(/\s+an$/, '').trim();
+                setReminder(mins, text || 'deine Erinnerung');
             } else {
                 setLabelJ('⏳ Erinnerung', 'Sag: "Erinnere mich in 10 Minuten an Pizza"');
                 jarvisSpeak('Sag zum Beispiel: Erinnere mich in 10 Minuten an die Pizza.');
@@ -2496,10 +2522,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         // ── FUSSBALL ──────────────────────────────────────────────
         const FOOTBALL_LEAGUES = {
-            'ger.1': 'Bundesliga', 'eng.1': 'Premier League',
+            'fifa.world': 'WM 2026', 'ger.1': 'Bundesliga', 'eng.1': 'Premier League',
             'uefa.champions': 'Champions League', 'esp.1': 'La Liga', 'ita.1': 'Serie A'
         };
-        let currentLeague = 'ger.1';
+        let currentLeague = 'fifa.world';
 
         async function openFootball(league) {
             hideAllPanels();
@@ -2517,12 +2543,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         async function loadFootball(league) {
             currentLeague = league;
             // Active-Button Styling
-            ['fb-ger','fb-eng','fb-ucl','fb-esp'].forEach(id => {
+            ['fb-wm','fb-ger','fb-eng','fb-ucl','fb-esp'].forEach(id => {
                 const b = document.getElementById(id);
                 if (!b) return;
                 b.style.background = '#1a1630'; b.style.color = '#a9bbe0'; b.style.borderColor = '#2a2548';
             });
-            const map = {'ger.1':'fb-ger','eng.1':'fb-eng','uefa.champions':'fb-ucl','esp.1':'fb-esp'};
+            const map = {'fifa.world':'fb-wm','ger.1':'fb-ger','eng.1':'fb-eng','uefa.champions':'fb-ucl','esp.1':'fb-esp'};
             if (map[league]) {
                 const b = document.getElementById(map[league]);
                 if (b) { b.style.background = '#2a2548'; b.style.color = '#EEF1F9'; b.style.borderColor = '#6c85bd'; }
@@ -2544,7 +2570,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const container = document.getElementById('fbMatchListJ');
             if (!container) return;
             if (!events.length) {
-                container.innerHTML = `<div style="color:#3B355E;font-size:13px;padding:20px;text-align:center">Keine Spiele heute ⚽</div>`;
+                container.innerHTML = `<div style="color:#3B355E;font-size:13px;padding:20px;text-align:center">Keine Spiele heute ⚽<br><br><span style="font-size:11px">Liga-Pause? Schau bei 🏆 WM vorbei!</span></div>`;
                 return;
             }
             container.innerHTML = events.slice(0, 8).map((ev, i) => {
@@ -2721,7 +2747,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const data = await spotifyAPI('GET', '/me/player/currently-playing');
                 const widget = document.getElementById('idleSpotifyJ');
                 if (!widget) return;
-                if (!data || !data.item || !data.is_playing) {
+                if (!data || !data.item) {
                     widget.style.opacity = '0';
                     widget.style.pointerEvents = 'none';
                     return;
@@ -2737,7 +2763,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const img = document.getElementById('idleAlbumImgJ');
                 if (imgUrl && img.getAttribute('href') !== imgUrl) img.setAttribute('href', imgUrl);
 
-                widget.style.opacity = '1';
+                // Bei Pause gedimmt anzeigen statt komplett ausblenden
+                widget.style.opacity = data.is_playing ? '1' : '0.55';
                 widget.style.pointerEvents = 'auto';
             } catch(e) {}
         }
