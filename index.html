@@ -508,6 +508,18 @@
                     <text id="weatherCityStatusJ2" x="684" y="502" style="font-size:19px;fill:#b4b4bd;font-weight:500">Dachau</text>
                     <text id="weatherDescJ2" x="684" y="526" style="font-size:15px;fill:#8a8a95">Lade Wetter…</text>
 
+                    <!-- Kleiner Status-Balken rechts -->
+                    <rect x="1150" y="288" width="108" height="150" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                    <text x="1204" y="312" text-anchor="middle" style="font-size:9px;fill:#6f97ab;letter-spacing:2px">STATUS</text>
+                    <circle cx="1170" cy="338" r="4" fill="#4ec99a"/>
+                    <text x="1182" y="342" style="font-size:11px;fill:#b4b4bd">Online</text>
+                    <circle cx="1170" cy="366" r="4" fill="#4ec99a"/>
+                    <text x="1182" y="370" style="font-size:11px;fill:#b4b4bd">Neural</text>
+                    <circle cx="1170" cy="394" r="4" fill="#8a8a95" opacity="0.6"/>
+                    <text x="1182" y="398" style="font-size:11px;fill:#8a8a95">Voice</text>
+                    <circle cx="1170" cy="422" r="4" fill="#4ec99a"/>
+                    <text x="1182" y="426" style="font-size:11px;fill:#b4b4bd">WLAN</text>
+
                     <!-- Spotify Now Playing (nur wenn Musik läuft) -->
                     <g id="idleSpotify2J" opacity="0" style="transition:opacity 0.6s">
                         <rect x="360" y="566" width="560" height="80" rx="16" fill="#0a2634" stroke="#1DB954" stroke-width="1" stroke-opacity="0.3"/>
@@ -716,14 +728,10 @@
 
                     <!-- EXTRA WETTER ANSICHT -->
                     <g id="detailWeatherModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
-                        <!-- Wetter-Panel -->
-                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
-                        <rect x="690" y="70" width="510" height="560" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
-                        <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 710 614 L 710 594 L 730 594" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 1180 614 L 1180 594 L 1160 594" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <text x="1160" y="108" text-anchor="end" style="font-size:10px;fill:#3a3a42;letter-spacing:4px">WETTERSTATION</text>
+                        <!-- Wetter-Panel (breit) -->
+                        <rect x="474" y="60" width="762" height="588" rx="22" fill="#0b2a3a" stroke="#1d5f7d" stroke-width="1.5"/>
+                        <rect x="474" y="60" width="762" height="588" rx="22" fill="url(#ambBigJ)" opacity="0.1"/>
+                        <text x="1214" y="90" text-anchor="end" style="font-size:10px;fill:#4a7186;letter-spacing:4px">WETTERSTATION</text>
 
                         <!-- Figur mit Regenschirm -->
                         <g transform="translate(122,40) scale(0.85)">
@@ -760,47 +768,70 @@
                             <path d="M 468 226 q 6 12 0 17 q -6 -5 0 -17" fill="#378ADD" opacity="0.45"/>
                         </g>
 
-                        <text id="detWeatherCityJ" x="730" y="130" style="font-size:18px; fill:#8a8a95; font-weight:500;">Dachau</text>
-                        <text id="detWeatherDayJ" x="730" y="155" style="font-size:14px; fill:#b4b4bd;">Dienstag</text>
-                        <g transform="translate(150, -30)">
-                            <g class="sunRaysJ" stroke="#f39c12" stroke-width="4" stroke-linecap="round">
-                                <line x1="610" y1="235" x2="610" y2="215" /><line x1="610" y1="365" x2="610" y2="385" />
-                            </g>
-                            <circle cx="610" cy="300" r="40" fill="#f39c12"/>
+                        <!-- Kopf: Stadt + Haupttemperatur -->
+                        <text id="detWeatherCityJ" x="556" y="112" style="font-size:24px; fill:#EEF1F9; font-weight:600;">Dachau</text>
+                        <text id="detWeatherDayJ" x="556" y="136" style="font-size:13px; fill:#6f97ab;">Dienstag</text>
+                        <text id="detWeatherIconJ" x="576" y="212" text-anchor="middle" style="font-size:56px;">⛅</text>
+                        <text id="detWeatherTempJ" x="626" y="212" style="font-size:76px; fill:#EEF1F9; font-weight:600;">32°</text>
+                        <text id="detWeatherDescJ" x="558" y="244" style="font-size:15px; fill:#8fb8cc;">Heiter</text>
+
+                        <!-- 5-Tage-Vorhersage (oben rechts) -->
+                        <g id="detForecastJ"></g>
+
+                        <line x1="556" y1="272" x2="1214" y2="272" stroke="#1d5f7d" stroke-width="1" opacity="0.5"/>
+
+                        <!-- Metriken-Reihe -->
+                        <g font-family="inherit">
+                            <rect x="556" y="288" width="152" height="96" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                            <text x="574" y="312" style="font-size:11px;fill:#6f97ab;">💧 Luftfeuchte</text>
+                            <text id="detHumidityJ" x="574" y="352" style="font-size:30px;fill:#EEF1F9;font-weight:600;">–</text>
+                            <rect x="720" y="288" width="152" height="96" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                            <text x="738" y="312" style="font-size:11px;fill:#6f97ab;">🌬️ Wind</text>
+                            <text id="detWindJ" x="738" y="352" style="font-size:30px;fill:#EEF1F9;font-weight:600;">–</text>
+                            <rect x="884" y="288" width="152" height="96" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                            <text x="902" y="312" style="font-size:11px;fill:#6f97ab;">🧭 Druck</text>
+                            <text id="detPressureJ" x="902" y="352" style="font-size:30px;fill:#EEF1F9;font-weight:600;">–</text>
+                            <rect x="1048" y="288" width="166" height="96" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                            <text x="1066" y="312" style="font-size:11px;fill:#6f97ab;">👁️ Sicht</text>
+                            <text id="detVisibilityJ" x="1066" y="352" style="font-size:30px;fill:#EEF1F9;font-weight:600;">–</text>
                         </g>
-                        <text id="detWeatherTempJ" x="910" y="295" style="font-size:84px; fill:#EEF1F9; font-weight:600;">32°</text>
-                        <text id="detWeatherDescJ" x="910" y="340" style="font-size:15px; fill:#8a8a95;">Heiter</text>
-                        <line x1="730" y1="410" x2="1170" y2="410" stroke="#3a3a42" stroke-width="1.5" opacity="0.4"/>
 
-                        <!-- MAX -->
-                        <rect x="728" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
-                        <text x="793" y="448" text-anchor="middle" style="font-size:18px;">🌡️</text>
-                        <text x="793" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">HOCH</text>
-                        <text id="detWeatherMaxJ" x="793" y="500" text-anchor="middle" style="font-size:28px;fill:#f39c12;font-weight:700;">35°</text>
+                        <!-- Sonnenaufgang / -untergang -->
+                        <rect x="556" y="398" width="252" height="108" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                        <text x="574" y="422" style="font-size:11px;fill:#6f97ab;letter-spacing:1px;">SONNE</text>
+                        <text x="592" y="466" text-anchor="middle" style="font-size:26px;">🌅</text>
+                        <text id="detSunriseJ" x="622" y="462" style="font-size:20px;fill:#EEF1F9;font-weight:600;">06:02</text>
+                        <text x="592" y="494" text-anchor="middle" style="font-size:26px;">🌇</text>
+                        <text id="detSunsetJ" x="622" y="490" style="font-size:20px;fill:#EEF1F9;font-weight:600;">21:18</text>
+                        <text id="detWeatherRainJ" x="790" y="422" text-anchor="end" style="font-size:11px;fill:#378ADD;">☔ 0%</text>
 
-                        <!-- MIN -->
-                        <rect x="878" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
-                        <text x="943" y="448" text-anchor="middle" style="font-size:18px;">❄️</text>
-                        <text x="943" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">TIEF</text>
-                        <text id="detWeatherMinJ" x="943" y="500" text-anchor="middle" style="font-size:28px;fill:#b4b4bd;font-weight:700;">20°</text>
+                        <!-- Luftqualität-Gauge -->
+                        <rect x="820" y="398" width="180" height="108" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                        <text x="838" y="422" style="font-size:11px;fill:#6f97ab;letter-spacing:1px;">LUFTQUALITÄT</text>
+                        <circle cx="866" cy="466" r="26" fill="none" stroke="#16455c" stroke-width="6"/>
+                        <circle id="detAirGaugeJ" cx="866" cy="466" r="26" fill="none" stroke="#4ec99a" stroke-width="6" stroke-linecap="round" stroke-dasharray="163" stroke-dashoffset="120" transform="rotate(-90 866 466)"/>
+                        <text id="detAirGaugeNumJ" x="866" y="472" text-anchor="middle" style="font-size:18px;fill:#EEF1F9;font-weight:700;">–</text>
+                        <text id="detAirJ" x="908" y="460" style="font-size:16px;fill:#b4b4bd;font-weight:600;">—</text>
+                        <text id="detAirValJ" x="908" y="480" style="font-size:9px;fill:#4a7186;"></text>
 
-                        <!-- REGEN -->
-                        <rect x="1028" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
-                        <text x="1093" y="448" text-anchor="middle" style="font-size:18px;">💧</text>
-                        <text x="1093" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">REGEN</text>
-                        <text id="detWeatherRainJ" x="1093" y="500" text-anchor="middle" style="font-size:28px;fill:#378ADD;font-weight:700;">0%</text>
+                        <!-- Pollen -->
+                        <rect x="1012" y="398" width="202" height="108" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                        <text x="1030" y="422" style="font-size:11px;fill:#6f97ab;letter-spacing:1px;">🌼 POLLENFLUG</text>
+                        <text id="detPollenJ" x="1030" y="464" style="font-size:26px;fill:#b4b4bd;font-weight:700;">—</text>
+                        <text id="detPollenValJ" x="1030" y="488" style="font-size:11px;fill:#4a7186;"></text>
 
-                        <!-- LUFTQUALITÄT -->
-                        <rect x="728" y="530" width="210" height="82" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
-                        <text x="748" y="556" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">🌬️ LUFTQUALITÄT</text>
-                        <text id="detAirJ" x="748" y="586" style="font-size:22px;fill:#b4b4bd;font-weight:700;">—</text>
-                        <text id="detAirValJ" x="748" y="603" style="font-size:10px;fill:#3a3a42;"></text>
-
-                        <!-- POLLEN -->
-                        <rect x="958" y="530" width="200" height="82" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
-                        <text x="978" y="556" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">🌼 POLLENFLUG</text>
-                        <text id="detPollenJ" x="978" y="586" style="font-size:22px;fill:#b4b4bd;font-weight:700;">—</text>
-                        <text id="detPollenValJ" x="978" y="603" style="font-size:10px;fill:#3a3a42;"></text>
+                        <!-- UV-Index -->
+                        <rect x="556" y="520" width="658" height="112" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                        <text x="574" y="544" style="font-size:11px;fill:#6f97ab;letter-spacing:1px;">☀️ UV-INDEX &amp; GEFÜHLTE TEMPERATUR</text>
+                        <text id="detUvJ" x="620" y="596" text-anchor="middle" style="font-size:38px;fill:#f39c12;font-weight:700;">–</text>
+                        <text x="620" y="618" text-anchor="middle" style="font-size:11px;fill:#6f97ab;">UV</text>
+                        <line x1="720" y1="548" x2="720" y2="612" stroke="#1d5f7d" stroke-width="1"/>
+                        <text id="detFeelsJ" x="800" y="596" text-anchor="middle" style="font-size:38px;fill:#EEF1F9;font-weight:600;">–</text>
+                        <text x="800" y="618" text-anchor="middle" style="font-size:11px;fill:#6f97ab;">gefühlt</text>
+                        <text id="detWeatherMaxJ" x="980" y="580" text-anchor="middle" style="font-size:24px;fill:#f39c12;font-weight:700;">–</text>
+                        <text x="980" y="600" text-anchor="middle" style="font-size:10px;fill:#6f97ab;">HOCH</text>
+                        <text id="detWeatherMinJ" x="1120" y="580" text-anchor="middle" style="font-size:24px;fill:#8fb8cc;font-weight:700;">–</text>
+                        <text x="1120" y="600" text-anchor="middle" style="font-size:10px;fill:#6f97ab;">TIEF</text>
                     </g>
 
                     <!-- WIKIPEDIA / KNOWLEDGE BASE ("WAS IST...") -->
@@ -1479,26 +1510,25 @@
             normal: `
                 <path d="M 564 314 Q 592 300 620 313" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
                 <path d="M 660 313 Q 688 300 716 315" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                <ellipse cx="594" cy="351" rx="26" ry="31" fill="#fff"/>
+                <circle cx="594" cy="351" r="29" fill="#fff"/>
                 <g class="pupilJ"><circle cx="595" cy="349" r="15" fill="#0a0a0a"/><circle cx="589" cy="343" r="5.5" fill="#fff"/></g>
-                <ellipse class="lidJ" cx="594" cy="351" rx="27" ry="32" fill="#0a0a0c"/>
-                <ellipse cx="686" cy="351" rx="26" ry="31" fill="#fff"/>
+                <circle class="lidJ" cx="594" cy="351" r="30" fill="#0a0a0c"/>
+                <circle cx="686" cy="351" r="29" fill="#fff"/>
                 <g class="pupilJ" style="animation-delay:0.5s"><circle cx="687" cy="349" r="15" fill="#0a0a0a"/><circle cx="681" cy="343" r="5.5" fill="#fff"/></g>
-                <ellipse class="lidJ" cx="686" cy="351" rx="27" ry="32" fill="#0a0a0c" style="animation-delay:0.05s"/>
-                <path d="M 616 385 Q 640 396 658 386" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>
-                <path d="M 652 390 Q 663 401 654 407 Q 647 403 649 391 Z" fill="#f2a3b3"/>`,
+                <circle class="lidJ" cx="686" cy="351" r="30" fill="#0a0a0c" style="animation-delay:0.05s"/>
+                <path d="M 616 386 Q 640 397 664 386" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>`,
             happy: `
                 <path d="M 566 356 Q 594 326 622 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
                 <path d="M 658 356 Q 686 326 714 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
                 <path d="M 608 380 Q 640 414 672 380 Z" fill="#fff" opacity="0.92"/>`,
             surprised: `
-                <path d="M 566 304 Q 594 294 620 302" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                <path d="M 660 302 Q 686 294 714 304" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                <ellipse cx="594" cy="352" rx="29" ry="34" fill="#fff"/>
+                <path d="M 566 302 Q 594 292 620 300" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <path d="M 660 300 Q 686 292 714 302" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <circle cx="594" cy="352" r="32" fill="#fff"/>
                 <circle cx="594" cy="353" r="9" fill="#0a0a0a"/><circle cx="590" cy="348" r="3.5" fill="#fff"/>
-                <ellipse cx="686" cy="352" rx="29" ry="34" fill="#fff"/>
+                <circle cx="686" cy="352" r="32" fill="#fff"/>
                 <circle cx="686" cy="353" r="9" fill="#0a0a0a"/><circle cx="682" cy="348" r="3.5" fill="#fff"/>
-                <ellipse cx="640" cy="394" rx="9" ry="12" fill="#fff" opacity="0.9"/>`,
+                <circle cx="640" cy="394" r="10" fill="#fff" opacity="0.9"/>`,
             love: `
                 <path d="M 594 341 C 587 332 574 337 579 347 Q 583 356 594 364 Q 605 356 609 347 C 614 337 601 332 594 341 Z" fill="#fff"/>
                 <path d="M 686 341 C 679 332 666 337 671 347 Q 675 356 686 364 Q 697 356 701 347 C 706 337 693 332 686 341 Z" fill="#fff"/>
@@ -1506,9 +1536,9 @@
             sad: `
                 <path d="M 566 312 Q 592 320 616 324" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
                 <path d="M 664 324 Q 688 320 714 312" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                <ellipse cx="594" cy="352" rx="24" ry="28" fill="#fff"/>
+                <circle cx="594" cy="353" r="26" fill="#fff"/>
                 <circle cx="594" cy="356" r="13" fill="#0a0a0a"/><circle cx="589" cy="351" r="4.5" fill="#fff"/>
-                <ellipse cx="686" cy="352" rx="24" ry="28" fill="#fff"/>
+                <circle cx="686" cy="353" r="26" fill="#fff"/>
                 <circle cx="686" cy="356" r="13" fill="#0a0a0a"/><circle cx="681" cy="351" r="4.5" fill="#fff"/>
                 <path d="M 574 380 q 6 11 0 16 q -6 -5 0 -16" fill="#8fd0ff" opacity="0.85"/>
                 <path d="M 706 380 q 6 11 0 16 q -6 -5 0 -16" fill="#8fd0ff" opacity="0.85"/>
@@ -1522,9 +1552,9 @@
             angry: `
                 <path d="M 566 314 L 620 330" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
                 <path d="M 660 330 L 714 314" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                <ellipse cx="594" cy="354" rx="24" ry="25" fill="#fff"/>
+                <circle cx="594" cy="355" r="25" fill="#fff"/>
                 <circle cx="596" cy="357" r="13" fill="#0a0a0a"/><circle cx="591" cy="352" r="4.5" fill="#fff"/>
-                <ellipse cx="686" cy="354" rx="24" ry="25" fill="#fff"/>
+                <circle cx="686" cy="355" r="25" fill="#fff"/>
                 <circle cx="684" cy="357" r="13" fill="#0a0a0a"/><circle cx="679" cy="352" r="4.5" fill="#fff"/>
                 <path d="M 618 394 L 662 392" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>`,
         };
@@ -2352,7 +2382,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const KEY = 'dc73a9090b9cd0f45f276fd2497d2775';
                 const [res, forecastRes] = await Promise.all([
                     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de`),
-                    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de&cnt=8`)
+                    fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${KEY}&units=metric&lang=de&cnt=40`)
                 ]);
                 const data = await res.json();
                 if (data.cod !== 200) {
@@ -2362,30 +2392,61 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     document.getElementById('detWeatherDescJ').textContent = 'Unbekannt';
                     return;
                 }
-                // Echte Tages-Min/Max aus Forecast (nächste 24h)
-                let dayMax = -999, dayMin = 999, rainSum = 0;
+                const setD = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+                const day = new Date().toLocaleDateString('de-DE', { weekday: 'long' });
+                setD('detWeatherCityJ', data.name);
+                setD('detWeatherDayJ', day);
+                setD('detWeatherTempJ', `${Math.round(data.main.temp)}°`);
+                setD('detWeatherIconJ', weatherIcon(data.weather[0].id));
+                setD('detWeatherDescJ', data.weather[0].description);
+                // Metriken
+                setD('detHumidityJ', `${data.main.humidity}%`);
+                setD('detWindJ', `${Math.round((data.wind?.speed || 0) * 3.6)} km/h`);
+                setD('detPressureJ', `${data.main.pressure} hPa`);
+                setD('detVisibilityJ', `${((data.visibility || 0) / 1000).toFixed(1)} km`);
+                setD('detFeelsJ', `${Math.round(data.main.feels_like)}°`);
+                // Sonne
+                const fmtSun = ts => new Date(ts * 1000).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                if (data.sys?.sunrise) setD('detSunriseJ', fmtSun(data.sys.sunrise));
+                if (data.sys?.sunset) setD('detSunsetJ', fmtSun(data.sys.sunset));
+
+                // Vorhersage (nächste Tage, Mittagswerte) + Tages-Min/Max/Regen
+                let dayMax = data.main.temp_max, dayMin = data.main.temp_min, rainSum = 0, rainN = 0;
                 try {
                     const fc = await forecastRes.json();
+                    const byDay = {};
                     fc.list.forEach(item => {
-                        dayMax = Math.max(dayMax, item.main.temp_max);
-                        dayMin = Math.min(dayMin, item.main.temp_min);
-                        rainSum += item.pop ?? 0;
+                        const d = new Date(item.dt * 1000);
+                        const key = d.toISOString().slice(0, 10);
+                        (byDay[key] = byDay[key] || []).push(item);
+                        if (d - new Date() < 86400000) { // nächste 24h
+                            dayMax = Math.max(dayMax, item.main.temp_max);
+                            dayMin = Math.min(dayMin, item.main.temp_min);
+                            rainSum += item.pop ?? 0; rainN++;
+                        }
                     });
-                    rainSum = Math.round((rainSum / fc.list.length) * 100);
-                } catch(e) {
-                    dayMax = data.main.temp_max;
-                    dayMin = data.main.temp_min;
-                    rainSum = data.clouds?.all ?? 0;
-                }
+                    const keys = Object.keys(byDay).slice(0, 5);
+                    const fcHtml = keys.map((k, i) => {
+                        const items = byDay[k];
+                        const noon = items.find(it => new Date(it.dt * 1000).getHours() >= 12) || items[Math.floor(items.length/2)];
+                        const wd = new Date(k).toLocaleDateString('de-DE', {weekday:'short'}).toUpperCase();
+                        const tmax = Math.round(Math.max(...items.map(it => it.main.temp_max)));
+                        const tmin = Math.round(Math.min(...items.map(it => it.main.temp_min)));
+                        const x = 802 + i * 84;
+                        return `<rect x="${x}" y="90" width="76" height="164" rx="14" fill="#0e3346" stroke="#1d5f7d" stroke-width="1"/>
+                            <text x="${x+38}" y="116" text-anchor="middle" style="font-size:12px;fill:#8fb8cc;font-weight:600">${wd}</text>
+                            <text x="${x+38}" y="162" text-anchor="middle" style="font-size:32px">${weatherIcon(noon.weather[0].id)}</text>
+                            <text x="${x+38}" y="204" text-anchor="middle" style="font-size:20px;fill:#EEF1F9;font-weight:600">${tmax}°</text>
+                            <text x="${x+38}" y="230" text-anchor="middle" style="font-size:14px;fill:#6f97ab">${tmin}°</text>`;
+                    }).join('');
+                    const fcEl = document.getElementById('detForecastJ');
+                    if (fcEl) fcEl.innerHTML = fcHtml;
+                } catch(e) {}
+                const rainPct = rainN ? Math.round((rainSum / rainN) * 100) : (data.clouds?.all ?? 0);
+                setD('detWeatherMaxJ', `${Math.round(dayMax)}°`);
+                setD('detWeatherMinJ', `${Math.round(dayMin)}°`);
+                setD('detWeatherRainJ', `☔ ${rainPct}%`);
 
-                const day = new Date().toLocaleDateString('de-DE', { weekday: 'long' });
-                document.getElementById('detWeatherCityJ').textContent = data.name;
-                document.getElementById('detWeatherDayJ').textContent = day;
-                document.getElementById('detWeatherTempJ').textContent = `${Math.round(data.main.temp)}°`;
-                document.getElementById('detWeatherDescJ').textContent = data.weather[0].description;
-                document.getElementById('detWeatherMaxJ').textContent = `${Math.round(dayMax)}°`;
-                document.getElementById('detWeatherMinJ').textContent = `${Math.round(dayMin)}°`;
-                document.getElementById('detWeatherRainJ').textContent = `${rainSum}%`;
                 setLabelJ('Wetterstation', `${data.name} · ${data.weather[0].description}`);
                 jarvisSpeak(`In ${data.name} sind es ${Math.round(data.main.temp)} Grad. ${data.weather[0].description}.`);
                 loadAirAndPollen(data.coord?.lat ?? 48.26, data.coord?.lon ?? 11.43);
@@ -2399,6 +2460,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const setT = (id, v, col) => { const e = document.getElementById(id); if (e) { e.textContent = v; if (col) e.style.fill = col; } };
             setT('detAirJ', '…'); setT('detPollenJ', '…');
             try {
+                // UV-Index parallel holen (OpenWeatherMap-Current hat keins)
+                fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=uv_index`)
+                    .then(r => r.json()).then(u => { const uv = u.current?.uv_index; if (uv != null) setT('detUvJ', Math.round(uv)); }).catch(() => {});
                 const r = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=european_aqi,pm2_5,grass_pollen,birch_pollen,alder_pollen,mugwort_pollen,ragweed_pollen`);
                 const d = await r.json();
                 const c = d.current || {};
@@ -2406,7 +2470,11 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const aqiTxt = aqi < 0 ? '—' : aqi <= 20 ? 'Sehr gut' : aqi <= 40 ? 'Gut' : aqi <= 60 ? 'Mäßig' : aqi <= 80 ? 'Schlecht' : 'Sehr schlecht';
                 const aqiCol = aqi < 0 ? '#8a8a95' : aqi <= 20 ? '#1d9e75' : aqi <= 40 ? '#7fd34e' : aqi <= 60 ? '#f39c12' : '#e74c3c';
                 setT('detAirJ', aqiTxt, aqiCol);
-                setT('detAirValJ', aqi < 0 ? '' : `EAQI ${aqi} · PM2.5: ${Math.round(c.pm2_5 || 0)} µg/m³`);
+                setT('detAirValJ', aqi < 0 ? '' : `EAQI ${aqi} · PM2.5 ${Math.round(c.pm2_5 || 0)}`);
+                // Gauge füllen (Umfang 2·π·26 ≈ 163)
+                const gauge = document.getElementById('detAirGaugeJ');
+                if (gauge && aqi >= 0) { gauge.setAttribute('stroke-dashoffset', 163 * (1 - Math.min(aqi, 100) / 100)); gauge.setAttribute('stroke', aqiCol); }
+                setT('detAirGaugeNumJ', aqi < 0 ? '–' : aqi);
 
                 const pollens = { 'Gräser': c.grass_pollen, 'Birke': c.birch_pollen, 'Erle': c.alder_pollen, 'Beifuß': c.mugwort_pollen, 'Ambrosia': c.ragweed_pollen };
                 let topName = '', topVal = 0;
