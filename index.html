@@ -328,6 +328,7 @@
                     <clipPath id="noteClipN"><rect x="665" y="190" width="380" height="280" rx="4"/></clipPath>
                     <clipPath id="musicCoverClipJ"><circle cx="640" cy="330" r="148"/></clipPath>
                     <clipPath id="idleAlbumClipJ"><rect x="0" y="0" width="68" height="68" rx="10"/></clipPath>
+                    <clipPath id="idleAlbum2ClipJ"><rect x="0" y="0" width="60" height="60" rx="8"/></clipPath>
                 </defs>
 
                 <rect x="0" y="0" width="1280" height="720" fill="url(#bgGJ)"/>
@@ -374,25 +375,9 @@
                         <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                         <!-- Visor (schwarzes Gesichts-Display) -->
                         <rect x="188" y="258" width="184" height="112" rx="50" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
-                        <!-- Kawaii-Gesicht (schaut verschmitzt zur Seite) -->
-                        <path d="M 214 290 Q 239 275 263 287" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <path d="M 297 287 Q 321 275 346 291" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <!-- Linkes Auge (Pupille zur Seite) -->
-                        <ellipse cx="240" cy="323" rx="23" ry="27" fill="#ffffff"/>
-                        <g class="pupilJ">
-                            <circle cx="249" cy="325" r="13" fill="#0a0a0a"/>
-                            <circle cx="244" cy="320" r="4.5" fill="#ffffff"/>
-                        </g>
-                        <ellipse class="lidJ" cx="240" cy="323" rx="24" ry="28" fill="#0a0a0c"/>
-                        <!-- Rechtes Auge (Pupille zur Seite) -->
-                        <ellipse cx="320" cy="323" rx="23" ry="27" fill="#ffffff"/>
-                        <g class="pupilJ" style="animation-delay:0.5s">
-                            <circle cx="329" cy="325" r="13" fill="#0a0a0a"/>
-                            <circle cx="324" cy="320" r="4.5" fill="#ffffff"/>
-                        </g>
-                        <ellipse class="lidJ" cx="320" cy="323" rx="24" ry="28" fill="#0a0a0c" style="animation-delay:0.05s"/>
-                        <!-- Mund (verschmitztes, leicht schiefes Lächeln) -->
-                        <path d="M 262 351 Q 283 363 301 347" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                        <!-- Gesicht: wird per setEmotion() gefüllt (Emotionen aus dem Fokus-Set,
+                             per Transform auf die kleinere idle-Position abgebildet) -->
+                        <g id="idleFaceJ" transform="translate(-276.8,18.5) scale(0.87)"></g>
                     </g>
 
                     <!-- Vertical divider -->
@@ -523,9 +508,23 @@
                     <text id="weatherCityStatusJ2" x="684" y="502" style="font-size:19px;fill:#b4b4bd;font-weight:500">Dachau</text>
                     <text id="weatherDescJ2" x="684" y="526" style="font-size:15px;fill:#8a8a95">Lade Wetter…</text>
 
+                    <!-- Spotify Now Playing (nur wenn Musik läuft) -->
+                    <g id="idleSpotify2J" opacity="0" style="transition:opacity 0.6s">
+                        <rect x="360" y="566" width="560" height="80" rx="16" fill="#0a2634" stroke="#1DB954" stroke-width="1" stroke-opacity="0.3"/>
+                        <image id="idleAlbumImg2J" href="" x="0" y="0" width="60" height="60" clip-path="url(#idleAlbum2ClipJ)" preserveAspectRatio="xMidYMid slice" transform="translate(378,576)"/>
+                        <rect x="378" y="576" width="60" height="60" rx="8" fill="none" stroke="#1DB954" stroke-width="1" opacity="0.3"/>
+                        <rect x="454" y="580" width="4" height="12" rx="2" fill="#1DB954"><animate attributeName="height" values="6;18;6" dur="0.7s" repeatCount="indefinite"/><animate attributeName="y" values="588;576;588" dur="0.7s" repeatCount="indefinite"/></rect>
+                        <rect x="462" y="576" width="4" height="16" rx="2" fill="#1DB954"><animate attributeName="height" values="16;6;16" dur="0.7s" begin="0.2s" repeatCount="indefinite"/><animate attributeName="y" values="576;586;576" dur="0.7s" begin="0.2s" repeatCount="indefinite"/></rect>
+                        <text id="idleSongTitle2J" x="480" y="598" style="font-size:16px;fill:#EEF1F9;font-weight:500">Songtitel</text>
+                        <text id="idleSongArtist2J" x="480" y="619" style="font-size:13px;fill:#1DB954;opacity:0.85">Künstler</text>
+                        <rect x="480" y="630" width="400" height="3" rx="1.5" fill="#122f3f"/>
+                        <rect id="idleProgressBar2J" x="480" y="630" width="0" height="3" rx="1.5" fill="#1DB954" opacity="0.7"/>
+                        <text x="902" y="582" text-anchor="end" style="font-size:9px;fill:#1DB954;letter-spacing:2px;opacity:0.55">NOW PLAYING</text>
+                    </g>
+
                     <!-- Newsticker unten -->
-                    <text id="newsTickerJ2" x="640" y="612" text-anchor="middle" style="font-size:14px;fill:#8a8a95;opacity:0.85"></text>
-                    <text id="idleTaglineJ2" x="640" y="612" text-anchor="middle" style="font-size:11px;fill:#3a3a42;letter-spacing:5px">JARVIS  OS  2.0</text>
+                    <text id="newsTickerJ2" x="640" y="688" text-anchor="middle" style="font-size:14px;fill:#8a8a95;opacity:0.85"></text>
+                    <text id="idleTaglineJ2" x="640" y="688" text-anchor="middle" style="font-size:11px;fill:#3a3a42;letter-spacing:5px">JARVIS  OS  2.0</text>
                 </g>
 
                 <!-- Karussell-Punkte zum Wechseln der Idle-Ansicht -->
@@ -1368,6 +1367,7 @@
             updateIdleSpotify();
             setInterval(updateIdleSpotify, 10000);
             setEmotion('normal');
+            scheduleEmotionRotation();
             startIdleAvatarAnimations();
             loadGoveeDevices();
             loadAlarms();
@@ -1477,15 +1477,16 @@
         // Gesichts-Varianten für den Fokus-Roboter (Visor-Mitte 640,350)
         const EMOTIONS = {
             normal: `
-                <path d="M 566 316 Q 594 302 620 314" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                <path d="M 660 314 Q 686 302 714 316" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                <ellipse cx="594" cy="350" rx="25" ry="30" fill="#fff"/>
-                <g class="pupilJ"><circle cx="596" cy="352" r="14" fill="#0a0a0a"/><circle cx="590" cy="346" r="5" fill="#fff"/></g>
-                <ellipse class="lidJ" cx="594" cy="350" rx="26" ry="31" fill="#0a0a0c"/>
-                <ellipse cx="686" cy="350" rx="25" ry="30" fill="#fff"/>
-                <g class="pupilJ" style="animation-delay:0.5s"><circle cx="688" cy="352" r="14" fill="#0a0a0a"/><circle cx="682" cy="346" r="5" fill="#fff"/></g>
-                <ellipse class="lidJ" cx="686" cy="350" rx="26" ry="31" fill="#0a0a0c" style="animation-delay:0.05s"/>
-                <path d="M 614 385 Q 641 398 666 381" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>`,
+                <path d="M 564 314 Q 592 300 620 313" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <path d="M 660 313 Q 688 300 716 315" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="594" cy="351" rx="26" ry="31" fill="#fff"/>
+                <g class="pupilJ"><circle cx="595" cy="349" r="15" fill="#0a0a0a"/><circle cx="589" cy="343" r="5.5" fill="#fff"/></g>
+                <ellipse class="lidJ" cx="594" cy="351" rx="27" ry="32" fill="#0a0a0c"/>
+                <ellipse cx="686" cy="351" rx="26" ry="31" fill="#fff"/>
+                <g class="pupilJ" style="animation-delay:0.5s"><circle cx="687" cy="349" r="15" fill="#0a0a0a"/><circle cx="681" cy="343" r="5.5" fill="#fff"/></g>
+                <ellipse class="lidJ" cx="686" cy="351" rx="27" ry="32" fill="#0a0a0c" style="animation-delay:0.05s"/>
+                <path d="M 616 385 Q 640 396 658 386" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.95"/>
+                <path d="M 652 390 Q 663 401 654 407 Q 647 403 649 391 Z" fill="#f2a3b3"/>`,
             happy: `
                 <path d="M 566 356 Q 594 326 622 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
                 <path d="M 658 356 Q 686 326 714 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
@@ -1529,16 +1530,39 @@
         };
         let currentEmotion = 'normal';
         function setEmotion(name, holdMs) {
-            const face = document.getElementById('faceFeaturesJ');
-            if (!face || !EMOTIONS[name]) return;
+            if (!EMOTIONS[name]) return;
             currentEmotion = name;
-            face.innerHTML = EMOTIONS[name];
-            // kurz halten, dann zurück auf normal (für spontane Reaktionen)
+            // Beide Roboter (Fokus + idle) zeigen dieselbe Emotion
+            const face = document.getElementById('faceFeaturesJ');
+            const idleFace = document.getElementById('idleFaceJ');
+            if (face) face.innerHTML = EMOTIONS[name];
+            if (idleFace) idleFace.innerHTML = EMOTIONS[name];
             clearTimeout(setEmotion._t);
             if (holdMs) setEmotion._t = setTimeout(() => {
-                if (currentEmotion === name) { currentEmotion = 'normal'; face.innerHTML = EMOTIONS.normal; }
+                if (currentEmotion === name) setEmotion('normal');
             }, holdMs);
         }
+
+        // Emotions-Rotation: alle 3–4 Min zeigt der idle-Roboter ein anderes Gefühl
+        let emotionRotateTimer = null;
+        function scheduleEmotionRotation() {
+            clearTimeout(emotionRotateTimer);
+            const delay = (180 + Math.random() * 60) * 1000; // 3–4 Minuten
+            emotionRotateTimer = setTimeout(() => {
+                // Nur im idle rotieren (nicht während Zuhören/Antworten)
+                const idleActive = document.getElementById('idleScreenJ').style.visibility !== 'hidden'
+                                || document.getElementById('idleScreen2J').style.visibility !== 'hidden';
+                if (idleActive && !recognition && !wakeRecogBusy()) {
+                    const moods = ['happy','surprised','love','sleepy','normal'];
+                    const pick = moods[Math.floor(Math.random() * moods.length)];
+                    setEmotion(pick);
+                    // nach 12 s zurück auf normal
+                    setTimeout(() => { if (currentEmotion === pick) setEmotion('normal'); }, 12000);
+                }
+                scheduleEmotionRotation();
+            }, delay);
+        }
+        function wakeRecogBusy() { return false; }
         // Sprachbefehl-Erkennung für Emotionen ("sei traurig", "lach mal" …)
         function emotionFromText(lq) {
             if (/\b(lach|freu|glücklich|happy|fröhlich)/.test(lq)) return 'happy';
@@ -3534,26 +3558,41 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             try {
                 const data = await spotifyAPI('GET', '/me/player/currently-playing');
                 const widget = document.getElementById('idleSpotifyJ');
+                const widget2 = document.getElementById('idleSpotify2J');
                 if (!widget) return;
                 if (!data || !data.item) {
-                    widget.style.opacity = '0';
-                    widget.style.pointerEvents = 'none';
+                    widget.style.opacity = '0'; widget.style.pointerEvents = 'none';
+                    if (widget2) widget2.style.opacity = '0';
                     return;
                 }
                 const track = data.item;
                 const artist = track.artists.map(a => a.name).join(', ');
                 const imgUrl = track.album?.images?.[1]?.url || track.album?.images?.[0]?.url || '';
-                const pct = Math.round((data.progress_ms / track.duration_ms) * 478);
+                const title = track.name.length > 30 ? track.name.slice(0,28)+'…' : track.name;
+                const art = artist.length > 35 ? artist.slice(0,33)+'…' : artist;
+                const opa = data.is_playing ? '1' : '0.55';
 
-                document.getElementById('idleSongTitleJ').textContent = track.name.length > 30 ? track.name.slice(0,28)+'…' : track.name;
-                document.getElementById('idleSongArtistJ').textContent = artist.length > 35 ? artist.slice(0,33)+'…' : artist;
-                document.getElementById('idleProgressBarJ').setAttribute('width', pct);
+                // Idle 1
+                document.getElementById('idleSongTitleJ').textContent = title;
+                document.getElementById('idleSongArtistJ').textContent = art;
+                document.getElementById('idleProgressBarJ').setAttribute('width', Math.round((data.progress_ms / track.duration_ms) * 478));
                 const img = document.getElementById('idleAlbumImgJ');
                 if (imgUrl && img.getAttribute('href') !== imgUrl) img.setAttribute('href', imgUrl);
+                widget.style.opacity = opa; widget.style.pointerEvents = 'auto';
 
-                // Bei Pause gedimmt anzeigen statt komplett ausblenden
-                widget.style.opacity = data.is_playing ? '1' : '0.55';
-                widget.style.pointerEvents = 'auto';
+                // Idle 2
+                if (widget2) {
+                    const set2 = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+                    set2('idleSongTitle2J', title);
+                    set2('idleSongArtist2J', art);
+                    const pb2 = document.getElementById('idleProgressBar2J');
+                    if (pb2) pb2.setAttribute('width', Math.round((data.progress_ms / track.duration_ms) * 400));
+                    const img2 = document.getElementById('idleAlbumImg2J');
+                    if (img2 && imgUrl && img2.getAttribute('href') !== imgUrl) img2.setAttribute('href', imgUrl);
+                    widget2.style.opacity = opa;
+                    // Tagline/Newsticker in Idle 2 nach unten schieben wenn Musik läuft
+                    const tag2 = document.getElementById('idleTaglineJ2'); if (tag2) tag2.style.opacity = '0';
+                }
             } catch(e) {}
         }
 
