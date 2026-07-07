@@ -13,18 +13,18 @@
     <style>
         :root {
             --bg-main: #0b0b0d;
-            --bg-card: #17171a;
-            --bg-accent: #26262b;
-            --border-color: #3a3a42;
+            --bg-card: #0e3346;
+            --bg-accent: #16455c;
+            --border-color: #1d5f7d;
             --text-primary: #f2f2f4;
-            --text-secondary: #b4b4bd;
-            --text-muted: #7c7c88;
+            --text-secondary: #b9d4e2;
+            --text-muted: #6f97ab;
             --color-success: #4ec99a;
             --color-sun: #e8b24a;
 
             /* Lichter-Modus (HomeKit Farb-Variablen) */
-            --color-bg-light: #101012;
-            --color-border-light: #45454f;
+            --color-bg-light: #0a2634;
+            --color-border-light: #1d5f7d;
             --color-text-warning: #f39c12;
         }
 
@@ -88,7 +88,7 @@
         .svg-overlay-right.active { opacity: 1; pointer-events: auto; }
         .svg-overlay-right .panel-inner {
             height: 100%;
-            background: linear-gradient(135deg, #0f0d1e 0%, #100E1E 100%);
+            background: linear-gradient(135deg, #0e3346 0%, #0e3346 100%);
             border-left: 1px solid #24242a;
             display: flex;
             flex-direction: column;
@@ -231,6 +231,11 @@
         @keyframes idleNodJ { 0%,100%{transform:scaleY(1)} 25%{transform:scaleY(0.92)} 50%{transform:scaleY(1.05)} 75%{transform:scaleY(0.96)} }
         @keyframes idleShakeJ { 0%,100%{transform:translateX(0)} 15%{transform:translateX(-8px)} 35%{transform:translateX(8px)} 55%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
         @keyframes idleSpinJ { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        /* Idle-2: Roboter lugt von oben rein und wippt neugierig */
+        @keyframes peekBobJ { 0%,100%{transform:translateY(0)} 50%{transform:translateY(12px)} }
+        @keyframes peekTiltJ { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
+        .peekBobJ { animation: peekBobJ 3.5s ease-in-out infinite; transform-origin: 640px 0px; }
+        @keyframes idle2InJ { 0%{opacity:0;transform:translateY(-24px)} 100%{opacity:1;transform:translateY(0)} }
         @keyframes mathChipInJ { 0% { opacity:0; transform: translateY(12px); } 100% { opacity:1; transform: translateY(0); } }
         @keyframes lineInJ { 0% { opacity:0; transform: translateX(-6px); } 100% { opacity:1; transform: translateX(0); } }
         @keyframes sunRotateJ { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -243,7 +248,7 @@
         .talkJ { animation: mouthTalkJ 0.35s ease-in-out infinite; transform-origin: center; }
         @keyframes matchInJ { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         @keyframes panelSlideInJ { from{opacity:0;transform:translateX(24px)} to{opacity:1;transform:translateX(0)} }
-        @keyframes alarmPulse { from{background:#1a1630;border-color:#f39c12} to{background:#2d2010;border-color:#f39c12} }
+        @keyframes alarmPulse { from{background:#16455c;border-color:#f39c12} to{background:#2d2010;border-color:#f39c12} }
         @keyframes alarmRing { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-10deg)} 40%{transform:rotate(10deg)} 60%{transform:rotate(-6deg)} 80%{transform:rotate(6deg)} }
         @keyframes eqBar { from{height:4px} to{height:22px} }
         .eq-bar { height: 4px; }
@@ -288,7 +293,7 @@
 <body>
 
     <div id="sleepOverlay" onclick="wakeUp()" style="display:none;position:fixed;inset:0;background:#000;z-index:9999;cursor:pointer;transition:opacity 1.2s ease;opacity:0;">
-        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#1a1630;">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:#16455c;">
             <div style="font-size:48px;margin-bottom:12px;">🌙</div>
             <div style="font-size:13px;letter-spacing:2px;">Tippen zum Aufwecken</div>
         </div>
@@ -343,7 +348,7 @@
                     <text x="280" y="600" text-anchor="middle" style="font-size:10px;fill:#1d9e75;letter-spacing:3px">● ACTIVE</text>
 
                     <!-- Avatar -->
-                    <g id="idleAvatarJ">
+                    <g id="idleAvatarJ" onclick="cycleEmotion()" style="cursor:pointer">
                         <!-- Boden-Schatten -->
                         <ellipse cx="280" cy="542" rx="74" ry="10" fill="#000000" opacity="0.22"/>
                         <!-- Mini-Antenne -->
@@ -369,25 +374,25 @@
                         <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                         <!-- Visor (schwarzes Gesichts-Display) -->
                         <rect x="188" y="258" width="184" height="112" rx="50" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
-                        <!-- Kawaii-Gesicht: Augenbrauen, weiße Augen, Mund -->
-                        <path d="M 216 292 Q 240 280 262 290" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <path d="M 298 290 Q 320 280 344 292" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <!-- Linkes Auge -->
-                        <ellipse cx="240" cy="322" rx="23" ry="27" fill="#ffffff"/>
+                        <!-- Kawaii-Gesicht (schaut verschmitzt zur Seite) -->
+                        <path d="M 214 290 Q 239 275 263 287" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                        <path d="M 297 287 Q 321 275 346 291" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                        <!-- Linkes Auge (Pupille zur Seite) -->
+                        <ellipse cx="240" cy="323" rx="23" ry="27" fill="#ffffff"/>
                         <g class="pupilJ">
-                            <circle cx="243" cy="320" r="14" fill="#0a0a0a"/>
-                            <circle cx="237" cy="314" r="5" fill="#ffffff"/>
+                            <circle cx="249" cy="325" r="13" fill="#0a0a0a"/>
+                            <circle cx="244" cy="320" r="4.5" fill="#ffffff"/>
                         </g>
-                        <ellipse class="lidJ" cx="240" cy="322" rx="24" ry="28" fill="#0a0a0c"/>
-                        <!-- Rechtes Auge -->
-                        <ellipse cx="320" cy="322" rx="23" ry="27" fill="#ffffff"/>
+                        <ellipse class="lidJ" cx="240" cy="323" rx="24" ry="28" fill="#0a0a0c"/>
+                        <!-- Rechtes Auge (Pupille zur Seite) -->
+                        <ellipse cx="320" cy="323" rx="23" ry="27" fill="#ffffff"/>
                         <g class="pupilJ" style="animation-delay:0.5s">
-                            <circle cx="323" cy="320" r="14" fill="#0a0a0a"/>
-                            <circle cx="317" cy="314" r="5" fill="#ffffff"/>
+                            <circle cx="329" cy="325" r="13" fill="#0a0a0a"/>
+                            <circle cx="324" cy="320" r="4.5" fill="#ffffff"/>
                         </g>
-                        <ellipse class="lidJ" cx="320" cy="322" rx="24" ry="28" fill="#0a0a0c" style="animation-delay:0.05s"/>
-                        <!-- Mund -->
-                        <path d="M 264 350 Q 280 361 296 350" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                        <ellipse class="lidJ" cx="320" cy="323" rx="24" ry="28" fill="#0a0a0c" style="animation-delay:0.05s"/>
+                        <!-- Mund (verschmitztes, leicht schiefes Lächeln) -->
+                        <path d="M 262 351 Q 283 363 301 347" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
                     </g>
 
                     <!-- Vertical divider -->
@@ -412,7 +417,7 @@
                     <line x1="555" y1="285" x2="1193" y2="285" stroke="#24242a" stroke-width="1" opacity="0.8"/>
 
                     <!-- Weather card -->
-                    <rect x="553" y="302" width="640" height="138" rx="18" fill="#0f0d1e" stroke="#24242a" stroke-width="1.5"/>
+                    <rect x="553" y="302" width="640" height="138" rx="18" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
                     <rect x="553" y="302" width="640" height="138" rx="18" fill="url(#ambBigJ)" opacity="0.15"/>
 
                     <!-- Weather icon -->
@@ -431,7 +436,7 @@
                     <text x="858" y="428" style="font-size:10px;fill:#24242a;letter-spacing:2px">CELSIUS · METRISCH</text>
 
                     <!-- Status bar -->
-                    <rect x="553" y="460" width="640" height="42" rx="10" fill="#0a0817" stroke="#24242a" stroke-width="1"/>
+                    <rect x="553" y="460" width="640" height="42" rx="10" fill="#0a2634" stroke="#24242a" stroke-width="1"/>
                     <circle cx="582" cy="481" r="4" fill="#1d9e75"/>
                     <text x="596" y="486" style="font-size:11px;fill:#4a6090;letter-spacing:1.5px">SYSTEM ONLINE</text>
                     <line x1="748" y1="466" x2="748" y2="496" stroke="#24242a" stroke-width="1"/>
@@ -447,7 +452,7 @@
 
                     <!-- Spotify Now Playing (nur sichtbar wenn was läuft) -->
                     <g id="idleSpotifyJ" opacity="0" style="transition:opacity 0.6s">
-                        <rect x="553" y="524" width="640" height="88" rx="14" fill="#0a0817" stroke="#1DB954" stroke-width="1" stroke-opacity="0.25"/>
+                        <rect x="553" y="524" width="640" height="88" rx="14" fill="#0a2634" stroke="#1DB954" stroke-width="1" stroke-opacity="0.25"/>
 
                         <!-- Animierte Balken -->
                         <rect x="572" y="562" width="5" height="14" rx="2" fill="#1DB954">
@@ -478,6 +483,55 @@
                         <!-- Label -->
                         <text x="1170" y="537" text-anchor="end" style="font-size:9px;fill:#1DB954;letter-spacing:2px;opacity:0.5">NOW PLAYING</text>
                     </g>
+                </g>
+
+                <!-- ══ IDLE 2: Infos im Vordergrund, Roboter lugt von oben rein ══ -->
+                <g id="idleScreen2J" class="fadeJ" opacity="0" style="visibility:hidden;pointer-events:none">
+                    <!-- dezenter Spotlight -->
+                    <circle cx="640" cy="380" r="460" fill="url(#ambBigJ)"/>
+
+                    <!-- Roboterkopf lugt von oben rein (wippt neugierig) -->
+                    <g class="peekBobJ">
+                        <line x1="640" y1="-34" x2="640" y2="-58" stroke="#4a4a52" stroke-width="6" stroke-linecap="round"/>
+                        <circle cx="640" cy="-66" r="10" fill="url(#podGJ)"/>
+                        <ellipse cx="512" cy="58" rx="19" ry="42" fill="url(#podGJ)" stroke="#26262b" stroke-width="2"/>
+                        <ellipse cx="768" cy="58" rx="19" ry="42" fill="url(#podGJ)" stroke="#26262b" stroke-width="2"/>
+                        <ellipse cx="640" cy="30" rx="128" ry="120" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                        <ellipse cx="586" cy="-30" rx="48" ry="24" fill="#ffffff" opacity="0.5" transform="rotate(-20 586 -30)"/>
+                        <rect x="536" y="18" width="208" height="112" rx="52" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
+                        <!-- Kawaii-Gesicht, schaut neugierig nach unten -->
+                        <path d="M 566 48 Q 594 38 620 48" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                        <path d="M 660 48 Q 686 38 714 48" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                        <ellipse cx="594" cy="80" rx="25" ry="29" fill="#ffffff"/>
+                        <circle cx="594" cy="92" r="14" fill="#0a0a0a"/>
+                        <circle cx="588" cy="87" r="5" fill="#ffffff"/>
+                        <ellipse cx="686" cy="80" rx="25" ry="29" fill="#ffffff"/>
+                        <circle cx="686" cy="92" r="14" fill="#0a0a0a"/>
+                        <circle cx="680" cy="87" r="5" fill="#ffffff"/>
+                        <path d="M 618 114 Q 640 124 662 114" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                    </g>
+
+                    <!-- Große zentrierte Uhr -->
+                    <text id="liveClockJ2" x="640" y="368" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:#EEF1F9;stroke:#0a0a0c;stroke-width:7px;paint-order:stroke;stroke-linejoin:round;letter-spacing:4px">12:00</text>
+                    <text id="liveDateJ2" x="640" y="418" text-anchor="middle" style="font-size:16px;fill:#8a8a95;letter-spacing:5px">DIENSTAG · 24. JUNI</text>
+
+                    <!-- Wetter-Pille (coelinblau) -->
+                    <rect x="430" y="470" width="420" height="74" rx="37" fill="#0e3346" stroke="#1d5f7d" stroke-width="1.5"/>
+                    <text id="weatherIconJ2" x="486" y="519" text-anchor="middle" style="font-size:42px">⛅</text>
+                    <text id="weatherTempJ2" x="556" y="519" style="font-size:40px;fill:#EEF1F9;font-weight:500">--°</text>
+                    <line x1="660" y1="486" x2="660" y2="528" stroke="#1d5f7d" stroke-width="1.2"/>
+                    <text id="weatherCityStatusJ2" x="684" y="502" style="font-size:19px;fill:#b4b4bd;font-weight:500">Dachau</text>
+                    <text id="weatherDescJ2" x="684" y="526" style="font-size:15px;fill:#8a8a95">Lade Wetter…</text>
+
+                    <!-- Newsticker unten -->
+                    <text id="newsTickerJ2" x="640" y="612" text-anchor="middle" style="font-size:14px;fill:#8a8a95;opacity:0.85"></text>
+                    <text id="idleTaglineJ2" x="640" y="612" text-anchor="middle" style="font-size:11px;fill:#3a3a42;letter-spacing:5px">JARVIS  OS  2.0</text>
+                </g>
+
+                <!-- Karussell-Punkte zum Wechseln der Idle-Ansicht -->
+                <g id="idleDotsJ">
+                    <circle id="dot0J" cx="628" cy="656" r="5.5" fill="#b4b4bd" style="cursor:pointer" onclick="switchIdle(0)"/>
+                    <circle id="dot1J" cx="652" cy="656" r="5.5" fill="#3a3a42" style="cursor:pointer" onclick="switchIdle(1)"/>
                 </g>
 
                 <!-- DYNAMISCHER FOKUS-MODUS -->
@@ -516,13 +570,13 @@
                                 <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                                 <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                                 <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                                <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                                <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                                 <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                                 <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                                <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                                <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                                 <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                                <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                                 <!-- Zeige-Arme (rotieren zum Timer-Punkt) -->
                                 <g id="timerArmRO" class="fadeFastJ" transform="rotate(-90 346 445)">
                                     <ellipse cx="394" cy="445" rx="46" ry="13" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
@@ -549,28 +603,28 @@
                             <ellipse cx="640" cy="330" rx="128" ry="120" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
                             <ellipse cx="586" cy="246" rx="48" ry="24" fill="#ffffff" opacity="0.5" transform="rotate(-20 586 246)"/>
                             <!-- Visor -->
-                            <rect x="536" y="288" width="208" height="122" rx="56" fill="#0b0d13" stroke="#c6cdda" stroke-width="4"/>
+                            <rect x="536" y="288" width="208" height="122" rx="56" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
 
                             <g id="faceFeaturesJ" class="fadeFastJ">
-                                <!-- Kawaii-Gesicht: Augenbrauen, weiße Augen, Mund -->
-                                <path d="M 566 316 Q 594 302 620 314" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                                <path d="M 660 314 Q 686 302 714 316" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
-                                <!-- Linkes Auge -->
-                                <ellipse cx="594" cy="350" rx="25" ry="30" fill="#ffffff"/>
+                                <!-- Kawaii-Gesicht (schaut verschmitzt zur Seite) -->
+                                <path d="M 564 314 Q 593 298 620 312" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                                <path d="M 660 312 Q 687 298 716 315" stroke="#ffffff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                                <!-- Linkes Auge (Pupille zur Seite) -->
+                                <ellipse cx="594" cy="351" rx="25" ry="30" fill="#ffffff"/>
                                 <g class="pupilJ">
-                                    <circle cx="597" cy="348" r="15" fill="#0a0a0a"/>
-                                    <circle cx="590" cy="341" r="5.5" fill="#ffffff"/>
+                                    <circle cx="604" cy="353" r="14" fill="#0a0a0a"/>
+                                    <circle cx="598" cy="347" r="5" fill="#ffffff"/>
                                 </g>
-                                <ellipse class="lidJ" cx="594" cy="350" rx="26" ry="31" fill="#0a0a0c"/>
-                                <!-- Rechtes Auge -->
-                                <ellipse cx="686" cy="350" rx="25" ry="30" fill="#ffffff"/>
+                                <ellipse class="lidJ" cx="594" cy="351" rx="26" ry="31" fill="#0a0a0c"/>
+                                <!-- Rechtes Auge (Pupille zur Seite) -->
+                                <ellipse cx="686" cy="351" rx="25" ry="30" fill="#ffffff"/>
                                 <g class="pupilJ" style="animation-delay:0.5s">
-                                    <circle cx="689" cy="348" r="15" fill="#0a0a0a"/>
-                                    <circle cx="682" cy="341" r="5.5" fill="#ffffff"/>
+                                    <circle cx="696" cy="353" r="14" fill="#0a0a0a"/>
+                                    <circle cx="690" cy="347" r="5" fill="#ffffff"/>
                                 </g>
-                                <ellipse class="lidJ" cx="686" cy="350" rx="26" ry="31" fill="#0a0a0c" style="animation-delay:0.05s"/>
-                                <!-- Mund -->
-                                <path id="mouthIdleJ" d="M 616 384 Q 640 396 664 384" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                                <ellipse class="lidJ" cx="686" cy="351" rx="26" ry="31" fill="#0a0a0c" style="animation-delay:0.05s"/>
+                                <!-- Mund (verschmitztes, leicht schiefes Lächeln) -->
+                                <path id="mouthIdleJ" d="M 614 385 Q 641 398 666 381" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>
                                 <ellipse id="mouthTalkJ" class="talkJ" cx="640" cy="388" rx="13" ry="6" fill="#ffffff" opacity="0"/>
                             </g>
                         </g>
@@ -612,7 +666,7 @@
                         <text x="1082" y="588" style="font-size:24px;fill:#8a8a95;opacity:0.2">%</text>
 
                         <!-- Rechen-Tafel -->
-                        <rect x="560" y="190" width="520" height="330" rx="20" fill="#0f0d1e" stroke="#24242a" stroke-width="1.5"/>
+                        <rect x="560" y="190" width="520" height="330" rx="20" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
                         <rect x="560" y="190" width="520" height="330" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
                         <path d="M 580 206 L 580 226 L 600 226" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <path d="M 1060 206 L 1060 226 L 1040 226" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
@@ -645,13 +699,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                         </g>
 
                         <!-- Aufgabe & Ergebnis -->
@@ -664,7 +718,7 @@
                     <!-- EXTRA WETTER ANSICHT -->
                     <g id="detailWeatherModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden">
                         <!-- Wetter-Panel -->
-                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#24242a" stroke-width="1.5"/>
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
                         <rect x="690" y="70" width="510" height="560" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
                         <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
@@ -692,13 +746,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                             <!-- Regenschirm -->
                             <path d="M 310 182 A 90 90 0 0 1 490 182 A 30 18 0 0 1 430 182 A 30 18 0 0 1 370 182 A 30 18 0 0 1 310 182 Z" fill="#7d7d86" stroke="#4a4a52" stroke-width="2"/>
                             <line x1="400" y1="92" x2="400" y2="80" stroke="#c9a15e" stroke-width="4" stroke-linecap="round"/>
@@ -720,31 +774,31 @@
                         <line x1="730" y1="410" x2="1170" y2="410" stroke="#3a3a42" stroke-width="1.5" opacity="0.4"/>
 
                         <!-- MAX -->
-                        <rect x="728" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3a3a42" stroke-width="1.2"/>
+                        <rect x="728" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
                         <text x="793" y="448" text-anchor="middle" style="font-size:18px;">🌡️</text>
                         <text x="793" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">HOCH</text>
                         <text id="detWeatherMaxJ" x="793" y="500" text-anchor="middle" style="font-size:28px;fill:#f39c12;font-weight:700;">35°</text>
 
                         <!-- MIN -->
-                        <rect x="878" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3a3a42" stroke-width="1.2"/>
+                        <rect x="878" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
                         <text x="943" y="448" text-anchor="middle" style="font-size:18px;">❄️</text>
                         <text x="943" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">TIEF</text>
                         <text id="detWeatherMinJ" x="943" y="500" text-anchor="middle" style="font-size:28px;fill:#b4b4bd;font-weight:700;">20°</text>
 
                         <!-- REGEN -->
-                        <rect x="1028" y="425" width="130" height="90" rx="14" fill="#1a1630" stroke="#3a3a42" stroke-width="1.2"/>
+                        <rect x="1028" y="425" width="130" height="90" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
                         <text x="1093" y="448" text-anchor="middle" style="font-size:18px;">💧</text>
                         <text x="1093" y="466" text-anchor="middle" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">REGEN</text>
                         <text id="detWeatherRainJ" x="1093" y="500" text-anchor="middle" style="font-size:28px;fill:#378ADD;font-weight:700;">0%</text>
 
                         <!-- LUFTQUALITÄT -->
-                        <rect x="728" y="530" width="210" height="82" rx="14" fill="#1a1630" stroke="#3a3a42" stroke-width="1.2"/>
+                        <rect x="728" y="530" width="210" height="82" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
                         <text x="748" y="556" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">🌬️ LUFTQUALITÄT</text>
                         <text id="detAirJ" x="748" y="586" style="font-size:22px;fill:#b4b4bd;font-weight:700;">—</text>
                         <text id="detAirValJ" x="748" y="603" style="font-size:10px;fill:#3a3a42;"></text>
 
                         <!-- POLLEN -->
-                        <rect x="958" y="530" width="200" height="82" rx="14" fill="#1a1630" stroke="#3a3a42" stroke-width="1.2"/>
+                        <rect x="958" y="530" width="200" height="82" rx="14" fill="#16455c" stroke="#3a3a42" stroke-width="1.2"/>
                         <text x="978" y="556" style="font-size:10px;fill:#8a8a95;letter-spacing:1px;">🌼 POLLENFLUG</text>
                         <text id="detPollenJ" x="978" y="586" style="font-size:22px;fill:#b4b4bd;font-weight:700;">—</text>
                         <text id="detPollenValJ" x="978" y="603" style="font-size:10px;fill:#3a3a42;"></text>
@@ -772,13 +826,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                         </g>
                         <!-- Sprechblase -->
                         <rect x="560" y="140" width="640" height="390" rx="24" fill="#26262b" stroke="#3a3a42" stroke-width="1.5"/>
@@ -829,13 +883,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                             <!-- Bleistift -->
                             <g transform="rotate(-10 392 340)">
                                 <rect x="384" y="272" width="16" height="118" fill="#f0c419" stroke="#b98850" stroke-width="1.5"/>
@@ -850,7 +904,7 @@
                             <div xmlns="http://www.w3.org/1999/xhtml" style="background:rgba(26,22,54,0.7);border:1px solid #3a3a42;border-radius:20px;padding:22px;color:#fff;box-sizing:border-box;height:100%;display:flex;flex-direction:column;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
                                     <span style="font-size:18px;font-weight:600;color:#eef1f9;">📋 Notizen</span>
-                                    <span id="notesCountBadge" style="font-size:12px;color:#8a8a95;background:#151226;padding:4px 10px;border-radius:20px;">0 gespeichert</span>
+                                    <span id="notesCountBadge" style="font-size:12px;color:#8a8a95;background:#16455c;padding:4px 10px;border-radius:20px;">0 gespeichert</span>
                                 </div>
                                 <div id="notesListContainer" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
                                 <div style="margin-top:14px;font-size:11px;color:#3a3a42;text-align:center;">Befehle: "notiz löschen 1" · "notiz löschen alle"</div>
@@ -880,17 +934,17 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                         </g>
 
                         <!-- Cover Art (vor dem Körper, von oben gehalten) -->
-                        <rect x="570" y="350" width="140" height="140" rx="12" fill="#1a1630" stroke="#24242a" stroke-width="1.5"/>
+                        <rect x="570" y="350" width="140" height="140" rx="12" fill="#16455c" stroke="#24242a" stroke-width="1.5"/>
                         <image id="musicCoverImgJ" href="" x="570" y="350" width="140" height="140"
                                preserveAspectRatio="xMidYMid slice" opacity="0" style="clip-path:inset(0 round 12px)"/>
                         <text id="musicCoverFallbackJ" x="640" y="436" text-anchor="middle"
@@ -947,13 +1001,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                             <!-- Glühbirne über der Hand -->
                             <circle cx="400" cy="336" r="52" fill="#f7d774" opacity="0.15"/>
                             <line x1="400" y1="290" x2="400" y2="276" stroke="#f7d774" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
@@ -987,7 +1041,7 @@
                         <!-- Cover Blur-Hintergrund (groß, unscharf) -->
                         <image id="fullCoverBgJ" href="" x="-60" y="-60" width="700" height="840" preserveAspectRatio="xMidYMid slice" opacity="0.12" style="filter:blur(30px)"/>
                         <!-- Cover Art -->
-                        <rect x="70" y="110" width="390" height="390" rx="20" fill="#1a1630" stroke="#24242a" stroke-width="1"/>
+                        <rect x="70" y="110" width="390" height="390" rx="20" fill="#16455c" stroke="#24242a" stroke-width="1"/>
                         <image id="fullCoverImgJ" href="" x="70" y="110" width="390" height="390" preserveAspectRatio="xMidYMid slice" style="clip-path:inset(0 round 20px)"/>
                         <text id="fullCoverFallbackJ" x="265" y="325" text-anchor="middle" style="font-size:80px">🎵</text>
                         <!-- Animierte Equalizer-Balken unterm Cover -->
@@ -1008,7 +1062,7 @@
                                 <div id="fullAlbumJ" style="font-size:13px;color:#3a3a42;margin-bottom:36px">Album</div>
 
                                 <!-- Progress -->
-                                <div style="position:relative;height:4px;background:#1a1630;border-radius:2px;margin-bottom:8px;">
+                                <div style="position:relative;height:4px;background:#16455c;border-radius:2px;margin-bottom:8px;">
                                     <div id="fullProgressJ" style="height:100%;width:0%;background:#1DB954;border-radius:2px;transition:width 1s linear;"></div>
                                 </div>
                                 <div style="display:flex;justify-content:space-between;margin-bottom:32px;">
@@ -1018,10 +1072,10 @@
 
                                 <!-- Controls -->
                                 <div style="display:flex;align-items:center;gap:20px;margin-bottom:32px;">
-                                    <button onclick="prevTrack()" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#1a1630'">⏮</button>
+                                    <button onclick="prevTrack()" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#16455c'">⏮</button>
                                     <button onclick="toggleMusicPlay()" id="fullPlayBtnJ" style="background:#1DB954;border:none;color:#000;width:68px;height:68px;border-radius:50%;cursor:pointer;font-size:28px;transition:transform 0.15s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">⏸</button>
-                                    <button onclick="skipTrack()" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#1a1630'">⏭</button>
-                                    <button onclick="hideAllPanels();openMusicMode();document.getElementById(\'avatarBundleJ\').style.transform=\'\'" style="background:#1a1630;border:1px solid #24242a;color:#8a8a95;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:16px;margin-left:auto;">⊞</button>
+                                    <button onclick="skipTrack()" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s;" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#16455c'">⏭</button>
+                                    <button onclick="hideAllPanels();openMusicMode();document.getElementById(\'avatarBundleJ\').style.transform=\'\'" style="background:#16455c;border:1px solid #24242a;color:#8a8a95;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:16px;margin-left:auto;">⊞</button>
                                 </div>
 
                                 <!-- Volume -->
@@ -1063,13 +1117,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                             <!-- Bahnhofsschild in der Hand -->
                             <rect x="366" y="352" width="66" height="40" rx="8" fill="#1d4ed8" stroke="#EEF1F9" stroke-width="2.5"/>
                             <text x="399" y="379" text-anchor="middle" style="font-size:22px;fill:#EEF1F9;font-weight:700">S</text>
@@ -1077,7 +1131,7 @@
                         </g>
 
                         <!-- Abfahrts-Panel -->
-                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#24242a" stroke-width="1.5"/>
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
                         <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <text x="720" y="112" style="font-size:18px;fill:#EEF1F9;font-weight:600">🚆 Abfahrten Dachau Bf</text>
@@ -1109,13 +1163,13 @@
                             <ellipse cx="234" cy="230" rx="42" ry="20" fill="#ffffff" opacity="0.5" transform="rotate(-20 234 230)"/>
                             <rect x="192" y="262" width="176" height="104" rx="48" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/><path d="M 216 290 Q 240 279 262 289" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M 298 289 Q 320 279 344 290" stroke="#ffffff" stroke-width="6" fill="none" stroke-linecap="round"/>
                             <circle cx="240" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="240" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="248" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="233" cy="306" r="6" fill="#ffffff" opacity="0.95"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(240,314)" style="transform-box: fill-box"/>
                             <circle cx="320" cy="314" r="24" fill="#ffffff" stroke="none"/>
-                            <circle cx="320" cy="314" r="13" fill="#0a0a0a"/>
+                            <circle cx="328" cy="316" r="13" fill="#0a0a0a"/>
                             <circle class="pupilJ" cx="313" cy="306" r="6" fill="#ffffff" opacity="0.95" style="animation-delay:0.5s"/>
-                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0b0d13" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
+                            <rect class="lidJ" x="-46" y="-46" width="92" height="92" fill="#0a0a0c" clip-path="url(#eyeClipJ)" transform="translate(320,314)" style="transform-box: fill-box; animation-delay:0.05s"/>
                             <!-- Karten-Schild in der Hand -->
                             <rect x="366" y="352" width="66" height="40" rx="8" fill="#1d9e75" stroke="#EEF1F9" stroke-width="2.5"/>
                             <text x="399" y="380" text-anchor="middle" style="font-size:24px">🗺</text>
@@ -1123,7 +1177,7 @@
                         </g>
 
                         <!-- Routen-Panel -->
-                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0f0d1e" stroke="#24242a" stroke-width="1.5"/>
+                        <rect x="690" y="70" width="510" height="560" rx="20" fill="#0e3346" stroke="#24242a" stroke-width="1.5"/>
                         <path d="M 710 86 L 710 106 L 730 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <path d="M 1180 86 L 1180 106 L 1160 106" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
                         <text id="routeTitleJ" x="720" y="112" style="font-size:17px;fill:#EEF1F9;font-weight:600">🗺️ Routenplaner</text>
@@ -1139,11 +1193,11 @@
         <div id="footballOverlayJ" class="svg-overlay-right">
             <div class="panel-inner">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;flex-shrink:0">
-                    <button onclick="loadFootball('fifa.world')" id="fb-wm" style="background:#1a1630;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏆 WM</button>
-                    <button onclick="loadFootball('ger.1')"  id="fb-ger" style="background:#1a1630;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🇩🇪 Bundesliga</button>
-                    <button onclick="loadFootball('eng.1')"  id="fb-eng" style="background:#1a1630;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
-                    <button onclick="loadFootball('uefa.champions')" id="fb-ucl" style="background:#1a1630;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">⭐ UCL</button>
-                    <button onclick="loadFootball('esp.1')"  id="fb-esp" style="background:#1a1630;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🇪🇸 LaLiga</button>
+                    <button onclick="loadFootball('fifa.world')" id="fb-wm" style="background:#16455c;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏆 WM</button>
+                    <button onclick="loadFootball('ger.1')"  id="fb-ger" style="background:#16455c;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🇩🇪 Bundesliga</button>
+                    <button onclick="loadFootball('eng.1')"  id="fb-eng" style="background:#16455c;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier</button>
+                    <button onclick="loadFootball('uefa.champions')" id="fb-ucl" style="background:#16455c;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">⭐ UCL</button>
+                    <button onclick="loadFootball('esp.1')"  id="fb-esp" style="background:#16455c;border:1px solid #24242a;color:#b4b4bd;padding:7px 11px;border-radius:8px;cursor:pointer;font-size:12px;transition:all 0.2s">🇪🇸 LaLiga</button>
                 </div>
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;flex-shrink:0">
                     <div id="fbLeagueNameJ" style="font-size:19px;color:#EEF1F9;font-weight:600">Bundesliga</div>
@@ -1158,8 +1212,8 @@
             <div class="panel-inner">
                 <div style="font-size:22px;color:#EEF1F9;font-weight:600;margin-bottom:18px;flex-shrink:0">⏰ Wecker</div>
                 <div style="display:flex;gap:8px;margin-bottom:16px;flex-shrink:0">
-                    <input type="time" id="newAlarmTime" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:15px;flex:1;outline:none;-webkit-appearance:none">
-                    <input type="text" id="newAlarmLabel" placeholder="Label…" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:13px;flex:2;outline:none">
+                    <input type="time" id="newAlarmTime" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:15px;flex:1;outline:none;-webkit-appearance:none">
+                    <input type="text" id="newAlarmLabel" placeholder="Label…" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;padding:10px 12px;border-radius:10px;font-size:13px;flex:2;outline:none">
                     <button onclick="addAlarmFromUI()" style="background:#8a8a95;border:none;color:#0a0813;width:44px;height:44px;border-radius:10px;cursor:pointer;font-size:22px;font-weight:700;flex-shrink:0;transition:transform 0.15s" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">+</button>
                 </div>
                 <div id="alarmListJ" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
@@ -1168,14 +1222,14 @@
 
         <!-- MUSIK FULL OVERLAY -->
         <div id="musicFullOverlayJ" class="svg-overlay">
-            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0d0b1a,#100E1E);border-radius:12px;display:flex;align-items:stretch;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0d0b1a,#0e3346);border-radius:12px;display:flex;align-items:stretch;overflow:hidden;">
                 <!-- Cover-Blur Hintergrund -->
                 <div id="coverBlurBgJ" style="position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(40px);opacity:0.18;transform:scale(1.1);transition:background-image 0.8s"></div>
                 <!-- Cover links -->
                 <div style="width:45%;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:30px;position:relative;z-index:1">
                     <div style="position:relative;width:100%;max-width:320px;aspect-ratio:1">
                         <img id="fullCoverImgJ" src="" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:20px;opacity:0;transition:opacity 0.5s;box-shadow:0 20px 60px rgba(0,0,0,0.6)">
-                        <div id="fullCoverFallbackJ" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;background:#1a1630;border-radius:20px">🎵</div>
+                        <div id="fullCoverFallbackJ" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px;background:#16455c;border-radius:20px">🎵</div>
                     </div>
                     <!-- Equalizer -->
                     <div id="fullEqJ" style="display:flex;gap:4px;align-items:flex-end;height:28px;margin-top:16px;opacity:0;transition:opacity 0.3s">
@@ -1193,7 +1247,7 @@
                     <div id="fullArtistJ" style="font-size:18px;color:#1DB954;margin-bottom:5px">Künstler</div>
                     <div id="fullAlbumJ" style="font-size:13px;color:#3a3a42;margin-bottom:30px">Album</div>
                     <!-- Progress -->
-                    <div style="position:relative;height:4px;background:#1a1630;border-radius:2px;margin-bottom:8px;cursor:pointer">
+                    <div style="position:relative;height:4px;background:#16455c;border-radius:2px;margin-bottom:8px;cursor:pointer">
                         <div id="fullProgressJ" style="height:100%;width:0%;background:#1DB954;border-radius:2px;transition:width 1s linear"></div>
                     </div>
                     <div style="display:flex;justify-content:space-between;margin-bottom:28px">
@@ -1202,10 +1256,10 @@
                     </div>
                     <!-- Controls -->
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px">
-                        <button onclick="prevTrack()" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#1a1630'">⏮</button>
+                        <button onclick="prevTrack()" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#16455c'">⏮</button>
                         <button onclick="toggleMusicPlay()" id="fullPlayBtnJ" style="background:#1DB954;border:none;color:#000;width:66px;height:66px;border-radius:50%;cursor:pointer;font-size:28px;transition:transform 0.15s;box-shadow:0 0 20px rgba(29,185,84,0.3)" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">⏸</button>
-                        <button onclick="skipTrack()" style="background:#1a1630;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#1a1630'">⏭</button>
-                        <button onclick="closeMusicFull()" style="background:#1a1630;border:1px solid #24242a;color:#8a8a95;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:16px;margin-left:auto;transition:all 0.2s" title="Kompakt">⊞</button>
+                        <button onclick="skipTrack()" style="background:#16455c;border:1px solid #24242a;color:#eef1f9;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:20px;transition:all 0.2s" onmouseover="this.style.background='#24242a'" onmouseout="this.style.background='#16455c'">⏭</button>
+                        <button onclick="closeMusicFull()" style="background:#16455c;border:1px solid #24242a;color:#8a8a95;width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:16px;margin-left:auto;transition:all 0.2s" title="Kompakt">⊞</button>
                     </div>
                     <!-- Volume -->
                     <div style="font-size:10px;color:#3a3a42;letter-spacing:3px;margin-bottom:10px">LAUTSTÄRKE</div>
@@ -1300,19 +1354,20 @@
             });
             setInterval(() => {
                 const now = new Date();
-                document.getElementById('liveClockJ').textContent = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-                const dateEl = document.getElementById('liveDateJ');
-                if (dateEl) {
-                    const day = now.toLocaleDateString('de-DE', {weekday:'long'}).toUpperCase();
-                    const d = now.toLocaleDateString('de-DE', {day:'numeric', month:'long'}).toUpperCase();
-                    dateEl.textContent = `${day} · ${d}`;
-                }
+                const time = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                const day = now.toLocaleDateString('de-DE', {weekday:'long'}).toUpperCase();
+                const d = now.toLocaleDateString('de-DE', {day:'numeric', month:'long'}).toUpperCase();
+                const dateStr = `${day} · ${d}`;
+                // Beide Idle-Screens aktualisieren
+                ['liveClockJ','liveClockJ2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = time; });
+                ['liveDateJ','liveDateJ2'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = dateStr; });
             }, 1000);
             getLiveWeather();
             updateGroqKeyStatus();
             updateDeepgramStatus();
             updateIdleSpotify();
             setInterval(updateIdleSpotify, 10000);
+            setEmotion('normal');
             startIdleAvatarAnimations();
             loadGoveeDevices();
             loadAlarms();
@@ -1353,14 +1408,41 @@
                     globalWeatherData = data;
                     const wid = data.weather[0].id;
                     const icon = weatherIcon(wid);
-                    document.getElementById('weatherTempJ').textContent = `${Math.round(data.main.temp)}°C`;
+                    const temp = `${Math.round(data.main.temp)}°C`;
+                    const desc = data.weather[0].description;
+                    // Idle 1
+                    document.getElementById('weatherTempJ').textContent = temp;
                     document.getElementById('weatherCityStatusJ').textContent = data.name;
                     const descEl = document.getElementById('weatherDescIdleJ');
-                    if (descEl) descEl.textContent = data.weather[0].description;
+                    if (descEl) descEl.textContent = desc;
                     const iconEl = document.getElementById('weatherIconJ');
                     if (iconEl) iconEl.textContent = icon;
+                    // Idle 2
+                    const set2 = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+                    set2('weatherTempJ2', `${Math.round(data.main.temp)}°`);
+                    set2('weatherCityStatusJ2', data.name);
+                    set2('weatherDescJ2', desc);
+                    set2('weatherIconJ2', icon);
                 }
             } catch(e) { document.getElementById('weatherTempJ').textContent = "--°C"; }
+        }
+
+        // ── IDLE-ANSICHT WECHSELN (Idle 1 ↔ Idle 2) ──────────────
+        let currentIdle = 0;
+        function switchIdle(n) {
+            currentIdle = n;
+            showJ('idleScreenJ', n === 0 ? 1 : 0);
+            showJ('idleScreen2J', n === 1 ? 1 : 0);
+            showJ('idleDotsJ', 1);
+            const d0 = document.getElementById('dot0J'), d1 = document.getElementById('dot1J');
+            if (d0) d0.setAttribute('fill', n === 0 ? '#b4b4bd' : '#3a3a42');
+            if (d1) d1.setAttribute('fill', n === 1 ? '#b4b4bd' : '#3a3a42');
+            // Idle-2-Roboter beim Einblenden kurz reinfahren lassen
+            if (n === 1) {
+                const s = document.getElementById('idleScreen2J');
+                s.style.animation = 'none'; void s.offsetWidth;
+                s.style.animation = 'idle2InJ 0.5s ease both';
+            }
         }
 
         function toggleSettingsDrawer(force) {
@@ -1389,6 +1471,103 @@
         function setLabelJ(p, t) {
             document.getElementById('phaseJ').textContent = p;
             document.getElementById('triggerJ').textContent = t;
+        }
+
+        // ══════════ EMOTIONEN (Cute-Eyes-Gesichter, 1:1 aus dem Bild) ══════════
+        // Gesichts-Varianten für den Fokus-Roboter (Visor-Mitte 640,350)
+        const EMOTIONS = {
+            normal: `
+                <path d="M 566 316 Q 594 302 620 314" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <path d="M 660 314 Q 686 302 714 316" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="594" cy="350" rx="25" ry="30" fill="#fff"/>
+                <g class="pupilJ"><circle cx="596" cy="352" r="14" fill="#0a0a0a"/><circle cx="590" cy="346" r="5" fill="#fff"/></g>
+                <ellipse class="lidJ" cx="594" cy="350" rx="26" ry="31" fill="#0a0a0c"/>
+                <ellipse cx="686" cy="350" rx="25" ry="30" fill="#fff"/>
+                <g class="pupilJ" style="animation-delay:0.5s"><circle cx="688" cy="352" r="14" fill="#0a0a0a"/><circle cx="682" cy="346" r="5" fill="#fff"/></g>
+                <ellipse class="lidJ" cx="686" cy="350" rx="26" ry="31" fill="#0a0a0c" style="animation-delay:0.05s"/>
+                <path d="M 614 385 Q 641 398 666 381" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>`,
+            happy: `
+                <path d="M 566 356 Q 594 326 622 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
+                <path d="M 658 356 Q 686 326 714 356" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round"/>
+                <path d="M 608 380 Q 640 414 672 380 Z" fill="#fff" opacity="0.92"/>`,
+            surprised: `
+                <path d="M 566 304 Q 594 294 620 302" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <path d="M 660 302 Q 686 294 714 304" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <ellipse cx="594" cy="352" rx="29" ry="34" fill="#fff"/>
+                <circle cx="594" cy="353" r="9" fill="#0a0a0a"/><circle cx="590" cy="348" r="3.5" fill="#fff"/>
+                <ellipse cx="686" cy="352" rx="29" ry="34" fill="#fff"/>
+                <circle cx="686" cy="353" r="9" fill="#0a0a0a"/><circle cx="682" cy="348" r="3.5" fill="#fff"/>
+                <ellipse cx="640" cy="394" rx="9" ry="12" fill="#fff" opacity="0.9"/>`,
+            love: `
+                <path d="M 594 341 C 587 332 574 337 579 347 Q 583 356 594 364 Q 605 356 609 347 C 614 337 601 332 594 341 Z" fill="#fff"/>
+                <path d="M 686 341 C 679 332 666 337 671 347 Q 675 356 686 364 Q 697 356 701 347 C 706 337 693 332 686 341 Z" fill="#fff"/>
+                <path d="M 620 386 Q 640 400 660 386" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+            sad: `
+                <path d="M 566 312 Q 592 320 616 324" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <path d="M 664 324 Q 688 320 714 312" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <ellipse cx="594" cy="352" rx="24" ry="28" fill="#fff"/>
+                <circle cx="594" cy="356" r="13" fill="#0a0a0a"/><circle cx="589" cy="351" r="4.5" fill="#fff"/>
+                <ellipse cx="686" cy="352" rx="24" ry="28" fill="#fff"/>
+                <circle cx="686" cy="356" r="13" fill="#0a0a0a"/><circle cx="681" cy="351" r="4.5" fill="#fff"/>
+                <path d="M 574 380 q 6 11 0 16 q -6 -5 0 -16" fill="#8fd0ff" opacity="0.85"/>
+                <path d="M 706 380 q 6 11 0 16 q -6 -5 0 -16" fill="#8fd0ff" opacity="0.85"/>
+                <path d="M 618 394 Q 640 382 662 394" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>`,
+            sleepy: `
+                <path d="M 568 350 Q 594 364 620 350" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <path d="M 660 350 Q 686 364 712 350" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+                <text x="716" y="322" style="font-size:28px;fill:#fff;opacity:0.75">z</text>
+                <text x="736" y="304" style="font-size:20px;fill:#fff;opacity:0.5">z</text>
+                <path d="M 626 388 Q 640 394 654 388" stroke="#fff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.8"/>`,
+            angry: `
+                <path d="M 566 314 L 620 330" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <path d="M 660 330 L 714 314" stroke="#fff" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="594" cy="354" rx="24" ry="25" fill="#fff"/>
+                <circle cx="596" cy="357" r="13" fill="#0a0a0a"/><circle cx="591" cy="352" r="4.5" fill="#fff"/>
+                <ellipse cx="686" cy="354" rx="24" ry="25" fill="#fff"/>
+                <circle cx="684" cy="357" r="13" fill="#0a0a0a"/><circle cx="679" cy="352" r="4.5" fill="#fff"/>
+                <path d="M 618 394 L 662 392" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.9"/>`,
+        };
+        let currentEmotion = 'normal';
+        function setEmotion(name, holdMs) {
+            const face = document.getElementById('faceFeaturesJ');
+            if (!face || !EMOTIONS[name]) return;
+            currentEmotion = name;
+            face.innerHTML = EMOTIONS[name];
+            // kurz halten, dann zurück auf normal (für spontane Reaktionen)
+            clearTimeout(setEmotion._t);
+            if (holdMs) setEmotion._t = setTimeout(() => {
+                if (currentEmotion === name) { currentEmotion = 'normal'; face.innerHTML = EMOTIONS.normal; }
+            }, holdMs);
+        }
+        // Sprachbefehl-Erkennung für Emotionen ("sei traurig", "lach mal" …)
+        function emotionFromText(lq) {
+            if (/\b(lach|freu|glücklich|happy|fröhlich)/.test(lq)) return 'happy';
+            if (/\b(überrasch|wow|erschreck|staun)/.test(lq)) return 'surprised';
+            if (/\b(lieb|herz|verliebt|knuddel|umarm)/.test(lq)) return 'love';
+            if (/\b(traurig|weine|schade|trauer)/.test(lq)) return 'sad';
+            if (/\b(müde|gähn)/.test(lq)) return 'sleepy';
+            if (/\b(wütend|sauer|böse|ärger|angry)/.test(lq)) return 'angry';
+            if (/\bneutral\b/.test(lq)) return 'normal';
+            return null;
+        }
+        const EMOTION_LABELS = { normal:'Neutral', happy:'Fröhlich', surprised:'Überrascht', love:'Verliebt', sad:'Traurig', sleepy:'Müde', angry:'Verärgert' };
+        const EMOTION_ORDER = ['normal','happy','surprised','love','sad','sleepy','angry'];
+        // Zeigt den Roboter groß mit einer Emotion (Sprachbefehl / Vorführen)
+        function showEmotion(name) {
+            hideAllPanels();
+            showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0);
+            showJ('focusScreenJ', 1);
+            showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+            document.getElementById('avatarBundleJ').style.transform = '';
+            setEmotion(name);
+            setLabelJ('Stimmung', EMOTION_LABELS[name] || name);
+            clearTimeout(showEmotion._t);
+            showEmotion._t = setTimeout(resetToHome, 4500);
+        }
+        // Klick auf den Roboter rotiert durch alle Gefühle (zum Anschauen)
+        function cycleEmotion() {
+            const i = EMOTION_ORDER.indexOf(currentEmotion);
+            showEmotion(EMOTION_ORDER[(i + 1) % EMOTION_ORDER.length]);
         }
 
         // ── AUTO-RETURN: temporäre Apps (Lichter, Notizen …) gehen nach
@@ -1424,15 +1603,17 @@
             ng.style.animation = 'none'; ng.style.opacity = 0;
             ng.style.visibility = 'hidden'; ng.style.pointerEvents = 'none';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
-            document.getElementById('mouthTalkJ').style.opacity = 0;
-            document.getElementById('mouthIdleJ').style.opacity = 1;
+            const mt = document.getElementById('mouthTalkJ'); if (mt) mt.style.opacity = 0;
+            const mi = document.getElementById('mouthIdleJ'); if (mi) mi.style.opacity = 1;
             document.getElementById('avatarBundleJ').style.transform = 'translate(0px, 0px) scale(1)';
         }
 
         function resetToHome() {
             clearInterval(timerTicker);
             hideAllPanels();
-            showJ('focusScreenJ', 0); showJ('idleScreenJ', 1);
+            showJ('focusScreenJ', 0);
+            switchIdle(currentIdle);   // zuletzt gewählte Idle-Ansicht zeigen
+            setEmotion('normal');
             setLabelJ('Idle Dashboard', 'System empfangsbereit');
         }
 
@@ -1642,7 +1823,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
             clearInterval(timerTicker);
             hideAllPanels();
-            showJ('idleScreenJ', 0);
+            showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0);
             showJ('focusScreenJ', 1);
             showJ('ringListenJ', 1);
             setLabelJ('Jarvis denkt…', `"${query}"`);
@@ -1658,6 +1839,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (isDateQuery(lqPC)) { handleDateQuery(); return; }
             if (lqPC.includes('erinner')) { handleReminderCommand(lqPC); return; }
             if (lqPC.startsWith('nachtmodus')) { handleNightCommand(lqPC); return; }
+            // Emotion zeigen: "sei traurig", "lach mal", "zeig gefühle" …
+            if (lqPC.includes('gefühl') || lqPC.includes('stimmung') || lqPC.includes('emotion')) { showEmotion(EMOTION_ORDER[(EMOTION_ORDER.indexOf(currentEmotion)+1)%EMOTION_ORDER.length]); return; }
+            { const emo = emotionFromText(lqPC); if (emo) { showEmotion(emo); return; } }
             if (lqPC.startsWith('route') || lqPC.startsWith('verbindung') || lqPC.includes('wie komme ich')) { const rq = parseRouteQuery(lqPC); if (rq) { openRouteMode(rq.from, rq.to); return; } }
             if (lqPC === 'bahn' || lqPC === 'zug' || lqPC === 'öpnv' || lqPC === 'oepnv' || lqPC.includes('abfahrt') || lqPC.includes('s-bahn') || lqPC === 'sbahn') { openTransitMode(); return; }
 
@@ -2241,7 +2425,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                                   : dep.transportType === 'BUS'   ? '#3b2a5d;color:#d0c2f0'
                                   : '#5d3c2a;color:#f0d8c2';
                     const gleis = dep.platform ? `<span style="font-size:11px;color:#8a8a95;min-width:38px;text-align:right">Gl. ${dep.platform}</span>` : '';
-                    return `<div style="display:flex;align-items:center;gap:12px;background:#151226;border:1px solid #24242a;border-radius:12px;padding:10px 14px;">
+                    return `<div style="display:flex;align-items:center;gap:12px;background:#16455c;border:1px solid #24242a;border-radius:12px;padding:10px 14px;">
                         <span style="font-size:16px;font-weight:700;color:#EEF1F9;min-width:52px">${t}</span>
                         <span style="background:${lineCol};font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;min-width:34px;text-align:center">${line}</span>
                         <span style="flex:1;font-size:13px;color:#b4b4bd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${dir}</span>
@@ -2320,7 +2504,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                             <span style="font-size:12px;color:#8a8a95">${fmtTimeHM(p.to.plannedArrival || p.to.plannedDeparture)}</span>
                         </div>`;
                     }).join('');
-                    return `<div style="background:#151226;border:1px solid ${idx === 0 ? '#8a8a95' : '#24242a'};border-radius:12px;padding:12px 14px">
+                    return `<div style="background:#16455c;border:1px solid ${idx === 0 ? '#8a8a95' : '#24242a'};border-radius:12px;padding:12px 14px">
                         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
                             <span style="font-size:16px;font-weight:700;color:#EEF1F9">${fmtTimeHM(dep)} → ${fmtTimeHM(arr)}</span>
                             <span style="font-size:12px;color:#8a8a95">${durMin} Min · ${transfers === 0 ? 'direkt' : transfers + '× umsteigen'}</span>
@@ -2491,14 +2675,19 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const el = document.getElementById('newsTickerJ');
             const tagline = document.getElementById('idleTaglineJ');
             if (!el) return;
+            const el2 = document.getElementById('newsTickerJ2');
+            const tagline2 = document.getElementById('idleTaglineJ2');
             if (tagline) tagline.style.opacity = 0;
+            if (tagline2) tagline2.style.opacity = 0;
             el.style.opacity = 0;
+            if (el2) el2.style.opacity = 0;
             setTimeout(() => {
                 newsIdx = (newsIdx + 1) % newsItems.length;
                 let headline = newsItems[newsIdx];
                 if (headline.length > 90) headline = headline.slice(0, 87) + '…';
-                el.textContent = '+++ ' + headline + ' +++';
-                el.style.opacity = 1;
+                const txt = '+++ ' + headline + ' +++';
+                el.textContent = txt; el.style.opacity = 1;
+                if (el2) { el2.textContent = txt; el2.style.opacity = 1; }
             }, 400);
         }
         loadNews();
@@ -2937,11 +3126,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                         // Roboter mit Hör-Ring zeigen (sonst wirkt es "verbugt")
                         cancelAutoReturn();
                         hideAllPanels();
-                        showJ('idleScreenJ', 0);
+                        showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0);
                         showJ('focusScreenJ', 1);
                         showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
                         document.getElementById('avatarBundleJ').style.transform = '';
                         setLabelJ('Jarvis', 'Ich höre…');
+                        setEmotion('surprised');
                         showJ('ringListenJ', 1);
                         // Kurz warten, ob im selben Satz noch ein Befehl folgt
                         captureTimer = setTimeout(finishCapture, 1300);
@@ -3143,7 +3333,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             ['fb-wm','fb-ger','fb-eng','fb-ucl','fb-esp'].forEach(id => {
                 const b = document.getElementById(id);
                 if (!b) return;
-                b.style.background = '#1a1630'; b.style.color = '#b4b4bd'; b.style.borderColor = '#24242a';
+                b.style.background = '#16455c'; b.style.color = '#b4b4bd'; b.style.borderColor = '#24242a';
             });
             const map = {'fifa.world':'fb-wm','ger.1':'fb-ger','eng.1':'fb-eng','uefa.champions':'fb-ucl','esp.1':'fb-esp'};
             if (map[league]) {
@@ -3192,7 +3382,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     ? `<span style="color:#3a3a42;font-size:10px">Abpfiff</span>`
                     : `<span style="color:#8a8a95;font-size:11px">${kickoff} Uhr</span>`;
 
-                return `<div style="background:#0f0d1e;border:1px solid ${border};border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:8px;animation:matchInJ 0.3s ease both;animation-delay:${i*0.06}s">
+                return `<div style="background:#0e3346;border:1px solid ${border};border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:8px;animation:matchInJ 0.3s ease both;animation-delay:${i*0.06}s">
                     <div style="flex:1;min-width:0">
                         <div style="font-size:14px;color:#EEF1F9;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${homeName}</div>
                         <div style="font-size:12px;color:#8a8a95;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${awayName}</div>
@@ -3278,7 +3468,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             }
 
             el.innerHTML = sorted.map((a, i) => `
-                <div style="background:#0f0d1e;border:1px solid ${a.active?(a.fired?'#f39c12':'#24242a'):'#181628'};border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;animation:matchInJ 0.3s ease both;animation-delay:${i*0.07}s">
+                <div style="background:#0e3346;border:1px solid ${a.active?(a.fired?'#f39c12':'#24242a'):'#181628'};border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;animation:matchInJ 0.3s ease both;animation-delay:${i*0.07}s">
                     <div style="display:flex;align-items:center;gap:12px;">
                         <div style="font-size:22px;${a.fired?'animation:alarmRing 0.5s ease infinite':''}">⏰</div>
                         <div>
@@ -3287,7 +3477,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                         </div>
                     </div>
                     <div style="display:flex;gap:8px;align-items:center;">
-                        <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#1a1630'};border:1px solid ${a.active?'#1d9e75':'#24242a'};color:#fff;width:52px;height:28px;border-radius:14px;cursor:pointer;font-size:11px;letter-spacing:1px;transition:all 0.2s;font-weight:600">${a.active?'AN':'AUS'}</button>
+                        <button onclick="toggleAlarmActive(${a.id})" style="background:${a.active?'#1d9e75':'#16455c'};border:1px solid ${a.active?'#1d9e75':'#24242a'};color:#fff;width:52px;height:28px;border-radius:14px;cursor:pointer;font-size:11px;letter-spacing:1px;transition:all 0.2s;font-weight:600">${a.active?'AN':'AUS'}</button>
                         <button onclick="deleteAlarm(${a.id})" style="background:transparent;border:1px solid #3c1f2e;color:#a0415d;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:15px;transition:background 0.2s" onmouseover="this.style.background='#3c1f2e'" onmouseout="this.style.background='transparent'">✕</button>
                     </div>
                 </div>`).join('');
@@ -3524,11 +3714,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 // Klar sichtbarer Hör-Modus: Panel schließen, Roboter + Ring zeigen
                 cancelAutoReturn();
                 hideAllPanels();
-                showJ('idleScreenJ', 0);
+                showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0);
                 showJ('focusScreenJ', 1);
                 showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
                 document.getElementById('avatarBundleJ').style.transform = '';
                 showJ('ringListenJ', 1);
+                setEmotion('surprised');
                 setLabelJ('Zuhören…', 'Sprich jetzt…');
                 // Wenn 10s gar nichts kommt, beenden
                 silenceTimerV = setTimeout(() => { try { recognition && recognition.stop(); } catch(_) {} }, 10000);
@@ -3568,6 +3759,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
         }
 
         function sleepMode() {
+            setEmotion('sleepy');
             const overlay = document.getElementById('sleepOverlay');
             overlay.style.display = 'flex';
             setTimeout(() => { overlay.style.opacity = '1'; }, 10);
@@ -3710,7 +3902,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 rect.setAttribute('x', x); rect.setAttribute('y', y);
                 rect.setAttribute('width', chipW); rect.setAttribute('height', chipH);
                 rect.setAttribute('rx', '10');
-                rect.setAttribute('fill', isOp ? '#26262b' : '#151226');
+                rect.setAttribute('fill', isOp ? '#26262b' : '#16455c');
                 rect.setAttribute('stroke', '#3a3a42'); rect.setAttribute('stroke-width', '1.5');
                 rect.style.cssText = `opacity:0; animation:${anim}`;
                 group.appendChild(rect);
