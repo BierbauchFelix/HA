@@ -218,7 +218,7 @@
         }
 
         /* HTML-Form-Elemente im SVG Lichter-Modus */
-        .color-swatch { width: 34px; height: 34px; border-radius: 50%; padding: 0; cursor: pointer; position: relative; border: none; }
+        .color-swatch { width: 34px; height: 34px; border-radius: 50%; padding: 0; margin: 0; cursor: pointer; position: relative; border: none; flex: 0 0 auto; -webkit-appearance: none; appearance: none; box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
         .color-swatch.active::after { content: ''; position: absolute; inset: -4px; border: 2px solid var(--text-primary); border-radius: 50%; }
 
         /* Animationen */
@@ -1352,19 +1352,37 @@
             b.classList.toggle('open', open);
         }
 
+        // Panels, die von selbst nach 60s zum Dashboard zurückkehren
+        const TEMP_PANELS = new Set(['ledControlWindowModeJ','notesListModeJ','detailWeatherModeJ','infoModeJ','mathTextJ','routeModeJ','transitModeJ','noteGroupN']);
+        // Panels, die offen bleiben (Musik, Timer)
+        const STAY_PANELS = new Set(['musicModeJ','musicFullModeJ','timerRingGroupO']);
         function showJ(id, v) {
             const el = document.getElementById(id);
             if (!el) return;
             el.style.opacity = v;
             el.style.pointerEvents = v > 0 ? 'auto' : 'none';
             el.style.visibility = v > 0 ? 'visible' : 'hidden';
+            if (v > 0) {
+                if (TEMP_PANELS.has(id)) armAutoReturn(60);
+                else if (STAY_PANELS.has(id)) cancelAutoReturn();
+            }
         }
         function setLabelJ(p, t) {
             document.getElementById('phaseJ').textContent = p;
             document.getElementById('triggerJ').textContent = t;
         }
 
+        // ── AUTO-RETURN: temporäre Apps (Lichter, Notizen …) gehen nach
+        //    60 s zurück aufs Dashboard. Musik & Timer bleiben offen. ──
+        let autoReturnTimer = null;
+        function cancelAutoReturn() { clearTimeout(autoReturnTimer); autoReturnTimer = null; }
+        function armAutoReturn(seconds = 60) {
+            cancelAutoReturn();
+            autoReturnTimer = setTimeout(() => { if (!recognition) resetToHome(); }, seconds * 1000);
+        }
+
         function hideAllPanels() {
+            cancelAutoReturn();
             clearInterval(musicProgressInterval);
             clearInterval(spotifyPollInterval);
             showJ('mathTextJ', 0); showJ('mathRingJ', 0);
@@ -2067,8 +2085,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                         </div>
                     </div>
                     <input type="range" min="1" max="100" value="70" style="width:100%; cursor:pointer;" onchange="goveeDeviceCmd(${i}, 'bright', this.value)">
-                    <div style="display:flex; gap:8px; margin-top:12px;">
-                        ${swatches.map(c => `<button onclick="goveeDeviceCmd(${i}, 'color', '${c}')" class="color-swatch" style="background:${c}; width:28px; height:28px;"></button>`).join('')}
+                    <div style="display:flex; gap:10px; margin-top:14px; align-items:center;">
+                        ${swatches.map(c => `<button onclick="goveeDeviceCmd(${i}, 'color', '${c}')" class="color-swatch" style="background:${c};"></button>`).join('')}
                     </div>
                 </div>`).join('');
         }
@@ -2596,7 +2614,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             const redirectUri = getSpotifyRedirectUri();
             const scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
             const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}&code_challenge=${challenge}&code_challenge_method=S256`;
-            window.open(authUrl, 'spotify_auth', 'width=500,height=700,left=300,top=200');
+            // Handy/Touch: Popups nach 'await' werden von iOS Safari blockiert →
+            // stattdessen im selben Tab weiterleiten (Token kommt via handleSpotifyCallback zurück).
+            const isMobile = /iP(hone|ad|od)|Android/i.test(navigator.userAgent) || 'ontouchstart' in window;
+            if (isMobile) {
+                window.location.href = authUrl;
+            } else {
+                const popup = window.open(authUrl, 'spotify_auth', 'width=500,height=700,left=300,top=200');
+                if (!popup) window.location.href = authUrl; // Popup blockiert → Redirect
+            }
         }
 
         async function spotifyAPI(method, endpoint, body = null) {
@@ -2866,10 +2892,10 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     if (cmd.length > 1) {
                         document.getElementById('assistantInput').value = cmd;
                         processCommand();
-                        wakeRestartTimer = setTimeout(startWakeWord, 1500);
+                        wakeRestartTimer = setTimeout(startWakeWord, 700);
                     } else {
                         playWakeSound();
-                        wakeRestartTimer = setTimeout(() => toggleVoiceInput(), 350);
+                        wakeRestartTimer = setTimeout(() => toggleVoiceInput(), 300);
                     }
                 };
 
@@ -2888,6 +2914,14 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     if (!triggered) {
                         if (!WAKE_TRIGGERS.some(t => heard.includes(t))) return;
                         triggered = true;
+                        // Sofort sichtbar in den Hör-Modus: offenes Panel schließen,
+                        // Roboter mit Hör-Ring zeigen (sonst wirkt es "verbugt")
+                        cancelAutoReturn();
+                        hideAllPanels();
+                        showJ('idleScreenJ', 0);
+                        showJ('focusScreenJ', 1);
+                        showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+                        document.getElementById('avatarBundleJ').style.transform = '';
                         setLabelJ('Jarvis', 'Ich höre…');
                         showJ('ringListenJ', 1);
                         // Kurz warten, ob im selben Satz noch ein Befehl folgt
@@ -3076,6 +3110,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
             document.getElementById('footballOverlayJ').classList.add('active');
+            armAutoReturn(60);
             setLabelJ('Fußball', FOOTBALL_LEAGUES[league] || 'Fußball');
             const dateStr = new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
             document.getElementById('fbDateJ').textContent = dateStr;
@@ -3254,6 +3289,7 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             document.getElementById('avatarBundleJ').style.transform = 'translateX(-410px)';
             showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
             document.getElementById('alarmOverlayJ').classList.add('active');
+            armAutoReturn(60);
             const active = alarms.filter(a => a.active).length;
             setLabelJ('Wecker', `${active} aktiv · ${alarms.length} gesamt`);
             renderAlarmPanel();
@@ -3466,8 +3502,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 btn.textContent = '🔴';
                 btn.style.background = '#3c1f2e';
                 btn.style.borderColor = '#a0415d';
+                // Klar sichtbarer Hör-Modus: Panel schließen, Roboter + Ring zeigen
+                cancelAutoReturn();
+                hideAllPanels();
+                showJ('idleScreenJ', 0);
+                showJ('focusScreenJ', 1);
+                showJ('avatarBodyJ', 1); showJ('faceFeaturesJ', 1);
+                document.getElementById('avatarBundleJ').style.transform = '';
                 showJ('ringListenJ', 1);
-                setLabelJ('Zuhören…', 'Sprich jetzt — ich warte bis du fertig bist');
+                setLabelJ('Zuhören…', 'Sprich jetzt…');
                 // Wenn 10s gar nichts kommt, beenden
                 silenceTimerV = setTimeout(() => { try { recognition && recognition.stop(); } catch(_) {} }, 10000);
             };
