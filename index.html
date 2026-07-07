@@ -484,17 +484,20 @@
                         <ellipse cx="640" cy="30" rx="128" ry="120" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
                         <ellipse cx="586" cy="-30" rx="48" ry="24" fill="#ffffff" opacity="0.5" transform="rotate(-20 586 -30)"/>
                         <rect x="536" y="18" width="208" height="112" rx="52" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
-                        <!-- Kawaii-Gesicht, schaut neugierig nach unten -->
-                        <path d="M 566 48 Q 594 38 620 48" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <path d="M 660 48 Q 686 38 714 48" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round"/>
-                        <ellipse cx="594" cy="80" rx="25" ry="29" fill="#ffffff"/>
-                        <circle cx="594" cy="92" r="14" fill="#0a0a0a"/>
-                        <circle cx="588" cy="87" r="5" fill="#ffffff"/>
-                        <ellipse cx="686" cy="80" rx="25" ry="29" fill="#ffffff"/>
-                        <circle cx="686" cy="92" r="14" fill="#0a0a0a"/>
-                        <circle cx="680" cy="87" r="5" fill="#ffffff"/>
-                        <path d="M 618 114 Q 640 124 662 114" stroke="#ffffff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.9"/>
+                        <!-- Gesicht: wird per setEmotion() gefüllt (Fokus-Emotionen per
+                             Transform auf die von-oben-lugende Position abgebildet) -->
+                        <g id="idleFace2J" transform="translate(0,-276)"></g>
                     </g>
+
+                    <!-- Klau-Arm: fährt gelegentlich runter und klaut eine Uhr-Ziffer -->
+                    <g id="stealArmJ" opacity="0" style="pointer-events:none">
+                        <line id="stealArmLineJ" x1="640" y1="120" x2="640" y2="120" stroke="url(#robotHeadGJ)" stroke-width="26" stroke-linecap="round"/>
+                        <line id="stealArmLineEdgeJ" x1="640" y1="120" x2="640" y2="120" stroke="#aeb7cc" stroke-width="27" stroke-linecap="round" opacity="0.25" fill="none"/>
+                        <circle id="stealHandJ" cx="640" cy="120" r="20" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
+                        <circle id="stealHandDotJ" cx="640" cy="120" r="7" fill="url(#podGJ)"/>
+                    </g>
+                    <text id="stolenDigitJ" opacity="0" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:#8fd0ff;stroke:#0a0a0c;stroke-width:6px;paint-order:stroke;stroke-linejoin:round;pointer-events:none;transition:opacity 0.2s"></text>
+                    <rect id="digitCoverJ" opacity="0" fill="#0c0c0e" style="pointer-events:none;transition:opacity 0.15s"/>
 
                     <!-- Große zentrierte Uhr -->
                     <text id="liveClockJ2" x="640" y="368" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:#EEF1F9;stroke:#0a0a0c;stroke-width:7px;paint-order:stroke;stroke-linejoin:round;letter-spacing:4px">12:00</text>
@@ -1399,6 +1402,7 @@
             setInterval(updateIdleSpotify, 10000);
             setEmotion('normal');
             scheduleEmotionRotation();
+            scheduleClockSteal();
             startIdleAvatarAnimations();
             loadGoveeDevices();
             loadAlarms();
@@ -1562,11 +1566,13 @@
         function setEmotion(name, holdMs) {
             if (!EMOTIONS[name]) return;
             currentEmotion = name;
-            // Beide Roboter (Fokus + idle) zeigen dieselbe Emotion
+            // Alle drei Roboter (Fokus + idle 1 + idle 2) zeigen dieselbe Emotion
             const face = document.getElementById('faceFeaturesJ');
             const idleFace = document.getElementById('idleFaceJ');
+            const idleFace2 = document.getElementById('idleFace2J');
             if (face) face.innerHTML = EMOTIONS[name];
             if (idleFace) idleFace.innerHTML = EMOTIONS[name];
+            if (idleFace2) idleFace2.innerHTML = EMOTIONS[name];
             clearTimeout(setEmotion._t);
             if (holdMs) setEmotion._t = setTimeout(() => {
                 if (currentEmotion === name) setEmotion('normal');
@@ -1593,6 +1599,74 @@
             }, delay);
         }
         function wakeRecogBusy() { return false; }
+
+        // ══════════ VERSPIELT: Roboter klaut eine Uhr-Ziffer (Idle 2) ══════════
+        function animateValue(from, to, dur, onUpdate, onDone) {
+            const start = performance.now();
+            (function frame(now) {
+                let t = Math.min(1, (now - start) / dur);
+                t = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; // easeInOut
+                onUpdate(from + (to - from) * t);
+                if (t < 1) requestAnimationFrame(frame); else if (onDone) onDone();
+            })(start);
+        }
+        let clockStealTimer = null;
+        function scheduleClockSteal() {
+            clearTimeout(clockStealTimer);
+            const delay = (120 + Math.random() * 180) * 1000; // 2–5 Minuten
+            clockStealTimer = setTimeout(() => {
+                const idle2Active = currentIdle === 1 && document.getElementById('idleScreen2J').style.visibility !== 'hidden';
+                if (idle2Active && !recognition) runClockSteal();
+                scheduleClockSteal();
+            }, delay);
+        }
+        function runClockSteal() {
+            const clock = document.getElementById('liveClockJ2');
+            const arm = document.getElementById('stealArmJ');
+            const armLine = document.getElementById('stealArmLineJ');
+            const armEdge = document.getElementById('stealArmLineEdgeJ');
+            const hand = document.getElementById('stealHandJ');
+            const handDot = document.getElementById('stealHandDotJ');
+            const stolen = document.getElementById('stolenDigitJ');
+            const cover = document.getElementById('digitCoverJ');
+            if (!clock || !arm || !stolen) return;
+            let bbox; try { bbox = clock.getBBox(); } catch(e) { return; }
+            const digitCX = bbox.x + bbox.width - 42;            // Mitte der letzten Ziffer
+            const clockY = parseFloat(clock.getAttribute('y'));   // 368
+            const digitChar = clock.textContent.slice(-1);
+            const topY = 130, grabY = clockY - 44;
+            let grabbed = false;
+
+            const place = (handY) => {
+                [armLine, armEdge].forEach(l => { l.setAttribute('x1', digitCX); l.setAttribute('x2', digitCX); l.setAttribute('y1', 55); l.setAttribute('y2', handY); });
+                hand.setAttribute('cx', digitCX); hand.setAttribute('cy', handY);
+                handDot.setAttribute('cx', digitCX); handDot.setAttribute('cy', handY);
+                if (grabbed) stolen.setAttribute('y', handY + 44);
+            };
+            // Abdeckung + geklaute Ziffer vorbereiten
+            cover.setAttribute('x', digitCX - 44); cover.setAttribute('y', bbox.y - 6);
+            cover.setAttribute('width', 88); cover.setAttribute('height', bbox.height + 12);
+            stolen.textContent = digitChar; stolen.setAttribute('x', digitCX); stolen.setAttribute('y', clockY);
+
+            place(topY);
+            arm.style.opacity = '1';
+            animateValue(topY, grabY, 650, place, () => {
+                grabbed = true;
+                cover.style.opacity = '1';
+                stolen.style.opacity = '1';
+                animateValue(grabY, topY, 800, place, () => {          // hochziehen
+                    setTimeout(() => {                                  // oben halten
+                        animateValue(topY, grabY, 800, place, () => {   // zurückbringen
+                            cover.style.opacity = '0';
+                            stolen.style.opacity = '0';
+                            grabbed = false;
+                            animateValue(grabY, topY, 550, place, () => { arm.style.opacity = '0'; });
+                        });
+                    }, 1300);
+                });
+            });
+        }
+
         // Sprachbefehl-Erkennung für Emotionen ("sei traurig", "lach mal" …)
         function emotionFromText(lq) {
             if (/\b(lach|freu|glücklich|happy|fröhlich)/.test(lq)) return 'happy';
