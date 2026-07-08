@@ -9,7 +9,7 @@
          → "Jarvis" funktioniert. -->
     <title>Jarvis OS - Ultimate Assistant</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Modak&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Modak&family=Rock+Salt&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #0b0b0d;
@@ -352,6 +352,21 @@
                 <circle cx="1080" cy="560" r="360" fill="url(#ambBigJ)"><animate attributeName="cx" values="1080;1000;1080" dur="18s" repeatCount="indefinite"/></circle>
                 <rect x="0" y="0" width="1280" height="720" fill="url(#gridPatJ)"/>
                 <rect x="0" y="0" width="1280" height="720" fill="url(#scanPatJ)"/>
+                <!-- Navy HUD-Akzente im Hintergrund -->
+                <g stroke="#33447a" fill="none" opacity="0.4">
+                    <path d="M 30 30 L 30 78 M 30 30 L 78 30"/>
+                    <path d="M 1250 30 L 1250 78 M 1250 30 L 1202 30"/>
+                    <path d="M 30 690 L 30 642 M 30 690 L 78 690"/>
+                    <path d="M 1250 690 L 1250 642 M 1250 690 L 1202 690"/>
+                    <line x1="0" y1="118" x2="120" y2="118" stroke-width="1"/>
+                    <line x1="1160" y1="602" x2="1280" y2="602" stroke-width="1"/>
+                </g>
+                <g fill="#33447a" opacity="0.5">
+                    <circle cx="126" cy="118" r="3"/>
+                    <circle cx="1154" cy="602" r="3"/>
+                    <rect x="1258" y="340" width="10" height="40" rx="2" opacity="0.4"/>
+                    <rect x="12" y="340" width="10" height="40" rx="2" opacity="0.4"/>
+                </g>
 
                 <!-- STARTSEITE (IDLE) -->
                 <g id="idleScreenJ" class="fadeJ">
@@ -413,7 +428,7 @@
                     <text x="874" y="80" text-anchor="middle" style="font-size:10px;fill:#3a3a42;letter-spacing:6px">JARVIS  OS  2.0</text>
 
                     <!-- Big clock (Bubble-Graffiti-Style) -->
-                    <text id="liveClockJ" x="874" y="232" text-anchor="middle" filter="url(#textGlowJ)" style="font-family:'Modak',sans-serif;font-size:126px;fill:url(#clockGradJ);stroke:#0a3a4a;stroke-width:6px;paint-order:stroke;stroke-linejoin:round;letter-spacing:4px">12:00</text>
+                    <text id="liveClockJ" x="874" y="232" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:126px;fill:#EEF1F9;letter-spacing:4px">12:00</text>
 
                     <!-- Live date -->
                     <text id="liveDateJ" x="874" y="262" text-anchor="middle" style="font-size:13px;fill:#8a8a95;letter-spacing:3px">DIENSTAG · 24. JUNI</text>
@@ -513,32 +528,16 @@
                         <path d="M 980 360 L 1030 450 L 995 435 L 960 480 Z" fill="#b7bede" opacity="0.5"/>
                     </g>
 
-                    <!-- Roboterkopf lugt von oben rein (wippt neugierig) -->
-                    <g class="peekBobJ">
-                        <line x1="640" y1="-34" x2="640" y2="-58" stroke="#4a4a52" stroke-width="6" stroke-linecap="round"/>
-                        <circle cx="640" cy="-66" r="10" fill="url(#podGJ)"/>
-                        <ellipse cx="512" cy="58" rx="19" ry="42" fill="url(#podGJ)" stroke="#26262b" stroke-width="2"/>
-                        <ellipse cx="768" cy="58" rx="19" ry="42" fill="url(#podGJ)" stroke="#26262b" stroke-width="2"/>
-                        <ellipse cx="640" cy="30" rx="128" ry="120" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
-                        <ellipse cx="586" cy="-30" rx="48" ry="24" fill="#ffffff" opacity="0.5" transform="rotate(-20 586 -30)"/>
-                        <rect x="536" y="18" width="208" height="112" rx="52" fill="#0a0a0c" stroke="#c6cdda" stroke-width="4"/>
-                        <!-- Gesicht: wird per setEmotion() gefüllt (Fokus-Emotionen per
-                             Transform auf die von-oben-lugende Position abgebildet) -->
-                        <g id="idleFace2J" transform="translate(0,-276)"></g>
+                    <!-- Kleiner, dezenter Augen-Kreis oben links (Roboter „ist da") -->
+                    <g id="cornerAvatar2J" opacity="0.5">
+                        <circle cx="62" cy="70" r="42" fill="url(#robotHeadGJ)" opacity="0.85"/>
+                        <circle cx="62" cy="72" r="33" fill="#0a0a0c"/>
+                        <!-- Gesicht: wird per setEmotion() klein in den Kreis gerechnet -->
+                        <g id="idleFace2J" transform="translate(-290,-124.5) scale(0.55)"></g>
                     </g>
-
-                    <!-- Klau-Arm: fährt gelegentlich runter und klaut eine Uhr-Ziffer -->
-                    <g id="stealArmJ" opacity="0" style="pointer-events:none">
-                        <line id="stealArmLineJ" x1="640" y1="120" x2="640" y2="120" stroke="url(#robotHeadGJ)" stroke-width="26" stroke-linecap="round"/>
-                        <line id="stealArmLineEdgeJ" x1="640" y1="120" x2="640" y2="120" stroke="#aeb7cc" stroke-width="27" stroke-linecap="round" opacity="0.25" fill="none"/>
-                        <circle id="stealHandJ" cx="640" cy="120" r="20" fill="url(#robotHeadGJ)" stroke="#aeb7cc" stroke-width="2"/>
-                        <circle id="stealHandDotJ" cx="640" cy="120" r="7" fill="url(#podGJ)"/>
-                    </g>
-                    <text id="stolenDigitJ" opacity="0" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:#8fd0ff;stroke:#0a0a0c;stroke-width:6px;paint-order:stroke;stroke-linejoin:round;pointer-events:none;transition:opacity 0.2s"></text>
-                    <rect id="digitCoverJ" opacity="0" fill="#0c0c0e" style="pointer-events:none;transition:opacity 0.15s"/>
 
                     <!-- Große zentrierte Uhr -->
-                    <text id="liveClockJ2" x="640" y="368" text-anchor="middle" filter="url(#textGlowJ)" style="font-family:'Modak',sans-serif;font-size:150px;fill:url(#clockGradJ);stroke:#0a3a4a;stroke-width:6px;paint-order:stroke;stroke-linejoin:round;letter-spacing:4px">12:00</text>
+                    <text id="liveClockJ2" x="640" y="352" text-anchor="middle" style="font-family:'Rock Salt',cursive;font-size:104px;fill:#EEF1F9;letter-spacing:2px">12:00</text>
                     <text id="liveDateJ2" x="640" y="418" text-anchor="middle" style="font-size:16px;fill:#8a8a95;letter-spacing:5px">DIENSTAG · 24. JUNI</text>
 
                     <!-- Wetter-Feld (futuristisch, HUD-Rahmen) -->
@@ -1446,7 +1445,6 @@
             setInterval(updateIdleSpotify, 10000);
             setEmotion('normal');
             scheduleEmotionRotation();
-            scheduleClockSteal();
             startIdleAvatarAnimations();
             loadGoveeDevices();
             loadAlarms();
