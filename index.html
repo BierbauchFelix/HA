@@ -2174,9 +2174,9 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             savedNotes.push({ text, time: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}) });
             saveNotesToStorage();
 
-            document.getElementById('avatarBundleJ').style.transform = 'translate(-360px, 0px) scale(1)';
-            const _mi = document.getElementById('mouthIdleJ'); if (_mi) _mi.style.opacity = 0;
-            const _mt = document.getElementById('mouthTalkJ'); if (_mt) _mt.style.opacity = 1;
+            // Roboter beim Notiz-Erstellen komplett ausblenden (nur der Zettel)
+            showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
+            document.getElementById('avatarBundleJ').style.transform = '';
 
             const svgNS = 'http://www.w3.org/2000/svg';
             const group = document.getElementById('noteTextN');
