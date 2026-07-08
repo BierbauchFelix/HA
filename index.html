@@ -9,7 +9,7 @@
          → "Jarvis" funktioniert. -->
     <title>Jarvis OS - Ultimate Assistant</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Modak&family=Rock+Salt&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Modak&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-main: #0b0b0d;
@@ -335,6 +335,8 @@
                     </filter>
                     <linearGradient id="neonLineJ" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#5566cc" stop-opacity="0"/><stop offset="50%" stop-color="#5566cc" stop-opacity="0.9"/><stop offset="100%" stop-color="#5566cc" stop-opacity="0"/></linearGradient>
                     <linearGradient id="clockGradJ" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#c8cffb"/></linearGradient>
+                    <!-- Uhr in Navy-Tönen (sticht nicht als reines Weiß raus) -->
+                    <linearGradient id="clockNavyJ" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b7c1e6"/><stop offset="100%" stop-color="#7e8dc0"/></linearGradient>
                     <pattern id="gridPatJ" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M 44 0 L 0 0 0 44" fill="none" stroke="#5566cc" stroke-width="0.5" opacity="0.06"/></pattern>
                     <pattern id="scanPatJ" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#5566cc" opacity="0.03"/></pattern>
                     <clipPath id="eyeClipJ"><circle cx="0" cy="0" r="46"/></clipPath>
@@ -428,7 +430,7 @@
                     <text x="874" y="80" text-anchor="middle" style="font-size:10px;fill:#3a3a42;letter-spacing:6px">JARVIS  OS  2.0</text>
 
                     <!-- Big clock (Bubble-Graffiti-Style) -->
-                    <text id="liveClockJ" x="874" y="232" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:126px;fill:#EEF1F9;letter-spacing:4px">12:00</text>
+                    <text id="liveClockJ" x="874" y="232" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:126px;fill:url(#clockNavyJ);letter-spacing:4px">12:00</text>
 
                     <!-- Live date -->
                     <text id="liveDateJ" x="874" y="262" text-anchor="middle" style="font-size:13px;fill:#8a8a95;letter-spacing:3px">DIENSTAG · 24. JUNI</text>
@@ -528,16 +530,8 @@
                         <path d="M 980 360 L 1030 450 L 995 435 L 960 480 Z" fill="#b7bede" opacity="0.5"/>
                     </g>
 
-                    <!-- Kleiner, dezenter Augen-Kreis oben links (Roboter „ist da") -->
-                    <g id="cornerAvatar2J" opacity="0.5">
-                        <circle cx="62" cy="70" r="42" fill="url(#robotHeadGJ)" opacity="0.85"/>
-                        <circle cx="62" cy="72" r="33" fill="#0a0a0c"/>
-                        <!-- Gesicht: wird per setEmotion() klein in den Kreis gerechnet -->
-                        <g id="idleFace2J" transform="translate(-290,-124.5) scale(0.55)"></g>
-                    </g>
-
-                    <!-- Große zentrierte Uhr -->
-                    <text id="liveClockJ2" x="640" y="352" text-anchor="middle" style="font-family:'Rock Salt',cursive;font-size:104px;fill:#EEF1F9;letter-spacing:2px">12:00</text>
+                    <!-- Große zentrierte Uhr (Navy-Töne, kein Glow) -->
+                    <text id="liveClockJ2" x="640" y="368" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:url(#clockNavyJ);letter-spacing:4px">12:00</text>
                     <text id="liveDateJ2" x="640" y="418" text-anchor="middle" style="font-size:16px;fill:#8a8a95;letter-spacing:5px">DIENSTAG · 24. JUNI</text>
 
                     <!-- Wetter-Feld (futuristisch, HUD-Rahmen) -->
