@@ -428,6 +428,8 @@
 
                     <!-- OS label -->
                     <text x="874" y="80" text-anchor="middle" style="font-size:10px;fill:#3a3a42;letter-spacing:6px">JARVIS  OS  2.0</text>
+                    <!-- Laufende Timer als Countdown (leer wenn keiner läuft) -->
+                    <text id="idleTimerJ" x="874" y="52" text-anchor="middle" style="font-size:24px;fill:#e8b24a;font-weight:600;letter-spacing:1px"></text>
 
                     <!-- Big clock (Bubble-Graffiti-Style) -->
                     <text id="liveClockJ" x="874" y="232" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:126px;fill:#EEF1F9;letter-spacing:4px">12:00</text>
@@ -529,6 +531,9 @@
                         <path d="M 760 662 L 980 360 L 1180 662 Z" fill="#3f4666"/>
                         <path d="M 980 360 L 1030 450 L 995 435 L 960 480 Z" fill="#b7bede" opacity="0.5"/>
                     </g>
+
+                    <!-- Laufende Timer als Countdown oben (leer wenn keiner läuft) -->
+                    <text id="idleTimer2J" x="640" y="70" text-anchor="middle" style="font-size:28px;fill:#e8b24a;font-weight:600;letter-spacing:1px"></text>
 
                     <!-- Große zentrierte Uhr (weiß, kein Glow) -->
                     <text id="liveClockJ2" x="640" y="368" text-anchor="middle" style="font-family:'Modak',sans-serif;font-size:150px;fill:#EEF1F9;letter-spacing:4px">12:00</text>
@@ -689,6 +694,13 @@
                         <text id="endTimeO" x="640" y="650" text-anchor="middle" style="font-size:14px;fill:#b4b4bd">Endet um --:--</text>
                     </g>
 
+                    <!-- MEHRFACH-TIMER (2+ Timer nebeneinander) -->
+                    <g id="multiTimerModeJ" class="fadeFastJ" opacity="0" style="visibility:hidden;pointer-events:none">
+                        <text x="640" y="90" text-anchor="middle" style="font-size:24px;fill:#EEF1F9;font-weight:500">⏱ Aktive Timer</text>
+                        <line x1="440" y1="112" x2="840" y2="112" stroke="#33447a" stroke-width="1" opacity="0.5"/>
+                        <g id="multiTimerCardsJ"></g>
+                    </g>
+
                     <!-- KARIERTER NOTIZZETTEL -->
                     <g transform="translate(-215,0)">
                     <g id="noteGroupN" class="fadeFastJ" opacity="0" style="visibility:hidden;transform-origin: 855px 330px;">
@@ -711,21 +723,21 @@
 
                     <!-- RECHNER-ANSICHT -->
                     <g id="mathTextJ" opacity="0" style="visibility:hidden">
-                        <!-- Schwebende Mathe-Symbole -->
-                        <text x="524" y="162" style="font-size:26px;fill:#8a8a95;opacity:0.25">√</text>
-                        <text x="1108" y="172" style="font-size:30px;fill:#8a8a95;opacity:0.22">π</text>
-                        <text x="1118" y="472" style="font-size:26px;fill:#8a8a95;opacity:0.2">∑</text>
-                        <text x="498" y="592" style="font-size:30px;fill:#8a8a95;opacity:0.22">÷</text>
-                        <text x="1082" y="588" style="font-size:24px;fill:#8a8a95;opacity:0.2">%</text>
+                        <!-- Schwebende Mathe-Symbole (Indigo-Glow) -->
+                        <text x="524" y="162" style="font-size:26px;fill:#5566cc;opacity:0.4" filter="url(#eyeGlowJ)">√</text>
+                        <text x="1108" y="172" style="font-size:30px;fill:#5566cc;opacity:0.35" filter="url(#eyeGlowJ)">π</text>
+                        <text x="1118" y="472" style="font-size:26px;fill:#5566cc;opacity:0.32" filter="url(#eyeGlowJ)">∑</text>
+                        <text x="498" y="592" style="font-size:30px;fill:#5566cc;opacity:0.35" filter="url(#eyeGlowJ)">÷</text>
+                        <text x="1082" y="588" style="font-size:24px;fill:#5566cc;opacity:0.32" filter="url(#eyeGlowJ)">%</text>
 
-                        <!-- Rechen-Tafel -->
-                        <rect x="560" y="190" width="520" height="330" rx="20" fill="#14203f" stroke="#24242a" stroke-width="1.5"/>
-                        <rect x="560" y="190" width="520" height="330" rx="20" fill="url(#ambBigJ)" opacity="0.12"/>
-                        <path d="M 580 206 L 580 226 L 600 226" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 1060 206 L 1060 226 L 1040 226" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 580 504 L 580 484 L 600 484" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <path d="M 1060 504 L 1060 484 L 1040 484" fill="none" stroke="#3a3a42" stroke-width="1.5" opacity="0.8"/>
-                        <text x="820" y="230" text-anchor="middle" style="font-size:10px;fill:#3a3a42;letter-spacing:4px">RECHENZENTRUM</text>
+                        <!-- Rechen-Tafel (dunkles Graphit + Indigo-HUD) -->
+                        <rect x="560" y="190" width="520" height="330" rx="14" fill="#0d1018" stroke="#33447a" stroke-width="1.5"/>
+                        <rect x="560" y="190" width="520" height="3" rx="1.5" fill="url(#neonLineJ)"/>
+                        <rect x="566" y="204" width="4" height="120" rx="2" fill="#5566cc" filter="url(#eyeGlowJ)"/>
+                        <path d="M 560 206 L 560 190 L 576 190 M 1080 504 L 1080 520 L 1064 520" fill="none" stroke="#5566cc" stroke-width="1.5" opacity="0.7"/>
+                        <path d="M 1080 206 L 1080 190 L 1064 190 M 560 504 L 560 520 L 576 520" fill="none" stroke="#5566cc" stroke-width="1.5" opacity="0.5"/>
+                        <text x="820" y="230" text-anchor="middle" style="font-size:10px;fill:#5566cc;letter-spacing:4px">◈ RECHENZENTRUM</text>
+                        <text x="1060" y="512" text-anchor="end" style="font-size:8px;fill:#33447a;letter-spacing:2px">CALC-CORE v2</text>
 
                         <!-- Figur mit Zeigestock -->
                         <g transform="translate(182,30) scale(0.85)">
@@ -763,8 +775,8 @@
 
                         <!-- Aufgabe & Ergebnis -->
                         <g id="mathChipsGroupJ"></g>
-                        <line x1="620" y1="400" x2="1020" y2="400" stroke="#3a3a42" stroke-width="2"/>
-                        <text x="668" y="466" text-anchor="middle" style="font-size:34px;fill:#3a3a42;font-weight:600">=</text>
+                        <line x1="620" y1="400" x2="1020" y2="400" stroke="url(#neonLineJ)" stroke-width="2"/>
+                        <text x="668" y="466" text-anchor="middle" style="font-size:34px;fill:#5566cc;font-weight:600" filter="url(#eyeGlowJ)">=</text>
                         <text id="mathResultJ" x="830" y="470" text-anchor="middle" style="font-size:52px;fill:#ffffff;font-weight:700" filter="url(#eyeGlowJ)">0</text>
                     </g>
 
@@ -1395,7 +1407,6 @@
     </div>
 
     <script>
-        let timerTicker;
         let globalWeatherData = null;
 
         // Notizen (localStorage mit Fallback falls blockiert)
@@ -1529,7 +1540,7 @@
         // Panels, die von selbst nach 60s zum Dashboard zurückkehren
         const TEMP_PANELS = new Set(['ledControlWindowModeJ','notesListModeJ','detailWeatherModeJ','infoModeJ','mathTextJ','routeModeJ','transitModeJ','noteGroupN']);
         // Panels, die offen bleiben (Musik, Timer)
-        const STAY_PANELS = new Set(['musicModeJ','musicFullModeJ','timerRingGroupO']);
+        const STAY_PANELS = new Set(['musicModeJ','musicFullModeJ','timerRingGroupO','multiTimerModeJ']);
         function showJ(id, v) {
             const el = document.getElementById(id);
             if (!el) return;
@@ -1752,6 +1763,7 @@
             showJ('mathTextJ', 0); showJ('mathRingJ', 0);
             showJ('infoModeJ', 0); showJ('detailWeatherModeJ', 0);
             showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0);
+            showJ('multiTimerModeJ', 0);
             showJ('ledControlWindowModeJ', 0);
             showJ('notesListModeJ', 0);
             showJ('musicModeJ', 0);
@@ -1775,7 +1787,6 @@
         }
 
         function resetToHome() {
-            clearInterval(timerTicker);
             hideAllPanels();
             showJ('focusScreenJ', 0);
             switchIdle(currentIdle);   // zuletzt gewählte Idle-Ansicht zeigen
@@ -1866,7 +1877,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (lq === 'bahn' || lq === 'zug' || lq === 'öpnv' || lq === 'oepnv' || lq.includes('abfahrt') || lq.includes('s-bahn') || lq === 'sbahn') { openTransitMode(); return; }
             if (lq === 'wm' || lq.includes('weltmeisterschaft')) { openFootball('fifa.world'); return; }
             if (lq === 'fußball' || lq === 'fussball' || lq === 'bundesliga') { openFootball(lq === 'bundesliga' ? 'ger.1' : 'fifa.world'); return; }
-            if (lq.includes("timer stopp") || lq === "stopp") { clearInterval(timerTicker); showJ('ringListenJ', 0); showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); setLabelJ('Timer', 'Gestoppt.'); return; }
+            if (lq.includes("timer stopp") || lq === "stopp") { stopAllTimers(); showJ('ringListenJ', 0); setLabelJ('Timer', 'Alle Timer gestoppt.'); return; }
+            if (lq === "timer" && activeTimers.length) { hideAllPanels(); showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0); showJ('focusScreenJ', 1); showTimerScreen(); setLabelJ(activeTimers.length > 1 ? `${activeTimers.length} Timer aktiv` : 'Timer aktiv', 'Laufende Timer.'); return; }
             if (lq.startsWith("timer")) { openTimerMode(parseDurationToSeconds(lq) || 600); return; }
             if (lq.includes('notizen') && (lq.includes('lösch') || lq.includes('loesch')) && lq.includes('alle')) { savedNotes = []; saveNotesToStorage(); openNotesListMode(); setLabelJ('Notizblock', 'Alle Notizen gelöscht.'); jarvisSpeak('Alle Notizen gelöscht.'); return; }
             if (lq.startsWith("notiz löschen") || lq.startsWith("notiz loeschen")) { const m = lq.match(/\d+/); if (lq.includes("alle")) { savedNotes=[]; saveNotesToStorage(); openNotesListMode(); } else deleteNote(m ? parseInt(m[0])-1 : savedNotes.length-1); return; }
@@ -1897,9 +1909,8 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 case 'notiz':        openNoteMode(param || originalQuery); break;
                 case 'timer':        openTimerMode(parseDurationToSeconds(param) || 600); break;
                 case 'timer_stopp':
-                    clearInterval(timerTicker);
-                    showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0);
-                    setLabelJ('Timer', 'Timer gestoppt.'); break;
+                    stopAllTimers();
+                    setLabelJ('Timer', 'Alle Timer gestoppt.'); break;
                 case 'musik':        openMusicMode(); break;
                 case 'wetter':       openDetailWeather(param || 'Dachau'); break;
                 case 'lichter':
@@ -1987,7 +1998,6 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             if (!query) return;
             inputField.value = "";
 
-            clearInterval(timerTicker);
             hideAllPanels();
             showJ('idleScreenJ', 0); showJ('idleScreen2J', 0); showJ('idleDotsJ', 0);
             showJ('focusScreenJ', 1);
@@ -2062,111 +2072,207 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
             return parts.join(' ') || '0 Sekunden';
         }
 
+        // ══════════ MEHRFACH-TIMER ══════════
+        // Timer laufen über Zeitstempel (endsAt) und einen globalen Ticker —
+        // sie überleben Panel-Wechsel und laufen auf dem Homescreen weiter.
+        let activeTimers = [];   // {id, name, total, endsAt, finished, finishedAt}
+        let timerIdSeq = 1;
+
+        function timerRemaining(t) { return Math.max(0, Math.ceil((t.endsAt - Date.now()) / 1000)); }
+        function fmtTimer(s) { return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
+        function fmtEnd(t) { return new Date(t.endsAt).toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'}); }
+
         function openTimerMode(durationSeconds) {
+            const total = Math.max(5, durationSeconds || 600);
+            const t = { id: timerIdSeq, name: `Timer ${timerIdSeq}`, total, endsAt: Date.now() + total * 1000, finished: false };
+            timerIdSeq++;
+            activeTimers.push(t);
+            showTimerScreen();
+            const niceDur = formatDurationNice(total);
+            setLabelJ(activeTimers.length > 1 ? `${activeTimers.length} Timer aktiv` : 'Timer aktiv', `${t.name}: ${niceDur} gestartet.`);
+            jarvisSpeak(`${activeTimers.length > 1 ? t.name : 'Timer'} über ${niceDur} gestartet.`);
+        }
+
+        // Zeigt die passende Timer-Ansicht: 1 Timer = Ring, 2+ = nebeneinander
+        function showTimerScreen() {
             showJ('ringListenJ', 0);
             showJ('avatarBodyJ', 0); showJ('faceFeaturesJ', 0);
             document.getElementById('avatarBundleJ').style.transform = '';
-            showJ('timerRingGroupO', 1);
-            showJ('timerDetailsGroupO', 1);
-            const tnReset = document.getElementById('timerNameO');
-            if (tnReset) tnReset.textContent = 'Timer';
-            const tdReset = document.getElementById('timeDisplayO');
-            if (tdReset) tdReset.style.fill = '#EEF1F9';
-
-            let totalSeconds = Math.max(5, durationSeconds || 600);
-            let remainingSeconds = totalSeconds;
-
-            function drawArc() {
-                const mins = Math.floor(remainingSeconds / 60);
-                const secs = remainingSeconds % 60;
-                document.getElementById('timeDisplayO').textContent = `${mins}:${String(secs).padStart(2,'0')}`;
-                
-                const factor = remainingSeconds / totalSeconds;
-                const angle = 360 * factor;
-                const rad = (angle - 90) * Math.PI / 180;
-                const cx = 640, cy = 330, r = 195;
-                const endX = cx + r * Math.cos(rad);
-                const endY = cy + r * Math.sin(rad);
-                const largeArc = angle > 180 ? 1 : 0;
-
-                const path = document.getElementById('progressArcO');
-                if (angle >= 359.99) {
-                    path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-0.01} ${cy-r}`);
-                } else if (angle <= 0.01) {
-                    path.setAttribute('d', '');
-                } else {
-                    path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY}`);
-                }
-                const dot = document.getElementById('progressDotO');
-                dot.setAttribute('cx', endX); dot.setAttribute('cy', endY);
-
-                // Arm der Figur folgt dem Timer-Punkt (Schulter-Pivots in Screen-Koordinaten)
-                const armR = document.getElementById('timerArmRO');
-                const armL = document.getElementById('timerArmLO');
-                const restR = document.getElementById('timerRestRO');
-                const restL = document.getElementById('timerRestLO');
-                if (armR && armL) {
-                    if (endX >= 640) {
-                        const deg = Math.atan2(endY - 396, endX - 692.8) * 180 / Math.PI;
-                        armR.setAttribute('transform', `rotate(${deg} 346 445)`);
-                        armR.style.opacity = 1; armL.style.opacity = 0;
-                        restL.style.opacity = 1; restR.style.opacity = 0;
-                    } else {
-                        const deg = Math.atan2(endY - 396, endX - 587.2) * 180 / Math.PI - 180;
-                        armL.setAttribute('transform', `rotate(${deg} 214 445)`);
-                        armL.style.opacity = 1; armR.style.opacity = 0;
-                        restR.style.opacity = 1; restL.style.opacity = 0;
-                    }
-                }
+            if (activeTimers.length <= 1) {
+                showJ('multiTimerModeJ', 0);
+                showJ('timerRingGroupO', 1);
+                showJ('timerDetailsGroupO', 1);
+                const tn = document.getElementById('timerNameO'); if (tn) tn.textContent = 'Timer';
+                const td = document.getElementById('timeDisplayO'); if (td) td.style.fill = '#EEF1F9';
+                updateSingleTimerScreen();
+            } else {
+                showJ('timerRingGroupO', 0);
+                showJ('timerDetailsGroupO', 0);
+                showJ('multiTimerModeJ', 1);
+                renderMultiTimers();
             }
-
-            drawArc();
-            timerTicker = setInterval(() => {
-                if(remainingSeconds <= 0) { clearInterval(timerTicker); return; }
-                remainingSeconds--;
-                drawArc();
-                if (remainingSeconds <= 0) { clearInterval(timerTicker); timerFinished(); }
-            }, 1000);
-
-            const niceDur = formatDurationNice(totalSeconds);
-            setLabelJ('Timer aktiv', `${niceDur} gestartet.`);
-            jarvisSpeak(`Timer über ${niceDur} gestartet.`);
         }
 
-        function timerFinished() {
+        function stopAllTimers() {
+            activeTimers = [];
+            showJ('timerRingGroupO', 0); showJ('timerDetailsGroupO', 0); showJ('multiTimerModeJ', 0);
+            updateIdleTimerWidget();
+        }
+
+        // Einzel-Timer-Ansicht (Ring + Figur-Arm) aktualisieren
+        function updateSingleTimerScreen() {
+            const grp = document.getElementById('timerRingGroupO');
+            if (!grp || grp.style.visibility !== 'visible') return;
+            const t = activeTimers[0];
+            if (!t || t.finished) return;
+            const remainingSeconds = timerRemaining(t);
+            const td = document.getElementById('timeDisplayO');
+            if (td) td.textContent = fmtTimer(remainingSeconds);
+            const endEl = document.getElementById('endTimeO');
+            if (endEl) endEl.textContent = 'Endet um ' + fmtEnd(t);
+
+            const factor = remainingSeconds / t.total;
+            const angle = 360 * factor;
+            const rad = (angle - 90) * Math.PI / 180;
+            const cx = 640, cy = 330, r = 195;
+            const endX = cx + r * Math.cos(rad);
+            const endY = cy + r * Math.sin(rad);
+            const largeArc = angle > 180 ? 1 : 0;
+
+            const path = document.getElementById('progressArcO');
+            if (angle >= 359.99) {
+                path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-0.01} ${cy-r}`);
+            } else if (angle <= 0.01) {
+                path.setAttribute('d', '');
+            } else {
+                path.setAttribute('d', `M ${cx} ${cy-r} A ${r} ${r} 0 ${largeArc} 1 ${endX} ${endY}`);
+            }
+            const dot = document.getElementById('progressDotO');
+            dot.setAttribute('cx', endX); dot.setAttribute('cy', endY);
+
+            // Arm der Figur folgt dem Timer-Punkt (Schulter-Pivots in Screen-Koordinaten)
+            const armR = document.getElementById('timerArmRO');
+            const armL = document.getElementById('timerArmLO');
+            const restR = document.getElementById('timerRestRO');
+            const restL = document.getElementById('timerRestLO');
+            if (armR && armL) {
+                if (endX >= 640) {
+                    const deg = Math.atan2(endY - 396, endX - 692.8) * 180 / Math.PI;
+                    armR.setAttribute('transform', `rotate(${deg} 346 445)`);
+                    armR.style.opacity = 1; armL.style.opacity = 0;
+                    restL.style.opacity = 1; restR.style.opacity = 0;
+                } else {
+                    const deg = Math.atan2(endY - 396, endX - 587.2) * 180 / Math.PI - 180;
+                    armL.setAttribute('transform', `rotate(${deg} 214 445)`);
+                    armL.style.opacity = 1; armR.style.opacity = 0;
+                    restR.style.opacity = 1; restL.style.opacity = 0;
+                }
+            }
+        }
+
+        // Mehrfach-Ansicht: Karten nebeneinander (bis 3 pro Reihe)
+        function renderMultiTimers() {
+            const g = document.getElementById('multiTimerCardsJ');
+            if (!g) return;
+            const n = activeTimers.length;
+            const W = 300, H = 230, GAP = 34;
+            const rows = Math.ceil(n / 3);
+            const startY = rows > 1 ? 140 : 230;
+            g.innerHTML = activeTimers.map((t, i) => {
+                const row = Math.floor(i / 3), col = i % 3;
+                const inRow = Math.min(n - row * 3, 3);
+                const rowW = inRow * W + (inRow - 1) * GAP;
+                const x = 640 - rowW / 2 + col * (W + GAP);
+                const y = startY + row * (H + GAP);
+                const remaining = timerRemaining(t);
+                const frac = t.finished ? 0 : (t.total ? remaining / t.total : 0);
+                const timeStr = t.finished ? 'FERTIG!' : fmtTimer(remaining);
+                const timeCol = t.finished ? '#f39c12' : '#EEF1F9';
+                return `<g>
+                    <rect x="${x}" y="${y}" width="${W}" height="${H}" rx="16" fill="#101a33" stroke="${t.finished ? '#f39c12' : '#33447a'}" stroke-width="1.5"/>
+                    <rect x="${x}" y="${y}" width="${W}" height="3" rx="1.5" fill="url(#neonLineJ)"/>
+                    <text x="${x + W/2}" y="${y + 44}" text-anchor="middle" style="font-size:14px;fill:#838fb8;letter-spacing:2px">⏱ ${t.name.toUpperCase()}</text>
+                    <text x="${x + W/2}" y="${y + 126}" text-anchor="middle" style="font-size:${t.finished ? 40 : 54}px;fill:${timeCol};font-weight:700">${timeStr}</text>
+                    <rect x="${x + 34}" y="${y + 162}" width="${W - 68}" height="6" rx="3" fill="#1d2b52"/>
+                    <rect x="${x + 34}" y="${y + 162}" width="${Math.max(0, (W - 68) * frac)}" height="6" rx="3" fill="#5566cc"/>
+                    <text x="${x + W/2}" y="${y + 202}" text-anchor="middle" style="font-size:12px;fill:#55608c">${t.finished ? 'abgelaufen' : 'endet ' + fmtEnd(t)}</text>
+                </g>`;
+            }).join('');
+        }
+
+        // Kleines Countdown-Widget auf beiden Homescreens
+        function updateIdleTimerWidget() {
+            const running = activeTimers.filter(t => !t.finished);
+            const txt = running.length ? '⏱ ' + running.map(t => fmtTimer(timerRemaining(t))).join('  ·  ') : '';
+            ['idleTimerJ', 'idleTimer2J'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = txt;
+            });
+        }
+
+        function timerFinishedFor(t) {
             // Peep-Peep-Sound (Küchentimer-Style, 4 Doppel-Pieper)
             try {
                 const ctx = getAudioCtx();
                 for (let r = 0; r < 4; r++) {
-                    [0, 0.18].forEach(t => {
+                    [0, 0.18].forEach(off => {
                         const o = ctx.createOscillator(); const g = ctx.createGain();
                         o.connect(g); g.connect(ctx.destination);
                         o.type = 'square';
                         o.frequency.value = 1320;
-                        const start = ctx.currentTime + r * 0.9 + t;
+                        const start = ctx.currentTime + r * 0.9 + off;
                         g.gain.setValueAtTime(0.25, start);
                         g.gain.exponentialRampToValueAtTime(0.001, start + 0.15);
                         o.start(start); o.stop(start + 0.16);
                     });
                 }
             } catch(e) {}
-            // Anzeige
-            const td = document.getElementById('timeDisplayO');
-            if (td) { td.textContent = '0:00'; td.style.fill = '#f39c12'; }
-            const tn = document.getElementById('timerNameO');
-            if (tn) tn.textContent = '⏰ Timer fertig!';
-            // Figur jubelt: beide Arme hoch
-            const armR = document.getElementById('timerArmRO'), armL = document.getElementById('timerArmLO');
-            const restR = document.getElementById('timerRestRO'), restL = document.getElementById('timerRestLO');
-            if (armR && armL) {
-                armR.setAttribute('transform', 'rotate(-60 346 445)'); armR.style.opacity = 1;
-                armL.setAttribute('transform', 'rotate(60 214 445)'); armL.style.opacity = 1;
-                if (restR) restR.style.opacity = 0;
-                if (restL) restL.style.opacity = 0;
+            // Einzel-Ansicht: Jubel-Figur
+            const ringVisible = document.getElementById('timerRingGroupO').style.visibility === 'visible';
+            if (ringVisible && activeTimers.length === 1) {
+                const td = document.getElementById('timeDisplayO');
+                if (td) { td.textContent = '0:00'; td.style.fill = '#f39c12'; }
+                const tn = document.getElementById('timerNameO');
+                if (tn) tn.textContent = '⏰ Timer fertig!';
+                const armR = document.getElementById('timerArmRO'), armL = document.getElementById('timerArmLO');
+                const restR = document.getElementById('timerRestRO'), restL = document.getElementById('timerRestLO');
+                if (armR && armL) {
+                    armR.setAttribute('transform', 'rotate(-60 346 445)'); armR.style.opacity = 1;
+                    armL.setAttribute('transform', 'rotate(60 214 445)'); armL.style.opacity = 1;
+                    if (restR) restR.style.opacity = 0;
+                    if (restL) restL.style.opacity = 0;
+                }
             }
-            setLabelJ('⏰ Timer', 'Zeit abgelaufen!');
-            jarvisSpeak('Timer abgelaufen!');
+            setLabelJ('⏰ Timer', `${activeTimers.length > 1 ? t.name : 'Timer'} abgelaufen!`);
+            jarvisSpeak(`${activeTimers.length > 1 ? t.name + ' ist' : 'Timer'} abgelaufen!`);
         }
+
+        // Globaler Ticker: läuft immer, egal welches Panel offen ist
+        setInterval(() => {
+            if (!activeTimers.length) { updateIdleTimerWidget(); return; }
+            activeTimers.forEach(t => {
+                if (!t.finished && timerRemaining(t) <= 0) {
+                    t.finished = true;
+                    t.finishedAt = Date.now();
+                    timerFinishedFor(t);
+                }
+            });
+            // Fertige Timer nach 10 s automatisch entfernen
+            const hadTimers = activeTimers.length > 0;
+            activeTimers = activeTimers.filter(t => !t.finished || Date.now() - t.finishedAt < 10000);
+            updateSingleTimerScreen();
+            const multiVisible = document.getElementById('multiTimerModeJ')?.style.visibility === 'visible';
+            if (multiVisible) {
+                if (activeTimers.length === 1) showTimerScreen();     // von 2 auf 1 → zurück zum Ring
+                else renderMultiTimers();
+            }
+            updateIdleTimerWidget();
+            // Alle Timer weg und ein Timer-Screen war offen → zurück zum Dashboard
+            if (hadTimers && !activeTimers.length) {
+                const ringVisible = document.getElementById('timerRingGroupO')?.style.visibility === 'visible';
+                if (ringVisible || multiVisible) resetToHome();
+            }
+        }, 1000);
 
         let noteTypeTimerN = null;
         function openNoteMode(text) {
@@ -2285,11 +2391,23 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 const [bg, ink] = noteColors[i % noteColors.length];
                 const rot = [-2.5, 2, -1.5, 2.5, -2, 1.5][i % 6];
                 const safeText = String(note.text).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+                const isReminder = !!note.remindAt;
                 const div = document.createElement('div');
-                div.style.cssText = `background:${bg};border-radius:2px 2px 16px 2px;padding:24px 14px 12px;position:relative;transform:rotate(${rot}deg);box-shadow:3px 6px 14px rgba(0,0,0,0.5);animation:notePopN 0.45s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:${i * 0.07}s;min-height:120px;display:flex;flex-direction:column;`;
+                div.style.cssText = `background:${bg};border-radius:2px 2px 16px 2px;padding:24px 14px 12px;position:relative;transform:rotate(${rot}deg);box-shadow:3px 6px 14px rgba(0,0,0,0.5);animation:notePopN 0.45s cubic-bezier(0.34,1.56,0.64,1) both;animation-delay:${i * 0.07}s;min-height:120px;display:flex;flex-direction:column;${note.done ? 'opacity:0.55;' : ''}`;
+                // Erinnerungs-Notiz: Fälligkeit mit Datum + Uhrzeit anzeigen
+                let reminderBadge = '';
+                if (isReminder) {
+                    const due = new Date(note.remindAt);
+                    const dueStr = due.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit'}) + ' · ' +
+                                   due.toLocaleTimeString('de-DE', {hour: '2-digit', minute: '2-digit'});
+                    reminderBadge = note.done
+                        ? `<div style="font-size:11px;font-weight:700;color:${ink};background:rgba(0,0,0,0.1);border-radius:6px;padding:3px 8px;margin-bottom:6px;display:inline-block;">✓ erinnert (${dueStr})</div>`
+                        : `<div style="font-size:11px;font-weight:700;color:#8a2f10;background:rgba(255,255,255,0.45);border-radius:6px;padding:3px 8px;margin-bottom:6px;display:inline-block;">⏰ ${dueStr} Uhr</div>`;
+                }
                 div.innerHTML = `
-                    <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%) rotate(${-rot * 2}deg);font-size:22px;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.35))">📌</div>
-                    <div style="flex:1;font-family:'Segoe Print','Comic Sans MS',cursive;font-size:14px;line-height:1.5;color:${ink};overflow-wrap:break-word;">${safeText}</div>
+                    <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%) rotate(${-rot * 2}deg);font-size:22px;filter:drop-shadow(0 2px 2px rgba(0,0,0,0.35))">${isReminder ? '⏰' : '📌'}</div>
+                    ${reminderBadge}
+                    <div style="flex:1;font-family:'Segoe Print','Comic Sans MS',cursive;font-size:14px;line-height:1.5;color:${ink};overflow-wrap:break-word;${note.done ? 'text-decoration:line-through;' : ''}">${safeText}</div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;border-top:1px dashed rgba(0,0,0,0.15);padding-top:8px;">
                         <span style="font-size:10px;color:${ink};opacity:0.6;font-weight:600;">#${i + 1} · ${note.time}</span>
                         <button onclick="deleteNote(${i})" style="background:rgba(0,0,0,0.12);border:none;border-radius:6px;padding:3px 9px;cursor:pointer;font-size:12px;">🗑</button>
@@ -2304,6 +2422,12 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 openNotesListMode();
                 setLabelJ('Notizblock', 'Notiz nicht gefunden.');
                 return;
+            }
+            // Falls es eine Erinnerungs-Notiz ist: ausstehende Erinnerung mit stornieren
+            const note = savedNotes[index];
+            if (note.rid) {
+                reminders = reminders.filter(r => r.id !== note.rid);
+                saveReminders();
             }
             savedNotes.splice(index, 1);
             saveNotesToStorage();
@@ -2764,8 +2888,17 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
 
         function setReminder(minutes, text) {
             const at = Date.now() + minutes * 60000;
-            reminders.push({ text, at });
+            const id = Date.now() + Math.random();
+            reminders.push({ id, text, at });
             saveReminders();
+            // Erinnerung auch als Notiz mit Fälligkeits-Datum + Uhrzeit ablegen
+            savedNotes.push({
+                text,
+                time: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                remindAt: at,
+                rid: id
+            });
+            saveNotesToStorage();
             const when = new Date(at).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
             setLabelJ('⏳ Erinnerung gesetzt', `${when} Uhr: ${text}`);
             jarvisSpeak(`Alles klar, ich erinnere dich um ${when} Uhr an ${text}.`);
@@ -2783,6 +2916,14 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                     o.start(ctx.currentTime + t); o.stop(ctx.currentTime + t + 0.3);
                 });
             } catch(e) {}
+            // Verknüpfte Notiz als "erinnert" markieren
+            const note = savedNotes.find(n => n.rid === r.id);
+            if (note) {
+                note.done = true;
+                saveNotesToStorage();
+                const listVisible = document.getElementById('notesListModeJ')?.style.visibility === 'visible';
+                if (listVisible) renderNotesList();
+            }
             setLabelJ('⏳ Erinnerung!', r.text);
             jarvisSpeak(`Erinnerung: ${r.text}`);
         }
@@ -4124,15 +4265,15 @@ Erkenne Tippfehler, Umgangssprache und natürliche Sätze:
                 rect.setAttribute('x', x); rect.setAttribute('y', y);
                 rect.setAttribute('width', chipW); rect.setAttribute('height', chipH);
                 rect.setAttribute('rx', '10');
-                rect.setAttribute('fill', isOp ? '#26262b' : '#1d2b52');
-                rect.setAttribute('stroke', '#3a3a42'); rect.setAttribute('stroke-width', '1.5');
+                rect.setAttribute('fill', isOp ? '#131722' : '#161b2c');
+                rect.setAttribute('stroke', isOp ? '#5566cc' : '#33447a'); rect.setAttribute('stroke-width', '1.5');
                 rect.style.cssText = `opacity:0; animation:${anim}`;
                 group.appendChild(rect);
 
                 const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 txt.setAttribute('x', x + chipW / 2); txt.setAttribute('y', y + chipH / 2 + 1);
                 txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('dominant-baseline', 'middle');
-                txt.setAttribute('style', `font-size:${isOp?26:22}px; font-weight:700; fill:${isOp?'#8a8a95':'#EEF1F9'}; opacity:0; animation:${anim}`);
+                txt.setAttribute('style', `font-size:${isOp?26:22}px; font-weight:700; fill:${isOp?'#7f8de0':'#EEF1F9'}; opacity:0; animation:${anim}`);
                 txt.textContent = token === '*' ? '×' : token === '/' ? '÷' : token;
                 group.appendChild(txt);
 
